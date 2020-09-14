@@ -1,0 +1,64 @@
+<html>
+<head>
+
+</head>
+<body>
+
+<h1>Importabular : a minimal spreadsheet component with excel copy paste</h1>
+
+<div id="editorNode"></div>
+
+<label for="jsonNode">The two way bound model can be edited below</label>
+<textarea id="jsonNode"></textarea>
+
+<script type="module">
+
+    // Instanciate the editor
+    import Importabular from './src/index.js'
+    const editorNode=document.getElementById('editorNode')
+    const editor=new Importabular({
+      data:[['Hello','World','!']],
+      node:editorNode,
+    })
+
+    // Bind its content two ways to a textarea
+    const jsonNode=document.getElementById('jsonNode')
+    editor.options.onChange = v=>jsonNode.value=JSON.stringify(v, null,2)
+    jsonNode.addEventListener('keyup', e=>{
+      try{
+        editor.setData(JSON.parse(e.target.value))
+        editor.style.border=''
+      }catch (e) {
+        editor.style.border='1px solid red'
+      }
+    })
+
+</script>
+
+<style>
+    body {
+        background: linear-gradient(#d3d3d3, white);
+        font-family: sans-serif;
+        min-height: 100vh;
+        max-width: 800px;
+        margin: 40px auto;
+    }
+
+    h1{
+        font-size:20px;
+        font-weight: 100;
+    }
+    #editorNode{
+        margin:40px auto;
+    }
+    #editorNode > table{
+        min-width: 100%;
+    }
+
+    textarea{
+        width:100%;
+        height: 500px;
+    }
+</style>
+</body>
+</html>

@@ -1,0 +1,28 @@
+{
+  "name": "importabular",
+  "version": "0.0.1",
+  "description": "Lightweight spreadsheet editor for the web, to easily let your users import their data from excel.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/renanlecaro/importabular.git"
+  },
+  "keywords": [
+    "spreadsheet",
+    "vanillajs",
+    "ui",
+    "lightweight",
+    "minimalist",
+    "data",
+    "import"
+  ],
+  "author": "Renan LE CARO",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/renanlecaro/importabular/issues"
+  },
+  "homepage": "https://github.com/renanlecaro/importabular#readme"
+}
