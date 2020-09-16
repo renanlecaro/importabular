@@ -337,7 +337,10 @@ export default class Importabular{
   touchend=e=>{
     if(this.editing) return
     if(!this.moved){
-      this.selectionEnd=this.selectionStart=this.getCoords(e);
+
+      this.changeSelectedCellsStyle(()=>{
+        this.selectionEnd=this.selectionStart=this.getCoords(e);
+      })
       this.startEditing(this.selectionEnd)
     }
   }
