@@ -5,4 +5,4 @@ parcelRequire=function(e,r,t,n){var i,o="function"==typeof parcelRequire&&parcel
 },{}],"lgAh":[function(require,module,exports) {
 "use strict";var e=t(require("../src"));function t(e){return e&&e.__esModule?e:{default:e}}require("./demo.css"),new e.default({data:[["Product ID","Product name","Price","Unit","Category"],["256","Sample product","2.5","Piece","Stuffs"],["122","Pre mix drink","5","Bottle","Drinks"]],node:document.getElementById("editorNode"),maxWidth:5,minHeight:8});
 },{"../src":"uBxZ","./demo.css":"n4SH"}]},{},["lgAh"], null)
-//# sourceMappingURL=https://renanlecaro.github.io/importabular/demo.b9057e97.js.map
+//# sourceMappingURL=https://renanlecaro.github.io/importabular/demo.24b75aaf.js.map

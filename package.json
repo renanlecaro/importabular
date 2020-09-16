@@ -6,7 +6,7 @@
   "files": ["dist/index.js", "src/index.js"],
   "scripts": {
     "start": "parcel demo/index.html --out-dir docs",
-    "build": "parcel build demo/index.html --out-dir docs --public-url https://renanlecaro.github.io/importabular/ && parcel build src/index.js"
+    "build": "rm -rf docs && parcel build demo/index.html --out-dir docs --public-url https://renanlecaro.github.io/importabular/ && parcel build src/index.js"
   },
   "repository": {
     "type": "git",

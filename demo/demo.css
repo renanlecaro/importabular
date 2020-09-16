@@ -4,25 +4,41 @@ body {
   margin: 0;
   padding: 0;
 }
+
+#editorNode{
+}
 section {
   color: white;
 }
 section a{
   color: white;
 }
+@media (max-width: 570px) {
+  #editorNode{
+    margin-left:-10px;
+    margin-right:-10px;
+    width: auto;
+    align-self: stretch;
+
+  }
+}
 @media (max-width: 1400px) {
 
   section {
-    padding: 40px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
   section>*{
-    max-width: 500px;
+    width: 100%;
+    max-width:580px;
   }
   section>*:last-child{
-    margin-top: 40px;
+    margin-top: 20px;
+  }
+  #editorNode>table{
+    min-width: 100%;
   }
 }
 @media (min-width: 1400px) {
