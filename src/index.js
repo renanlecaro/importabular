@@ -8,13 +8,24 @@ export default class Index{
   data=new LooseArray()
   options={
     onChange:null,
-    onSelectionChange:null
+    onSelectionChange:null,
+    contentStyle:()=>null,
+    cellStyle:()=>null,
+    minHeight:1,
+    maxHeight:Infinity,
+    minWidth:1,
+    maxWidth:Infinity,
+  }
+  fitBounds({x,y}){
+    return x>=0 && x<this.options.maxWidth
+    && y>=0 && y<this.options.maxHeight
   }
   constructor({data=[],node, ...options}) {
     this.parent=node
     Object.assign(this.options, options)
     this.setupDom()
     this.replaceDataWithArray(data)
+    this.incrementToFit({x:this.options.minWidth-1, y:this.options.minHeight-1})
   }
   onDataChanged(){
     if(this.options.onChange){
@@ -49,7 +60,9 @@ export default class Index{
   }
   tableStyle={
     borderSpacing:0,
-    background:'white'
+    background:'white',
+    border:'1px solid #ddd'
+
   }
   setupDom(){
     const table=document.createElement('table')
@@ -107,7 +120,7 @@ export default class Index{
     })
   }
   incrementToFit({x,y}){
-
+    if(!this.fitBounds({x,y})) return
     while(x>this.width-1) this.incrementWidth()
     while(y>this.height-1) this.incrementHeight()
   }
@@ -241,12 +254,14 @@ export default class Index{
   }
   moveCursor({x=0,y=0}){
 
-    this.stopEditing()
-
     const curr=this.selectionStart
     const nc = {x:curr.x+x, y:curr.y+y}
-    if(nc.x<0) return
-    if(nc.y<0) return
+
+    if(!this.fitBounds(nc)) return
+
+    this.stopEditing()
+
+
     this.incrementToFit(nc)
     // if(nc.x>=this.width) return;
     // if(nc.y>=this.height) return;
@@ -378,7 +393,8 @@ export default class Index{
   forSelectionCoord({rx,ry}, cb){
     for(let x=rx[0];x<rx[1];x++)
       for(let y=ry[0];y<ry[1];y++)
-        cb({x,y})
+        if(this.fitBounds({x,y}))
+          cb({x,y})
   }
   restyle=({x,y})=>{
 
@@ -399,7 +415,8 @@ export default class Index{
       borderColor:editTarget && !editing ? 'black' : (
         [y ? '#ddd':'transparent','transparent','transparent',
           x ? '#ddd':'transparent'].join(' ')
-      )
+      ),
+      ...cleanStyle(this.options.cellStyle(...arguments))
     }
   }
   contentStyle(x,y,{selected,onlySelected, editTarget,editing}){
@@ -415,8 +432,10 @@ export default class Index{
       fontSize:'inherit',
       color:'inherit',
       boxSizing:'border-box',
+      ...cleanStyle(this.options.contentStyle(...arguments))
     }
   }
+
 
   refreshDisplayedValue=({x,y})=>{
     const div=this.getCell(x,y).firstChild
@@ -441,6 +460,7 @@ export default class Index{
 
 
   replaceDataWithArray(data) {
+
     data.forEach((line, y)=>{
       line.forEach((val, x)=>{
         this.setVal( x,y, val)
@@ -450,6 +470,9 @@ export default class Index{
     this.onDataChanged()
   }
   setVal( x,y,val){
+
+    if(!this.fitBounds({x,y})) return
+
     this.data.setVal( x,y, val)
     this.incrementToFit({x:x+1,y:y+1})
     this.refreshDisplayedValue({x,y})
@@ -587,4 +610,10 @@ function ensureDimensions(rows) {
     }
   }
   return result
+}
+
+function cleanStyle(s) {
+  if(!s) return {}
+  Object.keys(s).forEach(key => !s[key] && s[key]!==0 && delete s[key]);
+  return s
 }

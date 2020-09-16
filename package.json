@@ -4,7 +4,9 @@
   "description": "Lightweight spreadsheet editor for the web, to easily let your users import their data from excel.",
   "main": "src/index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "start": "parcel demo/index.html",
+    "build": "parcel build demo/index.html && parcel build src/index.js"
   },
   "repository": {
     "type": "git",
@@ -24,5 +26,9 @@
   "bugs": {
     "url": "https://github.com/renanlecaro/importabular/issues"
   },
-  "homepage": "https://github.com/renanlecaro/importabular#readme"
+  "homepage": "https://github.com/renanlecaro/importabular#readme",
+  "devDependencies": { 
+    "jest": "^26.4.2",
+    "parcel-bundler": "^1.12.4"
+  },
 }

@@ -1,0 +1,45 @@
+<html><head><title>Importabular : 4.5kb javascript spreadsheet component</title><link rel="stylesheet" href="/demo.0edf2f00.css"></head><body> <section style="background:linear-gradient(-45deg,#262431,#013448);"> <div> <h1>Minimal spreadsheet javascript component</h1> <ul class="checks"> <li title="Once minified and gzipped">Under 5 Kb</li> <li title="Basic support, double tap a cell to edit it, not tried on iphone">Mobile friendly</li> <li title="Works from libre office, should work for other software">Copy / paste</li> <li>MIT License</li> </ul> </div> <div id="editorNode"></div> </section> <section style="background:linear-gradient(-45deg,#2c2457,#4c1a95);"> <div> <h2>Usage</h2> <p>Install it from npm</p> <code>npm install importabular</code> <p>Instanciate it on a dom node</p>
+<pre><code lang="javascript">import Importabular from 'importabular'
+const sheet=new Importabular({
+  node:document.getElementById('editorNode'),
+})</code></pre> <p>Get the current data as a 2D array</p>
+<pre><code lang="javascript">sheet.data.toArr()</code></pre> <p>Destroy it to remove event listeners</p>
+<pre><code lang="javascript">sheet.destroy()</code></pre> </div> </section> <section style="background:linear-gradient(-45deg,#770032,#ca0042);"> <div> <h2>Limitations</h2> <p> This is a minimalist library that does very little : </p> <ul> <li>No sharing of the keyboard with other components on the page</li> <li>No virtual rendering</li> <li>No sorting, pivot, formula, etc ..</li> <li>Only basic keyboard shortcuts</li> <li>Only strings as data type</li> <li>Only for recent browsers</li> </ul> </div>
+</section> <section style="background:linear-gradient(-45deg,#060606,#081e3c);"> <div> <h2>More info</h2> <p>On the left is a more complete example.</p> <p> Some common use cases have options, for the rest you should just read <a href="https://github.com/renanlecaro/importabular">the source</a> and subclass it of fix the code. </p> <p> I've created this lib because I was tired of having to remove 90% of the features offered by the very few open source libs for web spreadsheets. </p> <p> So for this reinventing the wheel to make sense, I should not add any extra features to this core. The lib is fresh and not battle tested, so probably has some bugs. Feel free to <a href="https://github.com/renanlecaro/importabular/issues/new"> create an issue</a> if you find a clear bug, or submit a PR. </p> <p>The source is still quite tiny (600 lines of code) so you shouldn't have too hard of a time modifying it to fit your needs.</p> </div> <div> <pre><code lang="javascript">import Importabular from 'importabular'
+
+const sheet=new Importabular({
+  node:document.getElementById('editorNode'),
+
+  // Prefill the table
+  data:[['This','is','the','first','row']],
+
+  // Called after each change to the table data
+  onChange:data=>console.log('new data : ',data),
+
+  // Called every time the user changes selection,
+  // useful for real time collaborative editing
+  onSelectionChange:sel=>console.log('new selection',sel),
+
+  // Each cell is rendered as a TD with inside either
+  // a div or an input. This will override the TD style
+  cellStyle:(x,y,{selected,editing})=>
+    ({
+      backgroundColor:!selected && !editing && y%2?
+        '#fafafa':null
+    }),
+
+  // and this will override the style of the text
+  // input or div.
+  contentStyle:()=>({fontFamily:'sherif'}),
+
+  // Starting size of the grid on instanciation
+  minWidth:5,
+  minHeight:10,
+
+  // Limits to the growth of the grid
+  maxWidth:5,
+  maxHeight:10,
+})
+</code></pre> </div>
+</section> <script src="/demo.89cbb58b.js"></script>
+</body></html>
