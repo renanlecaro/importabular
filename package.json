@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest",
     "start": "parcel demo/index.html",
-    "build": "parcel build demo/index.html && parcel build src/index.js"
+    "build": "parcel build demo/index.html --out-dir docs && parcel build src/index.js"
   },
   "repository": {
     "type": "git",
@@ -30,5 +30,5 @@
   "devDependencies": {
     "jest": "^26.4.2",
     "parcel-bundler": "^1.12.4"
-  },
+  }
 }
