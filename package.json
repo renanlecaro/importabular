@@ -5,8 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "jest",
-    "start": "parcel demo/index.html",
-    "build": "parcel build demo/index.html --out-dir docs && parcel build src/index.js"
+    "start": "parcel demo/index.html --out-dir docs",
+    "build": "parcel build demo/index.html --out-dir docs --public-url https://renanlecaro.github.io/importabular/ && parcel build src/index.js"
   },
   "repository": {
     "type": "git",
