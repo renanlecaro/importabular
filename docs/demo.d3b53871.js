@@ -276,7 +276,7 @@ var Importabular = /*#__PURE__*/function () {
 
             _this.moveCursor({
               y: 1
-            });
+            }, e.shiftKey);
           }
 
           if (e.key === 'ArrowUp') {
@@ -284,7 +284,7 @@ var Importabular = /*#__PURE__*/function () {
 
             _this.moveCursor({
               y: -1
-            });
+            }, e.shiftKey);
           }
 
           if (e.key === 'ArrowLeft') {
@@ -292,7 +292,7 @@ var Importabular = /*#__PURE__*/function () {
 
             _this.moveCursor({
               x: -1
-            });
+            }, e.shiftKey);
           }
 
           if (e.key === 'ArrowRight') {
@@ -300,7 +300,7 @@ var Importabular = /*#__PURE__*/function () {
 
             _this.moveCursor({
               x: +1
-            });
+            }, e.shiftKey);
           }
         }
 
@@ -628,14 +628,14 @@ var Importabular = /*#__PURE__*/function () {
     }
   }, {
     key: "moveCursor",
-    value: function moveCursor(_ref7) {
+    value: function moveCursor(_ref7, shiftSelectionEnd) {
       var _this5 = this;
 
       var _ref7$x = _ref7.x,
           x = _ref7$x === void 0 ? 0 : _ref7$x,
           _ref7$y = _ref7.y,
           y = _ref7$y === void 0 ? 0 : _ref7$y;
-      var curr = this.selectionStart;
+      var curr = shiftSelectionEnd ? this.selectionEnd : this.selectionStart;
       var nc = {
         x: curr.x + x,
         y: curr.y + y
@@ -646,7 +646,11 @@ var Importabular = /*#__PURE__*/function () {
       // if(nc.y>=this.height) return;
 
       this.changeSelectedCellsStyle(function () {
-        _this5.selectionStart = _this5.selectionEnd = nc;
+        if (shiftSelectionEnd) {
+          _this5.selectionEnd = nc;
+        } else {
+          _this5.selectionStart = _this5.selectionEnd = nc;
+        }
       });
     }
   }, {
@@ -1130,7 +1134,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "41403" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "41601" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

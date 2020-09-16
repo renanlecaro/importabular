@@ -217,20 +217,20 @@ export default class Importabular{
         }
         if(e.key==='ArrowDown'){
           e.preventDefault()
-          this.moveCursor({y:1})
+          this.moveCursor({y:1},e.shiftKey)
         }
 
         if(e.key==='ArrowUp'){
           e.preventDefault()
-          this.moveCursor({y:-1})
+          this.moveCursor({y:-1},e.shiftKey)
         }
         if(e.key==='ArrowLeft'){
           e.preventDefault()
-          this.moveCursor({x:-1})
+          this.moveCursor({x:-1},e.shiftKey)
         }
         if(e.key==='ArrowRight'){
           e.preventDefault()
-          this.moveCursor({x:+1})
+          this.moveCursor({x:+1},e.shiftKey)
         }
       }
 
@@ -252,9 +252,9 @@ export default class Importabular{
 
     this.onDataChanged()
   }
-  moveCursor({x=0,y=0}){
+  moveCursor({x=0,y=0}, shiftSelectionEnd){
 
-    const curr=this.selectionStart
+    const curr=shiftSelectionEnd? this.selectionEnd : this.selectionStart
     const nc = {x:curr.x+x, y:curr.y+y}
 
     if(!this.fitBounds(nc)) return
@@ -266,7 +266,11 @@ export default class Importabular{
     // if(nc.x>=this.width) return;
     // if(nc.y>=this.height) return;
     this.changeSelectedCellsStyle(()=>{
-      this.selectionStart=this.selectionEnd =nc
+      if(shiftSelectionEnd){
+        this.selectionEnd =nc
+      }else{
+        this.selectionStart=this.selectionEnd =nc
+      }
     })
   }
   selecting=false;

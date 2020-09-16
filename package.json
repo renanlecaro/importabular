@@ -1,9 +1,9 @@
 {
   "name": "importabular",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "5kb javascript spreadsheet, let your users import their data from excel.",
   "main": "dist/index.js",
-  "scripts": { 
+  "scripts": {
     "start": "parcel demo/index.html --out-dir docs",
     "build": "parcel build demo/index.html --out-dir docs --public-url https://renanlecaro.github.io/importabular/ && parcel build src/index.js"
   },
