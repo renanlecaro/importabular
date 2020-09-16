@@ -1,7 +1,7 @@
 
 
 
-export default class Index{
+export default class Importabular{
   parent=null
   width=1
   height=1
