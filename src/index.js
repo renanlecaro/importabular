@@ -87,11 +87,35 @@ export default class Importabular{
     tbody.addEventListener('mouseenter', this.mouseenter, true)
     tbody.addEventListener('mouseup', this.mouseup, true)
     tbody.addEventListener('mouseleave', this.mouseleave)
+    tbody.addEventListener('touchstart', this.touchstart, true)
+    tbody.addEventListener('touchend', this.touchend, true)
+    tbody.addEventListener('touchmove', this.touchmove, true)
     document.addEventListener('keydown', this.keydown, true)
     document.addEventListener('paste', this.paste)
     document.addEventListener('cut', this.cut)
     document.addEventListener('copy', this.copy)
   }
+
+  destroy(){
+    this.destroyEditing()
+
+    // Remove global listeners
+    const tbody=this.tbody
+    tbody.removeEventListener('mousedown', this.mousedown, true)
+    tbody.removeEventListener('mouseenter', this.mouseenter, true)
+    tbody.removeEventListener('mouseup', this.mouseup, true)
+    tbody.removeEventListener('mouseleave', this.mouseleave)
+    tbody.removeEventListener('touchstart', this.touchstart, true)
+    tbody.removeEventListener('touchend', this.touchend, true)
+    tbody.removeEventListener('touchmove', this.touchmove, true)
+    document.removeEventListener('keydown', this.keydown, true)
+    document.removeEventListener('copy', this.copy)
+    document.removeEventListener('cut', this.cut)
+    document.removeEventListener('paste', this.paste)
+
+    this.table.parentElement.removeChild(this.table)
+  }
+
 
   addCell(tr, x,y){
     const td=document.createElement('td')
@@ -173,22 +197,6 @@ export default class Importabular{
     this.copy(e)
     this.setAllSelectedCellsTo('')
   }
-  destroy(){
-    this.destroyEditing()
-
-    // Remove global listeners
-    const tbody=this.tbody
-    tbody.removeEventListener('mousedown', this.mousedown, true)
-    tbody.removeEventListener('mouseenter', this.mouseenter, true)
-    tbody.removeEventListener('mouseup', this.mouseup, true)
-    tbody.removeEventListener('mouseleave', this.mouseleave)
-    document.removeEventListener('keydown', this.keydown, true)
-    document.removeEventListener('copy', this.copy)
-    document.removeEventListener('cut', this.cut)
-    document.removeEventListener('paste', this.paste)
-
-    this.table.parentElement.removeChild(this.table)
-  }
 
   keydown=e=>{
 
@@ -253,18 +261,11 @@ export default class Importabular{
     this.onDataChanged()
   }
   moveCursor({x=0,y=0}, shiftSelectionEnd){
-
     const curr=shiftSelectionEnd? this.selectionEnd : this.selectionStart
     const nc = {x:curr.x+x, y:curr.y+y}
-
     if(!this.fitBounds(nc)) return
-
     this.stopEditing()
-
-
     this.incrementToFit(nc)
-    // if(nc.x>=this.width) return;
-    // if(nc.y>=this.height) return;
     this.changeSelectedCellsStyle(()=>{
       if(shiftSelectionEnd){
         this.selectionEnd =nc
@@ -280,6 +281,7 @@ export default class Importabular{
   editing=null
 
   mousedown=e=>{
+    if(this.mobile) return
     this.changeSelectedCellsStyle(()=>{
       this.tbody.style.userSelect='none'
       this.selectionStart=this.getCoords(e);
@@ -288,6 +290,7 @@ export default class Importabular{
     })
   }
   mouseenter=e=>{
+    if(this.mobile) return
     if(this.selecting){
       this.changeSelectedCellsStyle(()=>{
         this.selectionEnd=this.getCoords(e);
@@ -302,6 +305,7 @@ export default class Importabular{
     this.tbody.style.userSelect=''
   }
   mouseup=e=>{
+    if(this.mobile) return
     if(this.selecting){
       this.changeSelectedCellsStyle(()=>{
         this.selectionEnd=this.getCoords(e);
@@ -324,16 +328,43 @@ export default class Importabular{
       this.endSelection()
     }
   }
+
+  touchstart=e=>{
+    if(this.editing) return
+    this.mobile=true
+    this.moved=false
+  }
+  touchend=e=>{
+    if(this.editing) return
+    if(!this.moved){
+      this.selectionEnd=this.selectionStart=this.getCoords(e);
+      this.startEditing(this.selectionEnd)
+    }
+  }
+  touchmove=e=>{
+    this.moved=true
+  }
+
   startEditing({x,y}){
 
     this.editing={x,y}
     const td=this.getCell(x,y)
-    const {width,height}=td.firstChild.getBoundingClientRect()
-    this.editingSize={width,height}
+    const tdSize=td.getBoundingClientRect()
+    const cellSize=td.firstChild.getBoundingClientRect()
+    Object.assign(td.style, {
+      width:tdSize.width,
+      height:tdSize.height,
+    })
+
     td.removeChild(td.firstChild)
     const input=document.createElement('input');
     input.type='text'
     input.value=this.getVal(x,y)
+
+    Object.assign(input.style, {
+      width:cellSize.width,
+      height:cellSize.height,
+    })
     td.appendChild(input)
     input.focus()
     input.addEventListener('blur', this.stopEditing)
@@ -359,6 +390,8 @@ export default class Importabular{
     if(!this.editing) return
     const {x,y}=this.editing
     const td=this.getCell(x,y)
+    td.style.width=''
+    td.style.height=''
     const input = td.firstChild
     input.removeEventListener('blur', this.stopEditing)
     input.removeEventListener('keydown', this.blurIfEnter)
@@ -420,20 +453,18 @@ export default class Importabular{
         [y ? '#ddd':'transparent','transparent','transparent',
           x ? '#ddd':'transparent'].join(' ')
       ),
+      boxSizing:'border-box',
       ...cleanStyle(this.options.cellStyle(...arguments))
     }
   }
   contentStyle(x,y,{selected,onlySelected, editTarget,editing}){
     return {
       border:'none',
-      padding:'0 10px',
+      padding:'10px',
       minWidth:'100px',
       minHeight:'40px',
-      lineHeight:'40px',
-      width:editing?this.editingSize.width+'px':'',
-      height:editing?this.editingSize.height+'px':'',
-      fontFamily:'inherit',
-      fontSize:'inherit',
+      font:'inherit',
+      lineHeight:'20px',
       color:'inherit',
       boxSizing:'border-box',
       ...cleanStyle(this.options.contentStyle(...arguments))
