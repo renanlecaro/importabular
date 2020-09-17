@@ -10,7 +10,7 @@
     </head>
 <body>
 
-<section style="background: linear-gradient(141deg, #b700b1, #2c77df);">
+<section style="background:  url(./noise.png),linear-gradient(141deg, #b700b1, #2c77df);">
 
     <div>
 
@@ -27,7 +27,7 @@
 
 </section>
 
-<section style="background-image: linear-gradient(145deg, #ff7fc7, #b175c1);">
+<section style="background-image: url(./noise.png),linear-gradient(145deg, #ff7fc7, #b175c1);">
 
 
     <div>
@@ -52,20 +52,20 @@ const sheet=new Importabular({
 </section>
 
 
-<section style="background-image: linear-gradient(141deg, #0096c4, #165fac);">
+<section style="background-image: url(./noise.png),linear-gradient(141deg, #0096c4, #165fac);">
 
     <div>
 
         <h2>Goals and limitations</h2>
         <p>
-            Some common use cases have options, for the rest you should just
-            read <a href="https://github.com/renanlecaro/importabular">the source</a> and subclass it of fix the code.
-        </p>
-        <p>
             I've created this lib because I was tired of having to remove 90% of the features
             offered by the very few open source libs for web spreadsheets.
         </p>
-
+        <p>
+            Some common use cases have options, for the rest you should just
+            read <a href="https://github.com/renanlecaro/importabular">the source</a>
+            and subclass it of fix the code.
+        </p>
         <p>
             So for this reinventing the wheel to make sense, I should not add any extra features
             to this core.
@@ -76,7 +76,6 @@ const sheet=new Importabular({
                 <li>Only strings as data type</li>
                 <li>Only for recent browsers</li>
             </ul>
-
         </p>
 
         <p>
@@ -84,11 +83,10 @@ const sheet=new Importabular({
             Feel free to <a href="https://github.com/renanlecaro/importabular/issues/new">
             create an issue</a> if you find a bug.
         </p>
-        
+
 
     </div>
     <div >
-        <h2>More involved example</h2>
         <pre><code lang="javascript">import Importabular from 'importabular'
 
 const sheet=new Importabular({

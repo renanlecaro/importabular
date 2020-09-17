@@ -9,6 +9,7 @@ body {
 }
 section {
   color: white;
+  background-blend-mode: soft-light,normal;
 }
 section a{
   color: white;
@@ -77,13 +78,9 @@ ul.checks li:before{
   content: "\2611";
   margin-right:10px;
 }
-h1{
+h1,h2{
   font-size:44px;
   font-weight: 600;
-}
-h2{
-  font-size:34px;
-  font-weight: 400;
 }
 
 #editorNode{
