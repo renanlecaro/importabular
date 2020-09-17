@@ -5,10 +5,12 @@
         <meta name="author" content="Renan LE CARO">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Importabular : 5kb javascript spreadsheet component</title>
+
+        <link rel="shortcut icon" href="./logo.png"/>
     </head>
 <body>
 
-<section style="background: linear-gradient(-45deg, #262431, #013448);">
+<section style="background: linear-gradient(141deg, #b700b1, #2c77df);">
 
     <div>
 
@@ -25,7 +27,7 @@
 
 </section>
 
-<section style="background: linear-gradient(-45deg, #2c2457, #4c1a95);">
+<section style="background-image: linear-gradient(145deg, #ff7fc7, #b175c1);">
 
 
     <div>
@@ -49,32 +51,12 @@ const sheet=new Importabular({
 
 </section>
 
-<section style="background: linear-gradient(-45deg, #770032, #ca0042);">
 
-
-    <div>
-        <h2>Limitations</h2>
-
-        <p>
-            This is a minimalist library that does very little :
-        </p>
-        <ul>
-            <li>No virtual rendering</li>
-            <li>No sorting, pivot, formula, etc ..</li>
-            <li>Only basic keyboard shortcuts</li>
-            <li>Only strings as data type</li>
-            <li>Only for recent browsers</li>
-        </ul>
-    </div>
-</section>
-
-
-<section style="background: linear-gradient(-45deg, #060606, #081e3c);">
+<section style="background-image: linear-gradient(141deg, #0096c4, #165fac);">
 
     <div>
 
-        <h2>More info</h2>
-        <p>On the left is a more complete example.</p>
+        <h2>Goals and limitations</h2>
         <p>
             Some common use cases have options, for the rest you should just
             read <a href="https://github.com/renanlecaro/importabular">the source</a> and subclass it of fix the code.
@@ -83,16 +65,30 @@ const sheet=new Importabular({
             I've created this lib because I was tired of having to remove 90% of the features
             offered by the very few open source libs for web spreadsheets.
         </p>
+
         <p>
             So for this reinventing the wheel to make sense, I should not add any extra features
-            to this core. The lib is fresh and not battle tested, so probably has some bugs.
-            Feel free to <a href="https://github.com/renanlecaro/importabular/issues/new">
-            create an issue</a> if you find a clear bug, or submit a PR.
+            to this core.
+            <ul>
+                <li>No virtual rendering</li>
+                <li>No sorting, pivot, formula, etc ..</li>
+                <li>Only basic keyboard shortcuts</li>
+                <li>Only strings as data type</li>
+                <li>Only for recent browsers</li>
+            </ul>
+
         </p>
-        <p>The source is still quite tiny (600 lines of code) so you shouldn't have too hard of a time
-        modifying it to fit your needs.</p>
+
+        <p>
+             The lib is fresh and not battle tested, probably has some bugs.
+            Feel free to <a href="https://github.com/renanlecaro/importabular/issues/new">
+            create an issue</a> if you find a bug.
+        </p>
+        
+
     </div>
     <div >
+        <h2>More involved example</h2>
         <pre><code lang="javascript">import Importabular from 'importabular'
 
 const sheet=new Importabular({
