@@ -9,5 +9,4 @@ new Importabular({
   ],
   node:document.getElementById('editorNode'),
   maxWidth:5,
-  minHeight:8
 })
