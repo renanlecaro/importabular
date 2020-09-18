@@ -1,7 +1,7 @@
 # importabular
 Lightweight spreadsheet editor for the web, to easily let your users import their data from excel.
 
-*   Under 5 Kb
+*   Lightweight ![Size badge](https://badgen.net/bundlephobia/minzip/importabular)
 *   Mobile friendly
 *   Copy / paste
 *   MIT License
