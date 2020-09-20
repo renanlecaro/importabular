@@ -35,12 +35,13 @@ sheet.destroy()
 
 This is a minimalist library that does very little :
 
-*   No sharing of the keyboard with other components on the page
+*   The API is quite young and subject to changes in later version
 *   No virtual rendering
 *   No sorting, pivot, formula, etc ..
 *   Only basic keyboard shortcuts
 *   Only strings as data type
 *   Only for recent browsers
+*   No "drag cell corner to duplicate value"
 
 ## More complete example
 
