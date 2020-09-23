@@ -224,6 +224,7 @@ export default class Importabular {
   }
 
   copy = e => {
+    if(this.editing) return
     const asArr = this.getSelectionAsArray()
     if (asArr) {
       e.preventDefault()
@@ -233,6 +234,7 @@ export default class Importabular {
   }
 
   cut = e => {
+    if(this.editing) return
     this.copy(e)
     this.setAllSelectedCellsTo('')
   }
