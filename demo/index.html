@@ -77,7 +77,7 @@ const sheet=new Importabular({
         <p>
           Some common use cases have options, for the rest you should just read
           <a href="https://github.com/renanlecaro/importabular">the source</a>
-          and subclass it of fix the code.
+          and subclass it, or fix the code.
         </p>
         <p>
           So for this reinventing the wheel to make sense, I should not add any
@@ -103,15 +103,17 @@ const sheet=new Importabular({
       </div>
     </section>
 
-    <section class="sample">
+    <section
+      class="sample"
+      style="background: linear-gradient(-141deg, #a9f1f9, #96c4ff)"
+    >
       <div id="editor-minimal"></div>
       <div>
         <h2>Minimal example</h2>
         <p>This is the most minimal way to embed the editor</p>
         <!-- prettier-ignore -->
-        <script class="readable" type="module">
-// Here we import the lib from unpkg, but that could be
-// replaced by the node module name
+        <script  class="readable" type="module">
+// Equivalent to : import Importabular from 'importabular';
 import Importabular from "https://unpkg.com/importabular/dist/index.js";
 // We just give it a node to attach itself to
 new Importabular({
@@ -121,14 +123,18 @@ new Importabular({
       </div>
     </section>
 
-    <section class="sample">
+    <section
+      class="sample"
+      style="background: linear-gradient(-141deg, #2dd3e6, #bff7f1)"
+    >
       <div id="editor-css"></div>
       <div>
         <h2>Simple css</h2>
         <p>Makes even rows slightly darker</p>
 
         <!-- prettier-ignore -->
-        <script class="readable" type="module">
+        <script  class="readable" type="module">
+// Equivalent to : import Importabular from 'importabular';
 import Importabular from "https://unpkg.com/importabular/dist/index.js";
 new Importabular({
     node: document.getElementById("editor-css"),
@@ -139,7 +145,10 @@ new Importabular({
       </div>
     </section>
 
-    <section class="sample">
+    <section
+      class="sample"
+      style="background: linear-gradient(-90deg, #fdffb1, #e8ffb4)"
+    >
       <div style="display: flex; justify-content: space-between">
         <div style="width: 45%">
           <strong>Editor 1</strong>
@@ -157,7 +166,9 @@ new Importabular({
           second too
         </p>
         <!-- prettier-ignore -->
-        <script class="readable" type="module">
+        <script  class="readable" type="module">
+
+// Equivalent to : import Importabular from 'importabular';
 import Importabular from "https://unpkg.com/importabular/dist/index.js";
 // Changing the content of one editor should update the other one too
 let ed1 = new Importabular({
@@ -172,7 +183,10 @@ let ed2 = new Importabular({
       </div>
     </section>
 
-    <section class="sample">
+    <section
+      class="sample"
+      style="background: linear-gradient(-141deg, #cda9f9, #96c4ff)"
+    >
       <div id="editor-simple-subclass"></div>
       <div>
         <h2>Subclasses editors</h2>
@@ -181,9 +195,9 @@ let ed2 = new Importabular({
           file
         </p>
         <!-- prettier-ignore -->
-        <script class="readable" type="module">
-// Notice that we're importing a different file here,  the index file
-// from the src folder, that is not minified
+        <script  class="readable" type="module">
+// Notice that we're importing a different file here
+// Equivalent to : import Importabular from 'importabular/src/index.js';
 import Importabular from "https://unpkg.com/importabular/src/index.js";
 
 class CustomEditor extends Importabular {
@@ -202,15 +216,18 @@ new CustomEditor({
       </div>
     </section>
 
-    <section class="sample">
+    <section
+      class="sample"
+      style="background: linear-gradient(-141deg, #8cf289, #899af7)"
+    >
       <div id="editor-full"></div>
       <div>
         <h2>Heavily customized importer</h2>
         <p>Uses validation and custom columns</p>
         <!-- prettier-ignore -->
-        <script class="readable" type="module">
-// Notice that we're importing a different file here, the index file
-// from the src folder, that is not minified
+        <script  class="readable" type="module">
+// Notice that we're importing a different file here
+// Equivalent to : import Importabular from 'importabular/src/index.js';
 import Importabular from "https://unpkg.com/importabular/src/index.js";
 
 function checkPhone(phone) {
@@ -243,7 +260,7 @@ class CustomEditor extends Importabular {
     if (!y) return "header";
 
     const value = this._getVal(x, y);
-
+    if(!value) return ''
     switch (x) {
       case 0:
         // Name column
@@ -276,25 +293,30 @@ class CustomEditor extends Importabular {
 new CustomEditor({
   node: document.getElementById("editor-full"),
   data: [
-    ["Contact name", "phone number", "email"],
-    ["dan", "+33628350101", "aaaaa@aaaa.fr"],
-    ["will be capitalized", "+49 invalid 55 55 01", "aaa@"],
-    ["", "", "UPPERCASE WILL BE IGNORED"],
+    ["Contact name", "Phone Number", "Email"],
+    ["henry four", "+33628350101", "invalid@.ru"],
+    ["Peter the great", "+7typo555501", "valid@email.ru"],
+    ["Yi", "+6665849494948", "UPPERCASE@IGNORED.cn"],
+    ["PriNce andrew", "+595949894", "prince@crown.uk"],
   ],
   maxCols: 3,
   css: `
     td.header{
-    background:#dadada;
-    font-weight:bold;
-    color:black;
-    pointer-event:none;
-    border:none !important;
+      background:white !important;
+      font-weight:bold;
+      color:black;
+      pointer-event:none;
+      border:none !important;
+      text-transform:uppercase;
+      font-size:80%;
+      text-align:center;
     }
     td.ok{
-    color:green ;
+      color:#5ea65e;
     }
     td.error{
-    color:red;
+      color: #a63e15;
+      text-decoration: line-through;;
     }
   `,
 });

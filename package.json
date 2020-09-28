@@ -34,6 +34,7 @@
     "url": "https://github.com/renanlecaro/importabular/issues"
   },
   "homepage": "https://renanlecaro.github.io/importabular/",
+
   "devDependencies": {
     "documentation": "*",
     "parcel-bundler": "^1.12.4",

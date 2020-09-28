@@ -51,14 +51,9 @@ section a {
   section > * {
     box-sizing: border-box;
     max-width: 600px;
+    margin: 0 40px;
     flex-grow: 1;
     flex-shrink: 1;
-  }
-  section > *:first-child {
-    order: 2;
-  }
-  section > *:last-child {
-    margin-right: 80px;
   }
 }
 
@@ -95,7 +90,7 @@ pre > code {
 script.readable {
   display: block;
   white-space: pre;
-  background: rgba(0, 0, 0, 0.1);
+  background: white;
   color: black;
   padding: 20px;
   font-family: monospace;
@@ -106,10 +101,11 @@ script.readable {
   overflow: auto;
 }
 section.sample {
-  background-image: linear-gradient(-141deg, #e1e1e1, #f0f0f0);
-  color: #333;
+  background-image: linear-gradient(-141deg, #a9f1f9, #96c4ff);
+  color: #051151;
 }
 
-section.sample > *:first-child {
+section.sample > :first-child {
+  /*We flip the order of the script and the container so that the script can see the container when it runs*/
   order: 2;
 }

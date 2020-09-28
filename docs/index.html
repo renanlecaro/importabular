@@ -1,22 +1,24 @@
-<html><head><meta charset="UTF-8"><meta name="description" content="Let your users import their data in your SAAS with a familiar excel like UI."><meta name="author" content="Renan LE CARO"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Importabular : 5kb javascript spreadsheet component</title><link rel="shortcut icon" href="https://renanlecaro.github.io/importabular/logo.90d502a4.png"><link rel="stylesheet" href="https://renanlecaro.github.io/importabular/demo.a145657a.css"></head><body> <section style="background:url(https://renanlecaro.github.io/importabular/noise.9b539b7c.png),linear-gradient(141deg,#b700b1,#2c77df);"> <div> <h2>Minimal spreadsheet javascript component</h2> <ul class="checks"> <li title="Once minified and gzipped">Under 5 Kb</li> <li title="Basic support, double tap a cell to edit it, not tried on iphone"> Mobile friendly </li> <li title="Works from libre office, should work for other software"> Copy / paste </li> <li>MIT License</li> </ul> </div> <div id="editorNode"></div> </section> <section style="background-image:url(https://renanlecaro.github.io/importabular/noise.9b539b7c.png),linear-gradient(145deg,#ff7fc7,#b175c1);"> <div> <h2>Usage</h2> <p>Install it from npm</p> <pre><code>npm install importabular</code></pre> <p>Instanciate it on a dom node</p> <pre><code lang="javascript">import Importabular from 'importabular'
+<html><head><meta charset="UTF-8"><meta name="description" content="Let your users import their data in your SAAS with a familiar excel like UI."><meta name="author" content="Renan LE CARO"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Importabular : 5kb javascript spreadsheet component</title><link rel="shortcut icon" href="https://renanlecaro.github.io/importabular/logo.90d502a4.png"><link rel="stylesheet" href="https://renanlecaro.github.io/importabular/demo.29cc652e.css"></head><body> <section style="background:url(https://renanlecaro.github.io/importabular/noise.9b539b7c.png),linear-gradient(141deg,#b700b1,#2c77df);"> <div> <h2>Minimal spreadsheet javascript component</h2> <ul class="checks"> <li title="Once minified and gzipped">Under 5 Kb</li> <li title="Basic support, double tap a cell to edit it, not tried on iphone"> Mobile friendly </li> <li title="Works from libre office, should work for other software"> Copy / paste </li> <li>MIT License</li> </ul> </div> <div id="editorNode"></div> </section> <section style="background-image:url(https://renanlecaro.github.io/importabular/noise.9b539b7c.png),linear-gradient(145deg,#ff7fc7,#b175c1);"> <div> <h2>Usage</h2> <p>Install it from npm</p> <pre><code>npm install importabular</code></pre> <p>Instanciate it on a dom node</p> <pre><code lang="javascript">import Importabular from 'importabular'
 const sheet=new Importabular({
   node:document.getElementById('editorNode'),
-})</code></pre> <p>Get the current data as a 2D array</p> <pre><code lang="javascript">sheet.getData()</code></pre> <p>Destroy it to remove event listeners</p> <pre><code lang="javascript">sheet.destroy()</code></pre> </div> </section> <section style="background-image:url(https://renanlecaro.github.io/importabular/noise.9b539b7c.png),linear-gradient(141deg,#0096c4,#165fac);"> <div> <h2>Goals and limitations</h2> <p> I've created this lib because I was tired of having to remove 90% of the features offered by the very few open source libs for web spreadsheets. </p> <p> Some common use cases have options, for the rest you should just read <a href="https://github.com/renanlecaro/importabular">the source</a> and subclass it of fix the code. </p> <p> So for this reinventing the wheel to make sense, I should not add any extra features to this core. </p> <ul> <li>No "drag cell corner to expand its value"</li> <li>No virtual rendering</li> <li>No sorting, pivot, formula, etc ..</li> <li>Only basic keyboard shortcuts</li> <li>Only strings as data type</li> <li>Only for recent browsers</li> </ul> <p> The lib is fresh and not battle tested, probably has some bugs. The API is not stable yet. Feel free to <a href="https://github.com/renanlecaro/importabular/issues/new"> create an issue</a> if you find a bug. </p> </div> </section> <section class="sample"> <div id="editor-minimal"></div> <div> <h2>Minimal example</h2> <p>This is the most minimal way to embed the editor</p>  <script class="readable" type="module">
-// Here we import the lib from unpkg, but that could be
-// replaced by the node module name
+})</code></pre> <p>Get the current data as a 2D array</p> <pre><code lang="javascript">sheet.getData()</code></pre> <p>Destroy it to remove event listeners</p> <pre><code lang="javascript">sheet.destroy()</code></pre> </div> </section> <section style="background-image:url(https://renanlecaro.github.io/importabular/noise.9b539b7c.png),linear-gradient(141deg,#0096c4,#165fac);"> <div> <h2>Goals and limitations</h2> <p> I've created this lib because I was tired of having to remove 90% of the features offered by the very few open source libs for web spreadsheets. </p> <p> Some common use cases have options, for the rest you should just read <a href="https://github.com/renanlecaro/importabular">the source</a> and subclass it, or fix the code. </p> <p> So for this reinventing the wheel to make sense, I should not add any extra features to this core. </p> <ul> <li>No "drag cell corner to expand its value"</li> <li>No virtual rendering</li> <li>No sorting, pivot, formula, etc ..</li> <li>Only basic keyboard shortcuts</li> <li>Only strings as data type</li> <li>Only for recent browsers</li> </ul> <p> The lib is fresh and not battle tested, probably has some bugs. The API is not stable yet. Feel free to <a href="https://github.com/renanlecaro/importabular/issues/new"> create an issue</a> if you find a bug. </p> </div> </section> <section class="sample" style="background:linear-gradient(-141deg,#a9f1f9,#96c4ff)"> <div id="editor-minimal"></div> <div> <h2>Minimal example</h2> <p>This is the most minimal way to embed the editor</p>  <script class="readable" type="module">
+// Equivalent to : import Importabular from 'importabular';
 import Importabular from "https://unpkg.com/importabular/dist/index.js";
 // We just give it a node to attach itself to
 new Importabular({
     node: document.getElementById("editor-minimal"),
 });
-        </script> </div> </section> <section class="sample"> <div id="editor-css"></div> <div> <h2>Simple css</h2> <p>Makes even rows slightly darker</p>  <script class="readable" type="module">
+        </script> </div> </section> <section class="sample" style="background:linear-gradient(-141deg,#2dd3e6,#bff7f1)"> <div id="editor-css"></div> <div> <h2>Simple css</h2> <p>Makes even rows slightly darker</p>  <script class="readable" type="module">
+// Equivalent to : import Importabular from 'importabular';
 import Importabular from "https://unpkg.com/importabular/dist/index.js";
 new Importabular({
     node: document.getElementById("editor-css"),
     // Make one row out of two have a darker background
     css: "tr:nth-child(2n){background:#f0f0f0};",
 });
-        </script> </div> </section> <section class="sample"> <div style="display:flex;justify-content:space-between"> <div style="width:45%"> <strong>Editor 1</strong> <div id="editor-clone-1"></div> </div> <div style="width:45%"> <strong>Editor 2</strong> <div id="editor-clone-2"></div> </div> </div> <div> <h2>Linked editors</h2> <p> Changing the content of one editor should modify the content of the second too </p>  <script class="readable" type="module">
+        </script> </div> </section> <section class="sample" style="background:linear-gradient(-90deg,#fdffb1,#e8ffb4)"> <div style="display:flex;justify-content:space-between"> <div style="width:45%"> <strong>Editor 1</strong> <div id="editor-clone-1"></div> </div> <div style="width:45%"> <strong>Editor 2</strong> <div id="editor-clone-2"></div> </div> </div> <div> <h2>Linked editors</h2> <p> Changing the content of one editor should modify the content of the second too </p>  <script class="readable" type="module">
+
+// Equivalent to : import Importabular from 'importabular';
 import Importabular from "https://unpkg.com/importabular/dist/index.js";
 // Changing the content of one editor should update the other one too
 let ed1 = new Importabular({
@@ -27,9 +29,9 @@ let ed2 = new Importabular({
     node: document.getElementById("editor-clone-2"),
     onChange: (data) => ed1.setData(data),
 });
-        </script> </div> </section> <section class="sample"> <div id="editor-simple-subclass"></div> <div> <h2>Subclasses editors</h2> <p> For specific changes to the editor, you can subclass the non minified file </p>  <script class="readable" type="module">
-// Notice that we're importing a different file here,  the index file
-// from the src folder, that is not minified
+        </script> </div> </section> <section class="sample" style="background:linear-gradient(-141deg,#cda9f9,#96c4ff)"> <div id="editor-simple-subclass"></div> <div> <h2>Subclasses editors</h2> <p> For specific changes to the editor, you can subclass the non minified file </p>  <script class="readable" type="module">
+// Notice that we're importing a different file here
+// Equivalent to : import Importabular from 'importabular/src/index.js';
 import Importabular from "https://unpkg.com/importabular/src/index.js";
 
 class CustomEditor extends Importabular {
@@ -44,9 +46,9 @@ new CustomEditor({
     node: document.getElementById("editor-simple-subclass"),
     data:[['I do not grow by default']]
 });
-        </script> </div> </section> <section class="sample"> <div id="editor-full"></div> <div> <h2>Heavily customized importer</h2> <p>Uses validation and custom columns</p>  <script class="readable" type="module">
-// Notice that we're importing a different file here, the index file
-// from the src folder, that is not minified
+        </script> </div> </section> <section class="sample" style="background:linear-gradient(-141deg,#8cf289,#899af7)"> <div id="editor-full"></div> <div> <h2>Heavily customized importer</h2> <p>Uses validation and custom columns</p>  <script class="readable" type="module">
+// Notice that we're importing a different file here
+// Equivalent to : import Importabular from 'importabular/src/index.js';
 import Importabular from "https://unpkg.com/importabular/src/index.js";
 
 function checkPhone(phone) {
@@ -79,7 +81,7 @@ class CustomEditor extends Importabular {
     if (!y) return "header";
 
     const value = this._getVal(x, y);
-
+    if(!value) return ''
     switch (x) {
       case 0:
         // Name column
@@ -112,26 +114,31 @@ class CustomEditor extends Importabular {
 new CustomEditor({
   node: document.getElementById("editor-full"),
   data: [
-    ["Contact name", "phone number", "email"],
-    ["dan", "+33628350101", "aaaaa@aaaa.fr"],
-    ["will be capitalized", "+49 invalid 55 55 01", "aaa@"],
-    ["", "", "UPPERCASE WILL BE IGNORED"],
+    ["Contact name", "Phone Number", "Email"],
+    ["henry four", "+33628350101", "invalid@.ru"],
+    ["Peter the great", "+7typo555501", "valid@email.ru"],
+    ["Yi", "+6665849494948", "UPPERCASE@IGNORED.cn"],
+    ["PriNce andrew", "+595949894", "prince@crown.uk"],
   ],
   maxCols: 3,
   css: `
     td.header{
-    background:#dadada;
-    font-weight:bold;
-    color:black;
-    pointer-event:none;
-    border:none !important;
+      background:white !important;
+      font-weight:bold;
+      color:black;
+      pointer-event:none;
+      border:none !important;
+      text-transform:uppercase;
+      font-size:80%;
+      text-align:center;
     }
     td.ok{
-    color:green ;
+      color:#5ea65e;
     }
     td.error{
-    color:red;
+      color: #a63e15;
+      text-decoration: line-through;;
     }
   `,
 });
-        </script> </div> </section> <script src="https://renanlecaro.github.io/importabular/demo.eb4aa34f.js"></script> </body></html>
+        </script> </div> </section> <script src="https://renanlecaro.github.io/importabular/demo.abfa47e7.js"></script> </body></html>
