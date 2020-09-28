@@ -87,7 +87,7 @@ pre > code {
   overflow: auto;
   max-width: 100%;
 }
-script.readable {
+pre.auto {
   display: block;
   white-space: pre;
   background: white;
