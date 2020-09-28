@@ -1,10 +1,7 @@
-<html><head><meta charset="UTF-8"><meta name="description" content="Let your users import their data in your SAAS with a familiar excel like UI."><meta name="author" content="Renan LE CARO"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Importabular : 5kb javascript spreadsheet component</title><link rel="shortcut icon" href="https://renanlecaro.github.io/importabular/logo.90d502a4.png"><link rel="stylesheet" href="https://renanlecaro.github.io/importabular/demo.38177856.css"></head><body> <section style="background:url(https://renanlecaro.github.io/importabular/noise.9b539b7c.png),linear-gradient(141deg,#b700b1,#2c77df);"> <div> <h1>Minimal spreadsheet javascript component</h1> <ul class="checks"> <li title="Once minified and gzipped">Under 5 Kb</li> <li title="Basic support, double tap a cell to edit it, not tried on iphone">Mobile friendly</li> <li title="Works from libre office, should work for other software">Copy / paste</li> <li>MIT License</li> </ul> </div> <div id="editorNode"></div> </section> <section style="background-image:url(https://renanlecaro.github.io/importabular/noise.9b539b7c.png),linear-gradient(145deg,#ff7fc7,#b175c1);"> <div> <h2>Usage</h2> <p>Install it from npm</p> <pre><code>npm install importabular</code></pre> <p>Instanciate it on a dom node</p>
-<pre><code lang="javascript">import Importabular from 'importabular'
+<html><head><meta charset="UTF-8"><meta name="description" content="Let your users import their data in your SAAS with a familiar excel like UI."><meta name="author" content="Renan LE CARO"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Importabular : 5kb javascript spreadsheet component</title><link rel="shortcut icon" href="https://renanlecaro.github.io/importabular/logo.90d502a4.png"><link rel="stylesheet" href="https://renanlecaro.github.io/importabular/demo.2f42198b.css"></head><body> <section style="background:url(https://renanlecaro.github.io/importabular/noise.9b539b7c.png),linear-gradient(141deg,#b700b1,#2c77df);"> <div> <h1>Minimal spreadsheet javascript component</h1> <ul class="checks"> <li title="Once minified and gzipped">Under 5 Kb</li> <li title="Basic support, double tap a cell to edit it, not tried on iphone"> Mobile friendly </li> <li title="Works from libre office, should work for other software"> Copy / paste </li> <li>MIT License</li> </ul> </div> <div id="editorNode"></div> </section> <section style="background-image:url(https://renanlecaro.github.io/importabular/noise.9b539b7c.png),linear-gradient(145deg,#ff7fc7,#b175c1);"> <div> <h2>Usage</h2> <p>Install it from npm</p> <pre><code>npm install importabular</code></pre> <p>Instanciate it on a dom node</p> <pre><code lang="javascript">import Importabular from 'importabular'
 const sheet=new Importabular({
   node:document.getElementById('editorNode'),
-})</code></pre> <p>Get the current data as a 2D array</p>
-<pre><code lang="javascript">sheet.data.toArr()</code></pre> <p>Destroy it to remove event listeners</p>
-<pre><code lang="javascript">sheet.destroy()</code></pre> </div> </section> <section style="background-image:url(https://renanlecaro.github.io/importabular/noise.9b539b7c.png),linear-gradient(141deg,#0096c4,#165fac);"> <div> <h2>Goals and limitations</h2> <p> I've created this lib because I was tired of having to remove 90% of the features offered by the very few open source libs for web spreadsheets. </p> <p> Some common use cases have options, for the rest you should just read <a href="https://github.com/renanlecaro/importabular">the source</a> and subclass it of fix the code. </p> <p> So for this reinventing the wheel to make sense, I should not add any extra features to this core. <ul> <li>No "drag cell corner to expand its value"</li> <li>No virtual rendering</li> <li>No sorting, pivot, formula, etc ..</li> <li>Only basic keyboard shortcuts</li> <li>Only strings as data type</li> <li>Only for recent browsers</li> </ul> </p> <p> The lib is fresh and not battle tested, probably has some bugs. The API is not stable yet. Feel free to <a href="https://github.com/renanlecaro/importabular/issues/new"> create an issue</a> if you find a bug. </p> </div> <div> <pre><code lang="javascript">import Importabular from 'importabular'
+})</code></pre> <p>Get the current data as a 2D array</p> <pre><code lang="javascript">sheet.data.toArr()</code></pre> <p>Destroy it to remove event listeners</p> <pre><code lang="javascript">sheet.destroy()</code></pre> </div> </section> <section style="background-image:url(https://renanlecaro.github.io/importabular/noise.9b539b7c.png),linear-gradient(141deg,#0096c4,#165fac);"> <div> <h2>Goals and limitations</h2> <p> I've created this lib because I was tired of having to remove 90% of the features offered by the very few open source libs for web spreadsheets. </p> <p> Some common use cases have options, for the rest you should just read <a href="https://github.com/renanlecaro/importabular">the source</a> and subclass it of fix the code. </p> <p> So for this reinventing the wheel to make sense, I should not add any extra features to this core. </p> <ul> <li>No "drag cell corner to expand its value"</li> <li>No virtual rendering</li> <li>No sorting, pivot, formula, etc ..</li> <li>Only basic keyboard shortcuts</li> <li>Only strings as data type</li> <li>Only for recent browsers</li> </ul> <p> The lib is fresh and not battle tested, probably has some bugs. The API is not stable yet. Feel free to <a href="https://github.com/renanlecaro/importabular/issues/new"> create an issue</a> if you find a bug. </p> </div> <div> <pre><code lang="javascript">import Importabular from 'importabular'
 
 const sheet=new Importabular({
   node:document.getElementById('editorNode'),
@@ -15,22 +12,6 @@ const sheet=new Importabular({
   // Called after each change to the table data
   onChange:data=>console.log('new data : ',data),
 
-  // Called every time the user changes selection,
-  // useful for real time collaborative editing
-  onSelectionChange:sel=>console.log('new selection',sel),
-
-  // Each cell is rendered as a TD with inside either
-  // a div or an input. This will override the TD style
-  cellStyle:(x,y,{selected,editing})=>
-    ({
-      backgroundColor:!selected && !editing && y%2?
-        '#fafafa':null
-    }),
-
-  // and this will override the style of the text
-  // input or div.
-  contentStyle:()=>({fontFamily:'sherif'}),
-
   // Starting size of the grid on instanciation
   minWidth:5,
   minHeight:10,
@@ -38,7 +19,8 @@ const sheet=new Importabular({
   // Limits to the growth of the grid
   maxWidth:5,
   maxHeight:10,
+
+  // Make one row out of two have a darker background
+  css: 'tr:nth-child(2n){background:#fafafa};'
 })
-</code></pre> </div>
-</section> <script src="https://renanlecaro.github.io/importabular/demo.6694855b.js"></script>
-</body></html>
+</code></pre> </div> </section> <script src="https://renanlecaro.github.io/importabular/demo.009ddc5f.js"></script> </body></html>

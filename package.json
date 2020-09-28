@@ -1,12 +1,18 @@
 {
   "name": "importabular",
-  "version": "0.0.7",
+  "version": "0.1.0",
   "description": "5kb javascript spreadsheet, let your users import their data from excel.",
   "main": "dist/index.js",
-  "files": ["dist/index.js", "src/index.js"],
+  "files": [
+    "dist/index.js",
+    "src/index.js"
+  ],
   "scripts": {
     "start": "parcel demo/index.html --out-dir docs",
-    "build": "rm -rf docs && parcel build demo/index.html --out-dir docs --public-url https://renanlecaro.github.io/importabular/ && parcel build src/index.js"
+    "build-jsdoc": "documentation readme src/index.js --section=API",
+    "build-doc": "rm -rf docs && parcel build demo/index.html --out-dir docs --public-url https://renanlecaro.github.io/importabular/ ",
+    "build-lib": "rm -rf dist/* && terser src/index.js --module --compress --mangle --module --keep-classnames --mangle-props regex=/^_/ --ecma 2015 > dist/index.js && gzip -k dist/index.js && ls -l dist",
+    "build": "npm run build-doc && npm run build-lib && npm run build-jsdoc"
   },
   "repository": {
     "type": "git",
@@ -28,6 +34,9 @@
   },
   "homepage": "https://renanlecaro.github.io/importabular/",
   "devDependencies": {
-    "parcel-bundler": "^1.12.4"
+    "documentation": "*",
+    "parcel-bundler": "^1.12.4",
+    "prettier": "2.1.2",
+    "terser": "^5.3.2"
   }
 }
