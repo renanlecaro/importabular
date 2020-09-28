@@ -2,7 +2,7 @@
 
 Lightweight spreadsheet editor for the web, to easily let your users import their data from excel.
 
--   Lightweight ![Size badge](https://badgen.net/bundlephobia/minzip/importabular)
+-   Lightweight ![Size badge](https://badgen.net/bundlephobia/minzip/importabular?cache=600)
 -   Mobile friendly
 -   Copy / paste
 -   MIT License
@@ -42,7 +42,7 @@ sheet.destroy()
 
 This is a minimalist library that does very little :
 
--   The API is quite young and subject to changes in later version
+-   The API is quite young and subject to changes in later version. It's now [getting closer to v1](https://www.npmjs.com/package/importabular)
 -   No virtual rendering, we use a simple size, this has the advantage of automatic column and rows sizing
 -   No sorting, pivot, formula, etc ..
 -   Only basic keyboard shortcuts
