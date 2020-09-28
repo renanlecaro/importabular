@@ -8,8 +8,7 @@ window.sheet=new Importabular({
     ["122", "Pre mix drink", "5", "Bottle", "Drinks"],
   ],
   node: document.getElementById("editorNode"),
-  maxCols: 5,
-  maxRows:5
+  maxCols: 5 
 });
 
 console.info(`
