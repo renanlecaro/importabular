@@ -103,7 +103,7 @@ const sheet=new Importabular({
         <p>This is the most minimal way to embed the editor</p>
 
         <script class="readable" type="module">
-          import Importabular from "../dist/index.js";
+          import Importabular from "./dist/index.js";
           // We just give it a node to attach itself to
           new Importabular({
             node: document.getElementById("editor-minimal"),
@@ -122,7 +122,7 @@ const sheet=new Importabular({
         <p>Makes even rows slightly darker</p>
 
         <script class="readable" type="module">
-          import Importabular from "../dist/index.js";
+          import Importabular from "./dist/index.js";
           new Importabular({
             node: document.getElementById("editor-css"),
             // Make one row out of two have a darker background
@@ -153,7 +153,7 @@ const sheet=new Importabular({
           second too
         </p>
         <script class="readable" type="module">
-          import Importabular from "../dist/index.js";
+          import Importabular from "./dist/index.js";
           // Changing the content of one editor should update the other one too
           let ed1 = new Importabular({
             node: document.getElementById("editor-clone-1"),
@@ -181,7 +181,7 @@ const sheet=new Importabular({
 
         <script class="readable" type="module">
           // Notice that we're importing a different file here
-          import Importabular from "../src/index.js";
+          import Importabular from "./src/index.js";
 
           class CustomEditor extends Importabular {
             _fillScrollSpace() {
@@ -210,7 +210,7 @@ const sheet=new Importabular({
 
         <script class="readable" type="module">
           // Notice that we're importing a different file here
-          import Importabular from "../src/index.js";
+          import Importabular from "./src/index.js";
 
           function checkPhone(phone) {
             return !!phone.match(/^\+[0-9 \-]+$/im);

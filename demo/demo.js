@@ -26,10 +26,11 @@ Array.prototype.forEach.call(
   (n) => {
     const pre = document.createElement("pre");
     pre.className = "auto";
+
     let js = n.innerText
       .trim()
-      .replace('from "../dist/index.js"', 'from "importabular"')
-      .replace('from "../src/index.js"', 'from "importabular/src/index.js"');
+      .replace('from "./dist/index.js"', 'from "importabular"')
+      .replace('from "./src/index.js"', 'from "importabular/src/index.js"');
 
     const lines = js.split("\n");
     const offset = lines[1].match(/ +/)[0].length;
