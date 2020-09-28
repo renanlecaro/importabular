@@ -8,7 +8,7 @@ body {
 }
 section {
   color: white;
-  background-blend-mode: soft-light, normal;
+  background-attachment: fixed;
 }
 section a {
   color: white;
@@ -101,8 +101,7 @@ script.readable {
   overflow: auto;
 }
 section.sample {
-  background-image: linear-gradient(-141deg, #a9f1f9, #96c4ff);
-  color: #051151;
+  color: rgba(0, 0, 0, 0.8);
 }
 
 section.sample > :first-child {

@@ -12,11 +12,7 @@
     <link rel="shortcut icon" href="./logo.png" />
   </head>
   <body>
-    <section
-      style="
-        background: url(./noise.png), linear-gradient(141deg, #b700b1, #2c77df);
-      "
-    >
+    <section style="background: linear-gradient(141deg, #b700b1, #2c77df)">
       <div>
         <h2>Minimal spreadsheet javascript component</h2>
         <ul class="checks">
@@ -37,10 +33,7 @@
     </section>
 
     <section
-      style="
-        background-image: url(./noise.png),
-          linear-gradient(145deg, #ff7fc7, #b175c1);
-      "
+      style="background-image: linear-gradient(145deg, #ff7fc7, #b175c1)"
     >
       <div>
         <h2>Usage</h2>
@@ -62,10 +55,7 @@ const sheet=new Importabular({
     </section>
 
     <section
-      style="
-        background-image: url(./noise.png),
-          linear-gradient(141deg, #0096c4, #165fac);
-      "
+      style="background-image: linear-gradient(141deg, #0096c4, #165fac)"
     >
       <div>
         <h2>Goals and limitations</h2>
@@ -105,7 +95,7 @@ const sheet=new Importabular({
 
     <section
       class="sample"
-      style="background: linear-gradient(-141deg, #a9f1f9, #96c4ff)"
+      style="background-image: linear-gradient(-141deg, #a9f1f9, #96c4ff)"
     >
       <div id="editor-minimal"></div>
       <div>
@@ -125,7 +115,7 @@ new Importabular({
 
     <section
       class="sample"
-      style="background: linear-gradient(-141deg, #2dd3e6, #bff7f1)"
+      style="background-image: linear-gradient(-141deg, #2dd3e6, #bff7f1)"
     >
       <div id="editor-css"></div>
       <div>
@@ -147,7 +137,7 @@ new Importabular({
 
     <section
       class="sample"
-      style="background: linear-gradient(-90deg, #fdffb1, #e8ffb4)"
+      style="background-image: linear-gradient(-90deg, #fdffb1, #e8ffb4)"
     >
       <div style="display: flex; justify-content: space-between">
         <div style="width: 45%">
@@ -185,7 +175,7 @@ let ed2 = new Importabular({
 
     <section
       class="sample"
-      style="background: linear-gradient(-141deg, #cda9f9, #96c4ff)"
+      style="background-image: linear-gradient(-141deg, #cda9f9, #96c4ff)"
     >
       <div id="editor-simple-subclass"></div>
       <div>
@@ -218,7 +208,7 @@ new CustomEditor({
 
     <section
       class="sample"
-      style="background: linear-gradient(-141deg, #8cf289, #899af7)"
+      style="background-image: linear-gradient(-141deg, #8cf289, #899af7)"
     >
       <div id="editor-full"></div>
       <div>
@@ -237,7 +227,7 @@ function checkPhone(phone) {
 }
 function checkEmail(email) {
   return !!email.match(
-    /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
+    /(.+)@(.+){2,}\.(.+){2,}/i
   );
 }
 function capitalize(name) {
