@@ -12,7 +12,8 @@
     "build-jsdoc": "documentation readme src/index.js --section=API",
     "build-doc": "rm -rf docs && parcel build demo/index.html --out-dir docs --public-url https://renanlecaro.github.io/importabular/ ",
     "build-lib": "rm -rf dist/* && terser src/index.js --module --compress --mangle --module --keep-classnames --mangle-props regex=/^_/ --ecma 2015 > dist/index.js && gzip -k dist/index.js && ls -l dist",
-    "build": "npm run build-doc && npm run build-lib && npm run build-jsdoc"
+    "build": "npm run pretty && npm run build-doc && npm run build-lib && npm run build-jsdoc",
+    "pretty": "prettier --write demo src"
   },
   "repository": {
     "type": "git",

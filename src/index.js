@@ -28,7 +28,10 @@ export default class Importabular {
     width = "100%",
     height = "80vh",
   }) {
-    if(!node) return console.error('Please call the constructor like this : new Importabular({node: document.body})')
+    if (!node)
+      return console.error(
+        "Please call the constructor like this : new Importabular({node: document.body})"
+      );
     this._parent = node;
     this._options = {
       onChange,
@@ -112,7 +115,9 @@ export default class Importabular {
     const cwd = iframe.contentWindow.document;
     this.cwd = cwd;
     cwd.open();
-    cwd.write(`<html lang="${navigator.language}"><body><style>${this._options.css}</style></body></html>`);
+    cwd.write(
+      `<html lang="${navigator.language}"><body><style>${this._options.css}</style></body></html>`
+    );
     cwd.close();
     Object.assign(iframe.style, this._iframeStyle);
 
@@ -209,11 +214,11 @@ export default class Importabular {
     const { rx, ry } = this._selection;
     const offset = { x: rx[0], y: ry[0] };
 
-    for(let y=0;y<rows.length; y++)
+    for (let y = 0; y < rows.length; y++)
       // Using the first column here makes sure that
       // if the paste data had various row length, we only
       // paste a clean rectangle
-      for(let x=0;x<rows[0].length; x++)
+      for (let x = 0; x < rows[0].length; x++)
         this._setVal(offset.x + x, offset.y + y, rows[y][x]);
 
     this._changeSelectedCellsStyle(() => {
@@ -344,38 +349,47 @@ export default class Importabular {
     this._scrollIntoView(nc);
   }
 
-  _tabCursorInSelection(horizontal,delta = 1) {
+  _tabCursorInSelection(horizontal, delta = 1) {
     // if (this._selectionSize() <= 1) {
     //   return this._moveCursor(horizontal? { x: delta, y: 0 }:{ x:0, y: delta });
     // }
     let { x, y } = this._focus || { x: 0, y: 0 };
-    const selectionSize =this._selectionSize()
-    const { rx, ry } =selectionSize >1? this._selection : {
-      rx:[0,this._options.maxCols],
-      ry:[0,this._options.maxRows]
-    };
+    const selectionSize = this._selectionSize();
+    const { rx, ry } =
+      selectionSize > 1
+        ? this._selection
+        : {
+            rx: [0, this._options.maxCols],
+            ry: [0, this._options.maxRows],
+          };
 
     let nc;
-    if(horizontal){
-      nc = _shift(x, y , delta, rx[0],rx[1] - 1, ry[0], ry[1]-1);
-    }else{
+    if (horizontal) {
+      nc = _shift(x, y, delta, rx[0], rx[1] - 1, ry[0], ry[1] - 1);
+    } else {
       // use the same logic, but with x and y inverted for the horizontal tabbing wiht enter/ shift enter
-      const temporaryCursor = _shift(y, x , delta, ry[0],ry[1] - 1, rx[0], rx[1]-1);
-      nc={
-        x:temporaryCursor.y,
-        y:temporaryCursor.x
-      }
+      const temporaryCursor = _shift(
+        y,
+        x,
+        delta,
+        ry[0],
+        ry[1] - 1,
+        rx[0],
+        rx[1] - 1
+      );
+      nc = {
+        x: temporaryCursor.y,
+        y: temporaryCursor.x,
+      };
     }
-
-
 
     if (!this._fitBounds(nc)) return;
     this._stopEditing();
     this._incrementToFit(nc);
     this._changeSelectedCellsStyle(() => {
       this._focus = nc;
-      if(selectionSize<=1){
-        this._selectionStart=this._selectionEnd = nc
+      if (selectionSize <= 1) {
+        this._selectionStart = this._selectionEnd = nc;
       }
     });
     this._scrollIntoView(nc);
@@ -483,7 +497,6 @@ export default class Importabular {
     this.moved = true;
   };
 
-
   _startEditing({ x, y }) {
     this._editing = { x, y };
     const td = this._getCell(x, y);
@@ -491,7 +504,7 @@ export default class Importabular {
     const cellSize = td.firstChild.getBoundingClientRect();
 
     Object.assign(td.style, {
-      width: tdSize.width-2,
+      width: tdSize.width - 2,
       height: tdSize.height,
     });
 
@@ -743,7 +756,7 @@ function _arrToHTML(arr) {
     });
   });
   return `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"><html lang="${navigator.language}"><head>
-<meta http-equiv="content-type" content="text/html; charset=utf-8"/><title></title></head><body>${table.outerHTML}</body></html>`
+<meta http-equiv="content-type" content="text/html; charset=utf-8"/><title></title></head><body>${table.outerHTML}</body></html>`;
 }
 
 function _parsePasteEvent(event) {
@@ -780,17 +793,17 @@ function _parsePasteEvent(event) {
   return fromText;
 }
 
-function _shift(x,y,deltaX, xMin,xMax, yMin, yMax) {
+function _shift(x, y, deltaX, xMin, xMax, yMin, yMax) {
   x += deltaX;
   if (x < xMin) {
-    if(xMax===Infinity) {
-      return {x:xMin,y}
+    if (xMax === Infinity) {
+      return { x: xMin, y };
     }
     x = xMax;
     y--;
     if (y < yMin) {
-      if(yMax===Infinity) {
-        return {x:xMin,y:yMin}
+      if (yMax === Infinity) {
+        return { x: xMin, y: yMin };
       }
       y = yMax;
     }
@@ -800,10 +813,10 @@ function _shift(x,y,deltaX, xMin,xMax, yMin, yMax) {
     y++;
     if (y > yMax) {
       y = yMin;
-      x = xMin
+      x = xMin;
     }
   }
-  return {x, y};
+  return { x, y };
 }
 
 const _defaultCss = `

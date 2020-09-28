@@ -5,4 +5,4 @@ parcelRequire=function(e,r,t,n){var i,o="function"==typeof parcelRequire&&parcel
 },{}],"lgAh":[function(require,module,exports) {
 "use strict";var e=t(require("../dist/index.js"));function t(e){return e&&e.__esModule?e:{default:e}}require("./demo.css"),window.sheet=new e.default({data:[["Product ID","Product name","Price","Unit","Category"],["256","Sample product","2.5","Piece","Stuffs"],["122","Pre mix drink","5","Bottle","Drinks"]],node:document.getElementById("editorNode"),maxCols:5}),console.info("\n\nYou can play around with the instance on the page, try :\n\nsheet.getData()\nsheet.setData([['Hello','World']])\nsheet.destroy()\n\n");
 },{"../dist/index.js":"Bzn5","./demo.css":"n4SH"}]},{},["lgAh"], null)
-//# sourceMappingURL=https://renanlecaro.github.io/importabular/demo.7b7fc940.js.map
+//# sourceMappingURL=https://renanlecaro.github.io/importabular/demo.eb4aa34f.js.map

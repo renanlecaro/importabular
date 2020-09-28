@@ -18,7 +18,7 @@
       "
     >
       <div>
-        <h1>Minimal spreadsheet javascript component</h1>
+        <h2>Minimal spreadsheet javascript component</h2>
         <ul class="checks">
           <li title="Once minified and gzipped">Under 5 Kb</li>
           <li
@@ -54,7 +54,7 @@ const sheet=new Importabular({
 })</code></pre>
 
         <p>Get the current data as a 2D array</p>
-        <pre><code lang="javascript">sheet.data.toArr()</code></pre>
+        <pre><code lang="javascript">sheet.getData()</code></pre>
 
         <p>Destroy it to remove event listeners</p>
         <pre><code lang="javascript">sheet.destroy()</code></pre>
@@ -101,30 +101,204 @@ const sheet=new Importabular({
           if you find a bug.
         </p>
       </div>
+    </section>
+
+    <section class="sample">
+      <div id="editor-minimal"></div>
       <div>
-        <pre><code lang="javascript">import Importabular from 'importabular'
+        <h2>Minimal example</h2>
+        <p>This is the most minimal way to embed the editor</p>
+        <!-- prettier-ignore -->
+        <script class="readable" type="module">
+// Here we import the lib from unpkg, but that could be
+// replaced by the node module name
+import Importabular from "https://unpkg.com/importabular/dist/index.js";
+// We just give it a node to attach itself to
+new Importabular({
+    node: document.getElementById("editor-minimal"),
+});
+        </script>
+      </div>
+    </section>
 
-const sheet=new Importabular({
-  node:document.getElementById('editorNode'),
+    <section class="sample">
+      <div id="editor-css"></div>
+      <div>
+        <h2>Simple css</h2>
+        <p>Makes even rows slightly darker</p>
 
-  // Prefill the table
-  data:[['This','is','the','first','row']],
+        <!-- prettier-ignore -->
+        <script class="readable" type="module">
+import Importabular from "https://unpkg.com/importabular/dist/index.js";
+new Importabular({
+    node: document.getElementById("editor-css"),
+    // Make one row out of two have a darker background
+    css: "tr:nth-child(2n){background:#f0f0f0};",
+});
+        </script>
+      </div>
+    </section>
 
-  // Called after each change to the table data
-  onChange:data=>console.log('new data : ',data),
+    <section class="sample">
+      <div style="display: flex; justify-content: space-between">
+        <div style="width: 45%">
+          <strong>Editor 1</strong>
+          <div id="editor-clone-1"></div>
+        </div>
+        <div style="width: 45%">
+          <strong>Editor 2</strong>
+          <div id="editor-clone-2"></div>
+        </div>
+      </div>
+      <div>
+        <h2>Linked editors</h2>
+        <p>
+          Changing the content of one editor should modify the content of the
+          second too
+        </p>
+        <!-- prettier-ignore -->
+        <script class="readable" type="module">
+import Importabular from "https://unpkg.com/importabular/dist/index.js";
+// Changing the content of one editor should update the other one too
+let ed1 = new Importabular({
+    node: document.getElementById("editor-clone-1"),
+    onChange: (data) => ed2.setData(data),
+});
+let ed2 = new Importabular({
+    node: document.getElementById("editor-clone-2"),
+    onChange: (data) => ed1.setData(data),
+});
+        </script>
+      </div>
+    </section>
 
-  // Starting size of the grid on instanciation
-  minWidth:5,
-  minHeight:10,
+    <section class="sample">
+      <div id="editor-simple-subclass"></div>
+      <div>
+        <h2>Subclasses editors</h2>
+        <p>
+          For specific changes to the editor, you can subclass the non minified
+          file
+        </p>
+        <!-- prettier-ignore -->
+        <script class="readable" type="module">
+// Notice that we're importing a different file here,  the index file
+// from the src folder, that is not minified
+import Importabular from "https://unpkg.com/importabular/src/index.js";
 
-  // Limits to the growth of the grid
-  maxWidth:5,
-  maxHeight:10,
+class CustomEditor extends Importabular {
+    _fillScrollSpace() {
+      // We override the method responsible for filling
+      // the scroll pane with empty cells. The overridden method
+      // does nothing so only one cell is created at instanciation time
+    }
+}
 
-  // Make one row out of two have a darker background
-  css: 'tr:nth-child(2n){background:#fafafa};'
-})
-</code></pre>
+new CustomEditor({
+    node: document.getElementById("editor-simple-subclass"),
+    data:[['I do not grow by default']]
+});
+        </script>
+      </div>
+    </section>
+
+    <section class="sample">
+      <div id="editor-full"></div>
+      <div>
+        <h2>Heavily customized importer</h2>
+        <p>Uses validation and custom columns</p>
+        <!-- prettier-ignore -->
+        <script class="readable" type="module">
+// Notice that we're importing a different file here, the index file
+// from the src folder, that is not minified
+import Importabular from "https://unpkg.com/importabular/src/index.js";
+
+function checkPhone(phone) {
+  return !!phone.match(
+    /^\+[0-9 \-]+$/im
+  );
+}
+function checkEmail(email) {
+  return !!email.match(
+    /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
+  );
+}
+function capitalize(name) {
+  return name
+    .split(" ")
+    .map(
+      (val) =>
+        val.slice(0, 1).toUpperCase() + val.slice(1).toLowerCase()
+    )
+    .join(" ");
+}
+
+class CustomEditor extends Importabular {
+  _classNames(x, y) {
+    return (
+      super._classNames(x, y) + " " + this.validationClasses(x, y)
+    );
+  }
+  validationClasses(x, y) {
+    if (!y) return "header";
+
+    const value = this._getVal(x, y);
+
+    switch (x) {
+      case 0:
+        // Name column
+        return value.length > 3 ? "ok" : "error";
+      case 1:
+        // Phone column
+        if (!value) return "";
+        return checkPhone(value) ? "ok" : "error";
+      case 2:
+        // Email column
+        if (!value) return "";
+        return checkEmail(value) ? "ok" : "error";
+    }
+    return "";
+  }
+  _setVal(x, y, val) {
+    // Prevent header editing after the initial loading
+    if (!y && this._getVal(x, y)) return;
+
+    // Auto capitalize names
+    if (x === 0) val = capitalize(val);
+
+    // Auto lowercase email
+    if (x === 2) val = val.toLowerCase();
+
+    return super._setVal(x, y, val);
+  }
+}
+
+new CustomEditor({
+  node: document.getElementById("editor-full"),
+  data: [
+    ["Contact name", "phone number", "email"],
+    ["dan", "+33628350101", "aaaaa@aaaa.fr"],
+    ["will be capitalized", "+49 invalid 55 55 01", "aaa@"],
+    ["", "", "UPPERCASE WILL BE IGNORED"],
+  ],
+  maxCols: 3,
+  css: `
+    td.header{
+    background:#dadada;
+    font-weight:bold;
+    color:black;
+    pointer-event:none;
+    border:none !important;
+    }
+    td.ok{
+    color:green ;
+    }
+    td.error{
+    color:red;
+    }
+  `,
+});
+        </script>
       </div>
     </section>
 

@@ -92,3 +92,24 @@ pre > code {
   overflow: auto;
   max-width: 100%;
 }
+script.readable {
+  display: block;
+  white-space: pre;
+  background: rgba(0, 0, 0, 0.1);
+  color: black;
+  padding: 20px;
+  font-family: monospace;
+  line-height: 20px;
+  margin-bottom: 40px;
+  font-size: 12px;
+  max-height: 80vh;
+  overflow: auto;
+}
+section.sample {
+  background-image: linear-gradient(-141deg, #e1e1e1, #f0f0f0);
+  color: #333;
+}
+
+section.sample > *:first-child {
+  order: 2;
+}
