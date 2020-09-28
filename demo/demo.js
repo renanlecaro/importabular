@@ -9,6 +9,7 @@ window.sheet=new Importabular({
   ],
   node: document.getElementById("editorNode"),
   maxCols: 5,
+  maxRows:5
 });
 
 console.info(`

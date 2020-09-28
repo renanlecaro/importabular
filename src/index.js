@@ -28,6 +28,7 @@ export default class Importabular {
     width = "100%",
     height = "80vh",
   }) {
+    if(!node) return console.error('Please call the constructor like this : new Importabular({node: document.body})')
     this._parent = node;
     this._options = {
       onChange,
@@ -344,11 +345,16 @@ export default class Importabular {
   }
 
   _tabCursorInSelection(horizontal,delta = 1) {
-    if (this._selectionSize() <= 1) {
-      return this._moveCursor(horizontal? { x: delta, y: 0 }:{ x:0, y: delta });
-    }
+    // if (this._selectionSize() <= 1) {
+    //   return this._moveCursor(horizontal? { x: delta, y: 0 }:{ x:0, y: delta });
+    // }
     let { x, y } = this._focus || { x: 0, y: 0 };
-    const { rx, ry } = this._selection;
+    const selectionSize =this._selectionSize()
+    const { rx, ry } =selectionSize >1? this._selection : {
+      rx:[0,this._options.maxCols],
+      ry:[0,this._options.maxRows]
+    };
+
     let nc;
     if(horizontal){
       nc = _shift(x, y , delta, rx[0],rx[1] - 1, ry[0], ry[1]-1);
@@ -368,6 +374,9 @@ export default class Importabular {
     this._incrementToFit(nc);
     this._changeSelectedCellsStyle(() => {
       this._focus = nc;
+      if(selectionSize<=1){
+        this._selectionStart=this._selectionEnd = nc
+      }
     });
     this._scrollIntoView(nc);
   }
@@ -772,12 +781,17 @@ function _parsePasteEvent(event) {
 }
 
 function _shift(x,y,deltaX, xMin,xMax, yMin, yMax) {
-  console.log({x,y,deltaX, xMin,xMax, yMin, yMax})
   x += deltaX;
   if (x < xMin) {
+    if(xMax===Infinity) {
+      return {x:xMin,y}
+    }
     x = xMax;
     y--;
     if (y < yMin) {
+      if(yMax===Infinity) {
+        return {x:xMin,y:yMin}
+      }
       y = yMax;
     }
   }
@@ -789,7 +803,6 @@ function _shift(x,y,deltaX, xMin,xMax, yMin, yMax) {
       x = xMin
     }
   }
-  console.log('result : ',{x,y})
   return {x, y};
 }
 
