@@ -12,8 +12,7 @@
     "build-jsdoc": "documentation readme src/index.js --section=API",
     "build-doc": "rm -rf docs && parcel build demo/index.html --out-dir docs --public-url https://renanlecaro.github.io/importabular/ ",
     "build-lib": "rm -rf dist/* && terser src/index.js --module --compress --mangle --module --keep-classnames --mangle-props regex=/^_/ --ecma 2015 > dist/index.js && gzip -k dist/index.js && ls -l dist",
-    "build": "npm run pretty && npm run build-doc && npm run build-lib && npm run build-jsdoc && npm run copy",
-    "copy": "mkdir docs/src && mkdir docs/dist && cp src/index.js docs/src/index.js && cp dist/index.js docs/dist/index.js",
+    "build": "npm run pretty && npm run build-doc && npm run build-lib && npm run build-jsdoc",
     "pretty": "prettier --write demo src"
   },
   "repository": {
@@ -34,12 +33,11 @@
   "bugs": {
     "url": "https://github.com/renanlecaro/importabular/issues"
   },
-
   "homepage": "https://renanlecaro.github.io/importabular/",
+
   "devDependencies": {
     "documentation": "*",
     "parcel-bundler": "^1.12.4",
-    "parcel-plugin-static-files-copy": "^2.5.0",
     "prettier": "2.1.2",
     "terser": "^5.3.2"
   }
