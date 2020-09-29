@@ -1,4 +1,4 @@
-import Importabular from "../dist/index.js";
+import Importabular from "../src/index.js";
 import "./demo.css";
 
 window.sheet = new Importabular({
