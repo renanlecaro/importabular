@@ -514,7 +514,7 @@ export default class _Importabular {
 
     // Make the new content fit the past size
     Object.assign(td.style, {
-      width: tdSize.width-2,
+      width: tdSize.width - 2,
       height: tdSize.height,
     });
 
@@ -826,7 +826,8 @@ html{
   scrollbar-width: none;
 }
 ::-webkit-scrollbar {
-  visibility: hidden;
+  width: 0;
+  height:0;
 }
 *{
   box-sizing: border-box;

@@ -39,8 +39,8 @@ export default class i {
   }) {
     if (
       (t(this, "p", 1),
-      t(this, "_", 1),
-      t(this, "g", new n()),
+      t(this, "g", 1),
+      t(this, "_", new n()),
       t(this, "paste", (t) => {
         if (this.R) return;
         t.preventDefault();
@@ -271,7 +271,7 @@ export default class i {
     this.u({ x: e - 1, y: t - 1 });
   }
   v() {
-    this.i.onChange && this.i.onChange(this.g.D());
+    this.i.onChange && this.i.onChange(this._.D());
   }
   I(t, e, i) {
     const s = document.createElement("div");
@@ -295,7 +295,7 @@ export default class i {
     const s = document.createElement("table"),
       n = document.createElement("tbody");
     s.appendChild(n), i.body.appendChild(s), (this.tbody = n), (this.table = s);
-    for (let t = 0; t < this._; t++) {
+    for (let t = 0; t < this.g; t++) {
       const e = document.createElement("tr");
       n.appendChild(e);
       for (let i = 0; i < this.p; i++) this.S(e, i, t);
@@ -312,9 +312,9 @@ export default class i {
     t.appendChild(s), this.I(s, e, i);
   }
   M() {
-    if (!this.C({ x: 0, y: this._ })) return !1;
-    this._++;
-    const t = this._ - 1,
+    if (!this.C({ x: 0, y: this.g })) return !1;
+    this.g++;
+    const t = this.g - 1,
       e = document.createElement("tr");
     this.tbody.appendChild(e);
     for (let i = 0; i < this.p; i++) this.S(e, i, t);
@@ -333,7 +333,7 @@ export default class i {
   }
   u({ x: t, y: e }) {
     for (; t > this.p - 1 && this.V(); );
-    for (; e > this._ - 1 && this.M(); );
+    for (; e > this.g - 1 && this.M(); );
   }
   B() {
     const { rx: t, ry: e } = this.$;
@@ -465,12 +465,12 @@ export default class i {
     };
   }
   setData(t) {
-    this.g.lt(), this.l(t);
+    this._.lt(), this.l(t);
     for (let t = 0; t < this.p; t++)
-      for (let e = 0; e < this._; e++) this.K({ x: t, y: e });
+      for (let e = 0; e < this.g; e++) this.K({ x: t, y: e });
   }
   getData() {
-    return this.g.D();
+    return this._.D();
   }
   l(t) {
     t.forEach((t, e) => {
@@ -481,12 +481,12 @@ export default class i {
   }
   O(t, e, i) {
     this.C({ x: t, y: e }) &&
-      (this.g.O(t, e, i),
+      (this._.O(t, e, i),
       this.u({ x: t + 1, y: e + 1 }),
       this.K({ x: t, y: e }));
   }
   k(t, e) {
-    return this.g.k(t, e);
+    return this._.k(t, e);
   }
   G(t, e) {
     return this.tbody.children[e].children[t];
@@ -504,10 +504,10 @@ function s(t, e, i, s, n, h, r) {
 }
 class n {
   constructor() {
-    t(this, "g", {});
+    t(this, "_", {});
   }
   O(t, e, i) {
-    const s = this.g,
+    const s = this._,
       n = (function (t) {
         return 0 === t ? "0" : t ? t.toString() : "";
       })(i);
@@ -521,17 +521,17 @@ class n {
         })(s[t]) && delete s[t]);
   }
   lt() {
-    this.g = {};
+    this._ = {};
   }
   k(t, e) {
-    const i = this.g;
+    const i = this._;
     return (i && i[t] && i[t][e]) || "";
   }
   D() {
     let t = 1,
       e = 1;
-    for (let i in this.g)
-      for (let s in this.g[i])
+    for (let i in this._)
+      for (let s in this._[i])
         (e = Math.max(e, parseInt(s) + 1)), (t = Math.max(t, parseInt(i) + 1));
     const i = [];
     for (let s = 0; s < e; s++) {
@@ -542,4 +542,4 @@ class n {
   }
 }
 const h =
-  "\nhtml{\n  -ms-overflow-style: none;\n  scrollbar-width: none;\n}\n::-webkit-scrollbar {\n  visibility: hidden;\n}\n*{\n  box-sizing: border-box;\n}\nbody{\n  padding: 0; \n  margin: 0;\n}\ntable{\n  border-spacing: 0;\n  background: white;\n  border: 1px solid #ddd;\n  border-width: 0 1px 1px 0;\n  font-size: 16px;\n  font-family: sans-serif;\n  border-collapse: separate;\n}\ntd{\n  padding:0;\n  border: 1px solid;\n  border-color: #ddd transparent transparent #ddd; \n}\ntd.selected.multi:not(.editing){\n  background:#d7f2f9;\n} \ntd.focus:not(.editing){\n  border-color: black;\n} \ntd>*{\n  border:none;\n  padding:10px;\n  min-width:100px;\n  min-height: 40px;\n  font:inherit;\n  line-height: 20px;\n  color:inherit;\n  white-space: normal;\n}\ntd>div::selection {\n    color: none;\n    background: none;\n}\n";
+  "\nhtml{\n  -ms-overflow-style: none;\n  scrollbar-width: none;\n}\n::-webkit-scrollbar {\n  width: 0;\n  height:0;\n}\n*{\n  box-sizing: border-box;\n}\nbody{\n  padding: 0; \n  margin: 0;\n}\ntable{\n  border-spacing: 0;\n  background: white;\n  border: 1px solid #ddd;\n  border-width: 0 1px 1px 0;\n  font-size: 16px;\n  font-family: sans-serif;\n  border-collapse: separate;\n}\ntd{\n  padding:0;\n  border: 1px solid;\n  border-color: #ddd transparent transparent #ddd; \n}\ntd.selected.multi:not(.editing){\n  background:#d7f2f9;\n} \ntd.focus:not(.editing){\n  border-color: black;\n} \ntd>*{\n  border:none;\n  padding:10px;\n  min-width:100px;\n  min-height: 40px;\n  font:inherit;\n  line-height: 20px;\n  color:inherit;\n  white-space: normal;\n}\ntd>div::selection {\n    color: none;\n    background: none;\n}\n";
