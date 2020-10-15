@@ -66,15 +66,6 @@ export default class _Importabular {
       background: "transparent",
     };
 
-    /** @private {Number} Current number of columns of the table. */
-    this._width = 1;
-
-    /** @private {Number} Current number of rows of the table. */
-    this._height = 1;
-
-    /** @private {_LooseArray} Current content of the table, stored as 2D map.*/
-    this._data = new _LooseArray();
-
     this._setupDom();
     this._replaceDataWithArray(data);
     this._incrementToFit({
@@ -83,6 +74,15 @@ export default class _Importabular {
     });
     this._fillScrollSpace();
   }
+
+  /** @private {Number} Current number of columns of the table. */
+  _width = 1;
+
+  /** @private {Number} Current number of rows of the table. */
+  _height = 1;
+
+  /** @private {_LooseArray} Current content of the table, stored as 2D map.*/
+  _data = new _LooseArray();
 
   /** @private Checks whether this cell should be editable, or if it's out of bounds*/
   _fitBounds({ x, y }) {
@@ -498,24 +498,31 @@ export default class _Importabular {
   _startEditing({ x, y }) {
     this._editing = { x, y };
     const td = this._getCell(x, y);
+
+    // Measure the current content
     const tdSize = td.getBoundingClientRect();
     const cellSize = td.firstChild.getBoundingClientRect();
 
-    Object.assign(td.style, {
-      width: tdSize.width - 2,
-      height: tdSize.height,
-    });
-
+    // remove the current content
     td.removeChild(td.firstChild);
+
+    // add the input
     const input = document.createElement("input");
     input.type = "text";
     input.value = this._getVal(x, y);
+    td.appendChild(input);
+
+    // Make the new content fit the past size
+    Object.assign(td.style, {
+      width: tdSize.width-2,
+      height: tdSize.height,
+    });
 
     Object.assign(input.style, {
-      width: cellSize.width,
-      height: cellSize.height,
+      width: `${cellSize.width}px`,
+      height: `${cellSize.height}px`,
     });
-    td.appendChild(input);
+
     input.focus();
     input.addEventListener("blur", this._stopEditing);
     input.addEventListener("keydown", this._blurIfEnter);

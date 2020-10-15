@@ -186,6 +186,12 @@ var _Importabular = /*#__PURE__*/function () {
 
     _classCallCheck(this, _Importabular);
 
+    _defineProperty(this, "_width", 1);
+
+    _defineProperty(this, "_height", 1);
+
+    _defineProperty(this, "_data", new _LooseArray());
+
     _defineProperty(this, "paste", function (e) {
       if (_this._editing) return;
       e.preventDefault();
@@ -506,15 +512,6 @@ var _Importabular = /*#__PURE__*/function () {
       border: "none",
       background: "transparent"
     };
-    /** @private {Number} Current number of columns of the table. */
-
-    this._width = 1;
-    /** @private {Number} Current number of rows of the table. */
-
-    this._height = 1;
-    /** @private {_LooseArray} Current content of the table, stored as 2D map.*/
-
-    this._data = new _LooseArray();
 
     this._setupDom();
 
@@ -527,11 +524,13 @@ var _Importabular = /*#__PURE__*/function () {
 
     this._fillScrollSpace();
   }
-  /** @private Checks whether this cell should be editable, or if it's out of bounds*/
+  /** @private {Number} Current number of columns of the table. */
 
 
   _createClass(_Importabular, [{
     key: "_fitBounds",
+
+    /** @private Checks whether this cell should be editable, or if it's out of bounds*/
     value: function _fitBounds(_ref4) {
       var x = _ref4.x,
           y = _ref4.y;
@@ -856,23 +855,27 @@ var _Importabular = /*#__PURE__*/function () {
         y: y
       };
 
-      var td = this._getCell(x, y);
+      var td = this._getCell(x, y); // Measure the current content
+
 
       var tdSize = td.getBoundingClientRect();
-      var cellSize = td.firstChild.getBoundingClientRect();
+      var cellSize = td.firstChild.getBoundingClientRect(); // remove the current content
+
+      td.removeChild(td.firstChild); // add the input
+
+      var input = document.createElement("input");
+      input.type = "text";
+      input.value = this._getVal(x, y);
+      td.appendChild(input); // Make the new content fit the past size
+
       Object.assign(td.style, {
         width: tdSize.width - 2,
         height: tdSize.height
       });
-      td.removeChild(td.firstChild);
-      var input = document.createElement("input");
-      input.type = "text";
-      input.value = this._getVal(x, y);
       Object.assign(input.style, {
-        width: cellSize.width,
-        height: cellSize.height
+        width: "".concat(cellSize.width, "px"),
+        height: "".concat(cellSize.height, "px")
       });
-      td.appendChild(input);
       input.focus();
       input.addEventListener("blur", this._stopEditing);
       input.addEventListener("keydown", this._blurIfEnter);
