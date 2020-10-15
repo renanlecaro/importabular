@@ -1,3 +1,19 @@
+/** @private All the events we listen to inside the iframe at the root level.
+ * Each one is mapped to the corresponding method on the instance. */
+const _events = [
+  "mousedown",
+  "mouseenter",
+  "mouseup",
+  "mouseleave",
+  "touchstart",
+  "touchend",
+  "touchmove",
+  "keydown",
+  "paste",
+  "cut",
+  "copy",
+];
+
 /**
  * Spreadsheet component
  * @param {Object} options
@@ -15,7 +31,7 @@
  *@param {Object} options.height Height of the iframe that will contain the table.
  *
  */
-export default class Importabular {
+export default class _Importabular {
   constructor({
     data = [],
     node = null,
@@ -28,10 +44,12 @@ export default class Importabular {
     width = "100%",
     height = "80vh",
   }) {
-    if (!node)
-      return console.error(
-        "Please call the constructor like this : new Importabular({node: document.body})"
+    if (!node) {
+      throw new Error(
+        "You need to pass a node argument to Importabular, like this : new Importabular({node: document.body})"
       );
+    }
+    // Reference to the parent DOM element, contains the iframe
     this._parent = node;
     this._options = {
       onChange,
@@ -47,6 +65,7 @@ export default class Importabular {
       border: "none",
       background: "transparent",
     };
+
     this._setupDom();
     this._replaceDataWithArray(data);
     this._incrementToFit({
@@ -55,9 +74,6 @@ export default class Importabular {
     });
     this._fillScrollSpace();
   }
-
-  /** @private {HTMLElement} Reference to the parent DOM element, contains the iframe. */
-  _parent = null;
 
   /** @private {Number} Current number of columns of the table. */
   _width = 1;
@@ -94,7 +110,7 @@ export default class Importabular {
     td.setAttribute("y", y.toString());
     const val = this._getVal(x, y);
     if (val) {
-      div.innerText = val;
+      div.textContent = val;
     } else {
       // Force no collapse of cell
       div.innerHTML = "&nbsp;";
@@ -137,26 +153,8 @@ export default class Importabular {
       }
     }
 
-    this._events.forEach((name) =>
-      cwd.addEventListener(name, this[name], true)
-    );
+    _events.forEach((name) => cwd.addEventListener(name, this[name], true));
   }
-
-  /** @private All the events we listen to inside the iframe at the root level.
-   * Each one is mapped to the corresponding method on the instance. */
-  _events = [
-    "mousedown",
-    "mouseenter",
-    "mouseup",
-    "mouseleave",
-    "touchstart",
-    "touchend",
-    "touchmove",
-    "keydown",
-    "paste",
-    "cut",
-    "copy",
-  ];
 
   /** Destroys the table, and clears even listeners
    * @public
@@ -164,7 +162,7 @@ export default class Importabular {
   destroy() {
     this._destroyEditing();
 
-    this._events.forEach((name) =>
+    _events.forEach((name) =>
       this.cwd.removeEventListener(name, this[name], true)
     );
 
@@ -500,24 +498,31 @@ export default class Importabular {
   _startEditing({ x, y }) {
     this._editing = { x, y };
     const td = this._getCell(x, y);
+
+    // Measure the current content
     const tdSize = td.getBoundingClientRect();
     const cellSize = td.firstChild.getBoundingClientRect();
 
+    // remove the current content
+    td.removeChild(td.firstChild);
+
+    // add the input
+    const input = document.createElement("input");
+    input.type = "text";
+    input.value = this._getVal(x, y);
+    td.appendChild(input);
+
+    // Make the new content fit the past size
     Object.assign(td.style, {
       width: tdSize.width - 2,
       height: tdSize.height,
     });
 
-    td.removeChild(td.firstChild);
-    const input = document.createElement("input");
-    input.type = "text";
-    input.value = this._getVal(x, y);
-
     Object.assign(input.style, {
-      width: cellSize.width,
-      height: cellSize.height,
+      width: `${cellSize.width}px`,
+      height: `${cellSize.height}px`,
     });
-    td.appendChild(input);
+
     input.focus();
     input.addEventListener("blur", this._stopEditing);
     input.addEventListener("keydown", this._blurIfEnter);
@@ -619,7 +624,7 @@ export default class Importabular {
   _refreshDisplayedValue = ({ x, y }) => {
     const div = this._getCell(x, y).firstChild;
     if (div.tagName === "DIV") {
-      div.innerText = this._getVal(x, y);
+      div.textContent = this._getVal(x, y);
     }
     this._restyle({ x, y });
   };
@@ -684,8 +689,66 @@ export default class Importabular {
     return this.tbody.children[y].children[x];
   }
 }
+export function _shift(x, y, deltaX, xMin, xMax, yMin, yMax) {
+  x += deltaX;
+  if (x < xMin) {
+    if (xMax === Infinity) {
+      return { x: xMin, y };
+    }
+    x = xMax;
+    y--;
+    if (y < yMin) {
+      if (yMax === Infinity) {
+        return { x: xMin, y: yMin };
+      }
+      y = yMax;
+    }
+  }
+  if (x > xMax) {
+    x = xMin;
+    y++;
+    if (y > yMax) {
+      y = yMin;
+      x = xMin;
+    }
+  }
+  return { x, y };
+}
 
-class _LooseArray {
+export function _parsePasteEvent(event) {
+  try {
+    const html = (event.clipboardData || window.clipboardData).getData(
+      "text/html"
+    );
+
+    const iframe = document.createElement("iframe");
+    document.body.appendChild(iframe);
+    iframe.contentWindow.document.open();
+    iframe.contentWindow.document.write(html);
+    iframe.contentWindow.document.close();
+
+    const trs = iframe.contentWindow.document.querySelectorAll("tr");
+    const data = [];
+    Array.prototype.forEach.call(trs, (tr, y) => {
+      const tds = tr.querySelectorAll("td");
+      Array.prototype.forEach.call(tds, (td, x) => {
+        const text = td.textContent;
+        if (!data[y]) data[y] = [];
+        data[y][x] = text;
+      });
+    });
+
+    document.body.removeChild(iframe);
+    if (data.length) return data;
+  } catch (e) {}
+
+  const fromText = (event.clipboardData || window.clipboardData)
+    .getData("text")
+    .split(/\r\n|\n|\r/)
+    .map((row) => row.split(""));
+  return fromText;
+}
+export class _LooseArray {
   // An 2D array of strings that only stores non "" values
   _data = {};
 
@@ -733,17 +796,16 @@ class _LooseArray {
   }
 }
 
-function _cleanVal(val) {
+export function _cleanVal(val) {
   if (val === 0) return "0";
   if (!val) return "";
   return val.toString();
 }
 
-function _isEmpty(obj) {
+export function _isEmpty(obj) {
   return Object.keys(obj).length === 0;
 }
-
-function _arrToHTML(arr) {
+export function _arrToHTML(arr) {
   const table = document.createElement("table");
   table.setAttribute("lang", navigator.language);
   arr.forEach((row) => {
@@ -752,80 +814,20 @@ function _arrToHTML(arr) {
     row.forEach((cell) => {
       const td = document.createElement("td");
       tr.appendChild(td);
-      td.innerText = cell;
+      td.textContent = cell;
     });
   });
   return `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"><html lang="${navigator.language}"><head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8"/><title></title></head><body>${table.outerHTML}</body></html>`;
 }
-
-function _parsePasteEvent(event) {
-  try {
-    const html = (event.clipboardData || window.clipboardData).getData(
-      "text/html"
-    );
-
-    const iframe = document.createElement("iframe");
-    document.body.appendChild(iframe);
-    iframe.contentWindow.document.open();
-    iframe.contentWindow.document.write(html);
-    iframe.contentWindow.document.close();
-
-    const trs = iframe.contentWindow.document.querySelectorAll("tr");
-    const data = [];
-    Array.prototype.forEach.call(trs, (tr, y) => {
-      const tds = tr.querySelectorAll("td");
-      Array.prototype.forEach.call(tds, (td, x) => {
-        const text = td.innerText;
-        if (!data[y]) data[y] = [];
-        data[y][x] = text;
-      });
-    });
-
-    document.body.removeChild(iframe);
-    if (data.length) return data;
-  } catch (e) {}
-
-  const fromText = (event.clipboardData || window.clipboardData)
-    .getData("text")
-    .split(/\r\n|\n|\r/)
-    .map((row) => row.split(""));
-  return fromText;
-}
-
-function _shift(x, y, deltaX, xMin, xMax, yMin, yMax) {
-  x += deltaX;
-  if (x < xMin) {
-    if (xMax === Infinity) {
-      return { x: xMin, y };
-    }
-    x = xMax;
-    y--;
-    if (y < yMin) {
-      if (yMax === Infinity) {
-        return { x: xMin, y: yMin };
-      }
-      y = yMax;
-    }
-  }
-  if (x > xMax) {
-    x = xMin;
-    y++;
-    if (y > yMax) {
-      y = yMin;
-      x = xMin;
-    }
-  }
-  return { x, y };
-}
-
-const _defaultCss = `
+export const _defaultCss = `
 html{
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
 ::-webkit-scrollbar {
-  visibility: hidden;
+  width: 0;
+  height:0;
 }
 *{
   box-sizing: border-box;

@@ -65,14 +65,14 @@ The source is still quite tiny (600 lines of code) so you shouldn't have too har
 
 #### Table of Contents
 
--   [Importabular](#importabular)
+-   [\_Importabular](#_importabular)
     -   [Parameters](#parameters)
     -   [destroy](#destroy)
     -   [setData](#setdata)
         -   [Parameters](#parameters-1)
     -   [getData](#getdata)
 
-### Importabular
+### \_Importabular
 
 Spreadsheet component
 

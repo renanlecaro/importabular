@@ -1,6 +1,6 @@
 {
   "name": "importabular",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "5kb javascript spreadsheet, let your users import their data from excel.",
   "main": "dist/index.js",
   "files": [
@@ -8,12 +8,13 @@
     "src/index.js"
   ],
   "scripts": {
-    "start": "parcel demo/index.html --out-dir docs",
+    "start": "npm run build-lib && rm -rf  docs/* && parcel demo/index.html --out-dir docs",
     "build-jsdoc": "documentation readme src/index.js --section=API",
     "build-doc": "rm -rf docs && parcel build demo/index.html --out-dir docs --public-url https://renanlecaro.github.io/importabular/ ",
-    "build-lib": "rm -rf dist/* && terser src/index.js --module --compress --mangle --module --keep-classnames --mangle-props regex=/^_/ --ecma 2015 > dist/index.js && gzip -k dist/index.js && ls -l dist",
+    "build-lib": "sh scripts/build.sh",
     "build": "npm run pretty && npm run build-doc && npm run build-lib && npm run build-jsdoc",
-    "pretty": "prettier --write demo src"
+    "pretty": "prettier --write demo src",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -36,21 +37,29 @@
   "staticFiles": {
     "staticPath": [
       {
-        "staticPath": "src",
+        "staticPath": "src/index.js",
         "staticOutDir": "src"
       },
       {
-        "staticPath": "dist",
+        "staticPath": "dist/index.js",
         "staticOutDir": "dist"
       }
     ]
   },
   "homepage": "https://renanlecaro.github.io/importabular/",
   "devDependencies": {
+    "@babel/cli": "^7.11.6",
+    "@babel/core": "^7.11.6",
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "@babel/preset-env": "^7.11.5",
+    "babel-jest": "^26.3.0",
     "documentation": "*",
     "parcel-bundler": "^1.12.4",
     "parcel-plugin-static-files-copy": "^2.5.0",
     "prettier": "2.1.2",
     "terser": "^5.3.2"
+  },
+  "dependencies": {
+    "jest": "^26.4.2"
   }
 }
