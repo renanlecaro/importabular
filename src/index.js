@@ -1,3 +1,19 @@
+/** @private All the events we listen to inside the iframe at the root level.
+ * Each one is mapped to the corresponding method on the instance. */
+const _events = [
+  "mousedown",
+  "mouseenter",
+  "mouseup",
+  "mouseleave",
+  "touchstart",
+  "touchend",
+  "touchmove",
+  "keydown",
+  "paste",
+  "cut",
+  "copy",
+];
+
 /**
  * Spreadsheet component
  * @param {Object} options
@@ -15,13 +31,7 @@
  *@param {Object} options.height Height of the iframe that will contain the table.
  *
  */
-import {_arrToHTML} from "./_arrToHTML";
-import {_LooseArray} from "./_LooseArray";
-import {_parsePasteEvent} from "./_parsePasteEvent";
-import {_shift} from "./_shift";
-import {_defaultCss} from "./_defaultCss";
-
-export default class Importabular {
+export default class _Importabular {
   constructor({
     data = [],
     node = null,
@@ -34,10 +44,12 @@ export default class Importabular {
     width = "100%",
     height = "80vh",
   }) {
-    if (!node)
-      return console.error(
-        "Please call the constructor like this : new Importabular({node: document.body})"
+    if (!node) {
+      throw new Error(
+        "You need to pass a node argument to Importabular, like this : new Importabular({node: document.body})"
       );
+    }
+    // Reference to the parent DOM element, contains the iframe
     this._parent = node;
     this._options = {
       onChange,
@@ -53,6 +65,16 @@ export default class Importabular {
       border: "none",
       background: "transparent",
     };
+
+    /** @private {Number} Current number of columns of the table. */
+    this._width = 1;
+
+    /** @private {Number} Current number of rows of the table. */
+    this._height = 1;
+
+    /** @private {_LooseArray} Current content of the table, stored as 2D map.*/
+    this._data = new _LooseArray();
+
     this._setupDom();
     this._replaceDataWithArray(data);
     this._incrementToFit({
@@ -61,18 +83,6 @@ export default class Importabular {
     });
     this._fillScrollSpace();
   }
-
-  /** @private {HTMLElement} Reference to the parent DOM element, contains the iframe. */
-  _parent = null;
-
-  /** @private {Number} Current number of columns of the table. */
-  _width = 1;
-
-  /** @private {Number} Current number of rows of the table. */
-  _height = 1;
-
-  /** @private {_LooseArray} Current content of the table, stored as 2D map.*/
-  _data = new _LooseArray();
 
   /** @private Checks whether this cell should be editable, or if it's out of bounds*/
   _fitBounds({ x, y }) {
@@ -100,7 +110,7 @@ export default class Importabular {
     td.setAttribute("y", y.toString());
     const val = this._getVal(x, y);
     if (val) {
-      div.innerText = val;
+      div.textContent = val;
     } else {
       // Force no collapse of cell
       div.innerHTML = "&nbsp;";
@@ -143,26 +153,8 @@ export default class Importabular {
       }
     }
 
-    this._events.forEach((name) =>
-      cwd.addEventListener(name, this[name], true)
-    );
+    _events.forEach((name) => cwd.addEventListener(name, this[name], true));
   }
-
-  /** @private All the events we listen to inside the iframe at the root level.
-   * Each one is mapped to the corresponding method on the instance. */
-  _events = [
-    "mousedown",
-    "mouseenter",
-    "mouseup",
-    "mouseleave",
-    "touchstart",
-    "touchend",
-    "touchmove",
-    "keydown",
-    "paste",
-    "cut",
-    "copy",
-  ];
 
   /** Destroys the table, and clears even listeners
    * @public
@@ -170,7 +162,7 @@ export default class Importabular {
   destroy() {
     this._destroyEditing();
 
-    this._events.forEach((name) =>
+    _events.forEach((name) =>
       this.cwd.removeEventListener(name, this[name], true)
     );
 
@@ -625,7 +617,7 @@ export default class Importabular {
   _refreshDisplayedValue = ({ x, y }) => {
     const div = this._getCell(x, y).firstChild;
     if (div.tagName === "DIV") {
-      div.innerText = this._getVal(x, y);
+      div.textContent = this._getVal(x, y);
     }
     this._restyle({ x, y });
   };
@@ -690,7 +682,184 @@ export default class Importabular {
     return this.tbody.children[y].children[x];
   }
 }
+export function _shift(x, y, deltaX, xMin, xMax, yMin, yMax) {
+  x += deltaX;
+  if (x < xMin) {
+    if (xMax === Infinity) {
+      return { x: xMin, y };
+    }
+    x = xMax;
+    y--;
+    if (y < yMin) {
+      if (yMax === Infinity) {
+        return { x: xMin, y: yMin };
+      }
+      y = yMax;
+    }
+  }
+  if (x > xMax) {
+    x = xMin;
+    y++;
+    if (y > yMax) {
+      y = yMin;
+      x = xMin;
+    }
+  }
+  return { x, y };
+}
 
+export function _parsePasteEvent(event) {
+  try {
+    const html = (event.clipboardData || window.clipboardData).getData(
+      "text/html"
+    );
 
+    const iframe = document.createElement("iframe");
+    document.body.appendChild(iframe);
+    iframe.contentWindow.document.open();
+    iframe.contentWindow.document.write(html);
+    iframe.contentWindow.document.close();
 
+    const trs = iframe.contentWindow.document.querySelectorAll("tr");
+    const data = [];
+    Array.prototype.forEach.call(trs, (tr, y) => {
+      const tds = tr.querySelectorAll("td");
+      Array.prototype.forEach.call(tds, (td, x) => {
+        const text = td.textContent;
+        if (!data[y]) data[y] = [];
+        data[y][x] = text;
+      });
+    });
 
+    document.body.removeChild(iframe);
+    if (data.length) return data;
+  } catch (e) {}
+
+  const fromText = (event.clipboardData || window.clipboardData)
+    .getData("text")
+    .split(/\r\n|\n|\r/)
+    .map((row) => row.split(""));
+  return fromText;
+}
+export class _LooseArray {
+  // An 2D array of strings that only stores non "" values
+  _data = {};
+
+  _setVal(x, y, val) {
+    const hash = this._data;
+    const cleanedVal = _cleanVal(val);
+    if (cleanedVal) {
+      if (!hash[x]) hash[x] = {};
+      hash[x][y] = cleanedVal;
+    } else {
+      // delete item
+      if (hash[x] && hash[x][y]) {
+        delete hash[x][y];
+        if (_isEmpty(hash[x])) delete hash[x];
+      }
+    }
+  }
+
+  _clear() {
+    this._data = {};
+  }
+
+  _getVal(x, y) {
+    const hash = this._data;
+    return (hash && hash[x] && hash[x][y]) || "";
+  }
+
+  _toArr() {
+    let width = 1,
+      height = 1;
+    for (let x in this._data) {
+      for (let y in this._data[x]) {
+        height = Math.max(height, parseInt(y) + 1);
+        width = Math.max(width, parseInt(x) + 1);
+      }
+    }
+    const result = [];
+    for (let y = 0; y < height; y++) {
+      result.push([]);
+      for (let x = 0; x < width; x++) {
+        result[y].push(this._getVal(x, y));
+      }
+    }
+    return result;
+  }
+}
+
+export function _cleanVal(val) {
+  if (val === 0) return "0";
+  if (!val) return "";
+  return val.toString();
+}
+
+export function _isEmpty(obj) {
+  return Object.keys(obj).length === 0;
+}
+export function _arrToHTML(arr) {
+  const table = document.createElement("table");
+  table.setAttribute("lang", navigator.language);
+  arr.forEach((row) => {
+    const tr = document.createElement("tr");
+    table.appendChild(tr);
+    row.forEach((cell) => {
+      const td = document.createElement("td");
+      tr.appendChild(td);
+      td.textContent = cell;
+    });
+  });
+  return `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"><html lang="${navigator.language}"><head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8"/><title></title></head><body>${table.outerHTML}</body></html>`;
+}
+export const _defaultCss = `
+html{
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+::-webkit-scrollbar {
+  visibility: hidden;
+}
+*{
+  box-sizing: border-box;
+}
+body{
+  padding: 0; 
+  margin: 0;
+}
+table{
+  border-spacing: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-width: 0 1px 1px 0;
+  font-size: 16px;
+  font-family: sans-serif;
+  border-collapse: separate;
+}
+td{
+  padding:0;
+  border: 1px solid;
+  border-color: #ddd transparent transparent #ddd; 
+}
+td.selected.multi:not(.editing){
+  background:#d7f2f9;
+} 
+td.focus:not(.editing){
+  border-color: black;
+} 
+td>*{
+  border:none;
+  padding:10px;
+  min-width:100px;
+  min-height: 40px;
+  font:inherit;
+  line-height: 20px;
+  color:inherit;
+  white-space: normal;
+}
+td>div::selection {
+    color: none;
+    background: none;
+}
+`;

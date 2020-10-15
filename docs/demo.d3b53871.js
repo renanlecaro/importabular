@@ -117,233 +117,18 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"../src/_arrToHTML.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports._arrToHTML = _arrToHTML;
-
-function _arrToHTML(arr) {
-  var table = document.createElement("table");
-  table.setAttribute("lang", navigator.language);
-  arr.forEach(function (row) {
-    var tr = document.createElement("tr");
-    table.appendChild(tr);
-    row.forEach(function (cell) {
-      var td = document.createElement("td");
-      tr.appendChild(td);
-      td.innerText = cell;
-    });
-  });
-  return "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\"><html lang=\"".concat(navigator.language, "\"><head>\n<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"/><title></title></head><body>").concat(table.outerHTML, "</body></html>");
-}
-},{}],"../src/_LooseArray.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports._cleanVal = _cleanVal;
-exports._isEmpty = _isEmpty;
-exports._LooseArray = void 0;
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-var _LooseArray = /*#__PURE__*/function () {
-  function _LooseArray() {
-    _classCallCheck(this, _LooseArray);
-
-    _defineProperty(this, "_data", {});
-  }
-
-  _createClass(_LooseArray, [{
-    key: "_setVal",
-    value: function _setVal(x, y, val) {
-      var hash = this._data;
-
-      var cleanedVal = _cleanVal(val);
-
-      if (cleanedVal) {
-        if (!hash[x]) hash[x] = {};
-        hash[x][y] = cleanedVal;
-      } else {
-        // delete item
-        if (hash[x] && hash[x][y]) {
-          delete hash[x][y];
-          if (_isEmpty(hash[x])) delete hash[x];
-        }
-      }
-    }
-  }, {
-    key: "_clear",
-    value: function _clear() {
-      this._data = {};
-    }
-  }, {
-    key: "_getVal",
-    value: function _getVal(x, y) {
-      var hash = this._data;
-      return hash && hash[x] && hash[x][y] || "";
-    }
-  }, {
-    key: "_toArr",
-    value: function _toArr() {
-      var width = 1,
-          height = 1;
-
-      for (var x in this._data) {
-        for (var y in this._data[x]) {
-          height = Math.max(height, parseInt(y) + 1);
-          width = Math.max(width, parseInt(x) + 1);
-        }
-      }
-
-      var result = [];
-
-      for (var _y = 0; _y < height; _y++) {
-        result.push([]);
-
-        for (var _x = 0; _x < width; _x++) {
-          result[_y].push(this._getVal(_x, _y));
-        }
-      }
-
-      return result;
-    }
-  }]);
-
-  return _LooseArray;
-}();
-
-exports._LooseArray = _LooseArray;
-
-function _cleanVal(val) {
-  if (val === 0) return "0";
-  if (!val) return "";
-  return val.toString();
-}
-
-function _isEmpty(obj) {
-  return Object.keys(obj).length === 0;
-}
-},{}],"../src/_parsePasteEvent.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports._parsePasteEvent = _parsePasteEvent;
-
-function _parsePasteEvent(event) {
-  try {
-    var html = (event.clipboardData || window.clipboardData).getData("text/html");
-    var iframe = document.createElement("iframe");
-    document.body.appendChild(iframe);
-    iframe.contentWindow.document.open();
-    iframe.contentWindow.document.write(html);
-    iframe.contentWindow.document.close();
-    var trs = iframe.contentWindow.document.querySelectorAll("tr");
-    var data = [];
-    Array.prototype.forEach.call(trs, function (tr, y) {
-      var tds = tr.querySelectorAll("td");
-      Array.prototype.forEach.call(tds, function (td, x) {
-        var text = td.innerText;
-        if (!data[y]) data[y] = [];
-        data[y][x] = text;
-      });
-    });
-    document.body.removeChild(iframe);
-    if (data.length) return data;
-  } catch (e) {}
-
-  var fromText = (event.clipboardData || window.clipboardData).getData("text").split(/\r\n|\n|\r/).map(function (row) {
-    return row.split("");
-  });
-  return fromText;
-}
-},{}],"../src/_shift.js":[function(require,module,exports) {
+})({"../src/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports._shift = _shift;
-
-function _shift(x, y, deltaX, xMin, xMax, yMin, yMax) {
-  x += deltaX;
-
-  if (x < xMin) {
-    if (xMax === Infinity) {
-      return {
-        x: xMin,
-        y: y
-      };
-    }
-
-    x = xMax;
-    y--;
-
-    if (y < yMin) {
-      if (yMax === Infinity) {
-        return {
-          x: xMin,
-          y: yMin
-        };
-      }
-
-      y = yMax;
-    }
-  }
-
-  if (x > xMax) {
-    x = xMin;
-    y++;
-
-    if (y > yMax) {
-      y = yMin;
-      x = xMin;
-    }
-  }
-
-  return {
-    x: x,
-    y: y
-  };
-}
-},{}],"../src/_defaultCss.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports._defaultCss = void 0;
-var _defaultCss = "\nhtml{\n  -ms-overflow-style: none;\n  scrollbar-width: none;\n}\n::-webkit-scrollbar {\n  visibility: hidden;\n}\n*{\n  box-sizing: border-box;\n}\nbody{\n  padding: 0; \n  margin: 0;\n}\ntable{\n  border-spacing: 0;\n  background: white;\n  border: 1px solid #ddd;\n  border-width: 0 1px 1px 0;\n  font-size: 16px;\n  font-family: sans-serif;\n  border-collapse: separate;\n}\ntd{\n  padding:0;\n  border: 1px solid;\n  border-color: #ddd transparent transparent #ddd; \n}\ntd.selected.multi:not(.editing){\n  background:#d7f2f9;\n} \ntd.focus:not(.editing){\n  border-color: black;\n} \ntd>*{\n  border:none;\n  padding:10px;\n  min-width:100px;\n  min-height: 40px;\n  font:inherit;\n  line-height: 20px;\n  color:inherit;\n  white-space: normal;\n}\ntd>div::selection {\n    color: none;\n    background: none;\n}\n";
-exports._defaultCss = _defaultCss;
-},{}],"../src/index.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _arrToHTML2 = require("./_arrToHTML");
-
-var _LooseArray2 = require("./_LooseArray");
-
-var _parsePasteEvent2 = require("./_parsePasteEvent");
-
-var _shift2 = require("./_shift");
-
-var _defaultCss2 = require("./_defaultCss");
+exports._parsePasteEvent = _parsePasteEvent;
+exports._cleanVal = _cleanVal;
+exports._isEmpty = _isEmpty;
+exports._arrToHTML = _arrToHTML;
+exports._defaultCss = exports._LooseArray = exports.default = void 0;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -353,8 +138,29 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var Importabular = /*#__PURE__*/function () {
-  function Importabular(_ref) {
+/** @private All the events we listen to inside the iframe at the root level.
+ * Each one is mapped to the corresponding method on the instance. */
+var _events = ["mousedown", "mouseenter", "mouseup", "mouseleave", "touchstart", "touchend", "touchmove", "keydown", "paste", "cut", "copy"];
+/**
+ * Spreadsheet component
+ * @param {Object} options
+ * @param {Array} options.data Initial data of the table, ie [['A1','A2'],['B1','B2']]
+ * @param {Node} options.node Dom node to create the table into
+ * @param {Node} options.onChange Callback to run whenever the data
+ *               has changed, receives the new data as an argument.
+ *@param {Number} options.minRows Minimum number of rows.
+ *@param {Number} options.maxRows Maximum number of rows, the table will not grow vertically beyond this.
+ *@param {Number} options.minCols Minimum number of columns.
+ *@param {Number} options.maxCols Maximum number of columns, the table will not grow horizontally beyond this.
+ *@param {String} options.css Css code to add inside the iframe.
+ *
+ *@param {Object} options.width Width of the iframe that will contain the table.
+ *@param {Object} options.height Height of the iframe that will contain the table.
+ *
+ */
+
+var _Importabular = /*#__PURE__*/function () {
+  function _Importabular(_ref) {
     var _this = this;
 
     var _ref$data = _ref.data,
@@ -378,22 +184,14 @@ var Importabular = /*#__PURE__*/function () {
         _ref$height = _ref.height,
         height = _ref$height === void 0 ? "80vh" : _ref$height;
 
-    _classCallCheck(this, Importabular);
-
-    _defineProperty(this, "_parent", null);
-
-    _defineProperty(this, "_width", 1);
-
-    _defineProperty(this, "_height", 1);
-
-    _defineProperty(this, "_data", new _LooseArray2._LooseArray());
-
-    _defineProperty(this, "_events", ["mousedown", "mouseenter", "mouseup", "mouseleave", "touchstart", "touchend", "touchmove", "keydown", "paste", "cut", "copy"]);
+    _classCallCheck(this, _Importabular);
 
     _defineProperty(this, "paste", function (e) {
       if (_this._editing) return;
       e.preventDefault();
-      var rows = (0, _parsePasteEvent2._parsePasteEvent)(e);
+
+      var rows = _parsePasteEvent(e);
+
       var _this$_selection = _this._selection,
           rx = _this$_selection.rx,
           ry = _this$_selection.ry;
@@ -429,7 +227,7 @@ var Importabular = /*#__PURE__*/function () {
 
       if (asArr) {
         e.preventDefault();
-        e.clipboardData.setData("text/html", (0, _arrToHTML2._arrToHTML)(asArr));
+        e.clipboardData.setData("text/html", _arrToHTML(asArr));
         e.clipboardData.setData("text/plain", asArr.map(function (row) {
           return row.join("");
         }).join("\n"));
@@ -679,7 +477,7 @@ var Importabular = /*#__PURE__*/function () {
       var div = _this._getCell(x, y).firstChild;
 
       if (div.tagName === "DIV") {
-        div.innerText = _this._getVal(x, y);
+        div.textContent = _this._getVal(x, y);
       }
 
       _this._restyle({
@@ -688,7 +486,11 @@ var Importabular = /*#__PURE__*/function () {
       });
     });
 
-    if (!node) return console.error("Please call the constructor like this : new Importabular({node: document.body})");
+    if (!node) {
+      throw new Error("You need to pass a node argument to Importabular, like this : new Importabular({node: document.body})");
+    } // Reference to the parent DOM element, contains the iframe
+
+
     this._parent = node;
     this._options = {
       onChange: onChange,
@@ -696,7 +498,7 @@ var Importabular = /*#__PURE__*/function () {
       maxRows: maxRows,
       minCols: minCols,
       maxCols: maxCols,
-      css: _defaultCss2._defaultCss + css
+      css: _defaultCss + css
     };
     this._iframeStyle = {
       width: width,
@@ -704,6 +506,15 @@ var Importabular = /*#__PURE__*/function () {
       border: "none",
       background: "transparent"
     };
+    /** @private {Number} Current number of columns of the table. */
+
+    this._width = 1;
+    /** @private {Number} Current number of rows of the table. */
+
+    this._height = 1;
+    /** @private {_LooseArray} Current content of the table, stored as 2D map.*/
+
+    this._data = new _LooseArray();
 
     this._setupDom();
 
@@ -716,13 +527,11 @@ var Importabular = /*#__PURE__*/function () {
 
     this._fillScrollSpace();
   }
-  /** @private {HTMLElement} Reference to the parent DOM element, contains the iframe. */
+  /** @private Checks whether this cell should be editable, or if it's out of bounds*/
 
 
-  _createClass(Importabular, [{
+  _createClass(_Importabular, [{
     key: "_fitBounds",
-
-    /** @private Checks whether this cell should be editable, or if it's out of bounds*/
     value: function _fitBounds(_ref4) {
       var x = _ref4.x,
           y = _ref4.y;
@@ -760,7 +569,7 @@ var Importabular = /*#__PURE__*/function () {
       var val = this._getVal(x, y);
 
       if (val) {
-        div.innerText = val;
+        div.textContent = val;
       } else {
         // Force no collapse of cell
         div.innerHTML = "&nbsp;";
@@ -811,25 +620,22 @@ var Importabular = /*#__PURE__*/function () {
         }
       }
 
-      this._events.forEach(function (name) {
+      _events.forEach(function (name) {
         return cwd.addEventListener(name, _this2[name], true);
       });
     }
-    /** @private All the events we listen to inside the iframe at the root level.
-     * Each one is mapped to the corresponding method on the instance. */
-
-  }, {
-    key: "destroy",
-
     /** Destroys the table, and clears even listeners
      * @public
      * */
+
+  }, {
+    key: "destroy",
     value: function destroy() {
       var _this3 = this;
 
       this._destroyEditing();
 
-      this._events.forEach(function (name) {
+      _events.forEach(function (name) {
         return _this3.cwd.removeEventListener(name, _this3[name], true);
       });
 
@@ -996,10 +802,11 @@ var Importabular = /*#__PURE__*/function () {
       var nc;
 
       if (horizontal) {
-        nc = (0, _shift2._shift)(x, y, delta, rx[0], rx[1] - 1, ry[0], ry[1] - 1);
+        nc = _shift(x, y, delta, rx[0], rx[1] - 1, ry[0], ry[1] - 1);
       } else {
         // use the same logic, but with x and y inverted for the horizontal tabbing wiht enter/ shift enter
-        var temporaryCursor = (0, _shift2._shift)(y, x, delta, ry[0], ry[1] - 1, rx[0], rx[1] - 1);
+        var temporaryCursor = _shift(y, x, delta, ry[0], ry[1] - 1, rx[0], rx[1] - 1);
+
         nc = {
           x: temporaryCursor.y,
           y: temporaryCursor.x
@@ -1268,11 +1075,177 @@ var Importabular = /*#__PURE__*/function () {
     }
   }]);
 
-  return Importabular;
+  return _Importabular;
 }();
 
-exports.default = Importabular;
-},{"./_arrToHTML":"../src/_arrToHTML.js","./_LooseArray":"../src/_LooseArray.js","./_parsePasteEvent":"../src/_parsePasteEvent.js","./_shift":"../src/_shift.js","./_defaultCss":"../src/_defaultCss.js"}],"../node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
+exports.default = _Importabular;
+
+function _shift(x, y, deltaX, xMin, xMax, yMin, yMax) {
+  x += deltaX;
+
+  if (x < xMin) {
+    if (xMax === Infinity) {
+      return {
+        x: xMin,
+        y: y
+      };
+    }
+
+    x = xMax;
+    y--;
+
+    if (y < yMin) {
+      if (yMax === Infinity) {
+        return {
+          x: xMin,
+          y: yMin
+        };
+      }
+
+      y = yMax;
+    }
+  }
+
+  if (x > xMax) {
+    x = xMin;
+    y++;
+
+    if (y > yMax) {
+      y = yMin;
+      x = xMin;
+    }
+  }
+
+  return {
+    x: x,
+    y: y
+  };
+}
+
+function _parsePasteEvent(event) {
+  try {
+    var html = (event.clipboardData || window.clipboardData).getData("text/html");
+    var iframe = document.createElement("iframe");
+    document.body.appendChild(iframe);
+    iframe.contentWindow.document.open();
+    iframe.contentWindow.document.write(html);
+    iframe.contentWindow.document.close();
+    var trs = iframe.contentWindow.document.querySelectorAll("tr");
+    var data = [];
+    Array.prototype.forEach.call(trs, function (tr, y) {
+      var tds = tr.querySelectorAll("td");
+      Array.prototype.forEach.call(tds, function (td, x) {
+        var text = td.textContent;
+        if (!data[y]) data[y] = [];
+        data[y][x] = text;
+      });
+    });
+    document.body.removeChild(iframe);
+    if (data.length) return data;
+  } catch (e) {}
+
+  var fromText = (event.clipboardData || window.clipboardData).getData("text").split(/\r\n|\n|\r/).map(function (row) {
+    return row.split("");
+  });
+  return fromText;
+}
+
+var _LooseArray = /*#__PURE__*/function () {
+  function _LooseArray() {
+    _classCallCheck(this, _LooseArray);
+
+    _defineProperty(this, "_data", {});
+  }
+
+  _createClass(_LooseArray, [{
+    key: "_setVal",
+    value: function _setVal(x, y, val) {
+      var hash = this._data;
+
+      var cleanedVal = _cleanVal(val);
+
+      if (cleanedVal) {
+        if (!hash[x]) hash[x] = {};
+        hash[x][y] = cleanedVal;
+      } else {
+        // delete item
+        if (hash[x] && hash[x][y]) {
+          delete hash[x][y];
+          if (_isEmpty(hash[x])) delete hash[x];
+        }
+      }
+    }
+  }, {
+    key: "_clear",
+    value: function _clear() {
+      this._data = {};
+    }
+  }, {
+    key: "_getVal",
+    value: function _getVal(x, y) {
+      var hash = this._data;
+      return hash && hash[x] && hash[x][y] || "";
+    }
+  }, {
+    key: "_toArr",
+    value: function _toArr() {
+      var width = 1,
+          height = 1;
+
+      for (var x in this._data) {
+        for (var y in this._data[x]) {
+          height = Math.max(height, parseInt(y) + 1);
+          width = Math.max(width, parseInt(x) + 1);
+        }
+      }
+
+      var result = [];
+
+      for (var _y = 0; _y < height; _y++) {
+        result.push([]);
+
+        for (var _x = 0; _x < width; _x++) {
+          result[_y].push(this._getVal(_x, _y));
+        }
+      }
+
+      return result;
+    }
+  }]);
+
+  return _LooseArray;
+}();
+
+exports._LooseArray = _LooseArray;
+
+function _cleanVal(val) {
+  if (val === 0) return "0";
+  if (!val) return "";
+  return val.toString();
+}
+
+function _isEmpty(obj) {
+  return Object.keys(obj).length === 0;
+}
+
+function _arrToHTML(arr) {
+  var table = document.createElement("table");
+  table.setAttribute("lang", navigator.language);
+  arr.forEach(function (row) {
+    var tr = document.createElement("tr");
+    table.appendChild(tr);
+    row.forEach(function (cell) {
+      var td = document.createElement("td");
+      tr.appendChild(td);
+      td.textContent = cell;
+    });
+  });
+  return "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\"><html lang=\"".concat(navigator.language, "\"><head>\n<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"/><title></title></head><body>").concat(table.outerHTML, "</body></html>");
+}
+
+var _defaultCss = "\nhtml{\n  -ms-overflow-style: none;\n  scrollbar-width: none;\n}\n::-webkit-scrollbar {\n  visibility: hidden;\n}\n*{\n  box-sizing: border-box;\n}\nbody{\n  padding: 0; \n  margin: 0;\n}\ntable{\n  border-spacing: 0;\n  background: white;\n  border: 1px solid #ddd;\n  border-width: 0 1px 1px 0;\n  font-size: 16px;\n  font-family: sans-serif;\n  border-collapse: separate;\n}\ntd{\n  padding:0;\n  border: 1px solid;\n  border-color: #ddd transparent transparent #ddd; \n}\ntd.selected.multi:not(.editing){\n  background:#d7f2f9;\n} \ntd.focus:not(.editing){\n  border-color: black;\n} \ntd>*{\n  border:none;\n  padding:10px;\n  min-width:100px;\n  min-height: 40px;\n  font:inherit;\n  line-height: 20px;\n  color:inherit;\n  white-space: normal;\n}\ntd>div::selection {\n    color: none;\n    background: none;\n}\n";
+exports._defaultCss = _defaultCss;
+},{}],"../node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
 var bundleURL = null;
 
 function getBundleURLCached() {
@@ -1399,7 +1372,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "39103" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "34537" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
