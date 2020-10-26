@@ -121,27 +121,28 @@ export default class i {
           (this.L &&
             ("Escape" === t.key &&
               this.R &&
-              (t.preventDefault(), this.W(), this.N()),
+              (t.preventDefault(), this.W(), this.F()),
             "Enter" === t.key &&
-              (t.preventDefault(), this.P(!1, t.shiftKey ? -1 : 1)),
+              (t.preventDefault(), this.N(!1, t.shiftKey ? -1 : 1)),
             "Tab" === t.key &&
-              (t.preventDefault(), this.P(!0, t.shiftKey ? -1 : 1)),
+              (t.preventDefault(), this.N(!0, t.shiftKey ? -1 : 1)),
             this.R ||
-              (("Delete" !== t.key && "Backspace" !== t.key) ||
+              ("F2" === t.key && (t.preventDefault(), this.P(this.Y)),
+              ("Delete" !== t.key && "Backspace" !== t.key) ||
                 (t.preventDefault(), this.H("")),
               "ArrowDown" === t.key &&
-                (t.preventDefault(), this.Y({ y: 1 }, t.shiftKey)),
+                (t.preventDefault(), this.q({ y: 1 }, t.shiftKey)),
               "ArrowUp" === t.key &&
-                (t.preventDefault(), this.Y({ y: -1 }, t.shiftKey)),
+                (t.preventDefault(), this.q({ y: -1 }, t.shiftKey)),
               "ArrowLeft" === t.key &&
-                (t.preventDefault(), this.Y({ x: -1 }, t.shiftKey)),
+                (t.preventDefault(), this.q({ x: -1 }, t.shiftKey)),
               "ArrowRight" === t.key &&
-                (t.preventDefault(), this.Y({ x: 1 }, t.shiftKey))),
+                (t.preventDefault(), this.q({ x: 1 }, t.shiftKey))),
             1 !== t.key.length ||
               this.R ||
               this.j(() => {
-                const { x: t, y: e } = this.q;
-                this.F({ x: t, y: e }), (this.G(t, e).firstChild.value = "");
+                const { x: t, y: e } = this.Y;
+                this.P({ x: t, y: e }), (this.G(t, e).firstChild.value = "");
               })));
       }),
       t(this, "tt", !1),
@@ -149,7 +150,7 @@ export default class i {
       t(this, "U", null),
       t(this, "$", { rx: [0, 0], ry: [0, 0] }),
       t(this, "R", null),
-      t(this, "q", null),
+      t(this, "Y", null),
       t(this, "mousedown", (t) => {
         if (!this.mobile) {
           if (3 === t.which && !this.R && this.Z()) {
@@ -164,7 +165,7 @@ export default class i {
           }
           this.j(() => {
             (this.tbody.style.userSelect = "none"),
-              (this.U = this.L = this.q = this.it(t)),
+              (this.U = this.L = this.Y = this.it(t)),
               (this.tt = !0);
           });
         }
@@ -189,7 +190,7 @@ export default class i {
                   this.st > Date.now() - 300 &&
                   this.nt.x === this.U.x &&
                   this.nt.y === this.U.y &&
-                  this.F(this.U),
+                  this.P(this.U),
                 (this.st = Date.now()),
                 (this.nt = this.U);
             }));
@@ -205,20 +206,20 @@ export default class i {
           (this.R ||
             this.moved ||
             (this.j(() => {
-              this.U = this.L = this.q = this.it(t);
+              this.U = this.L = this.Y = this.it(t);
             }),
-            this.F(this.q)));
+            this.P(this.Y)));
       }),
       t(this, "touchmove", (t) => {
         this.mobile && (this.moved = !0);
       }),
-      t(this, "N", () => {
+      t(this, "F", () => {
         if (!this.R) return;
         const { x: t, y: e } = this.R,
           i = this.G(t, e);
         (i.style.width = ""), (i.style.height = "");
         const s = i.firstChild;
-        s.removeEventListener("blur", this.N),
+        s.removeEventListener("blur", this.F),
           s.removeEventListener("keydown", this.ht),
           this.O(t, e, s.value),
           i.removeChild(s),
@@ -227,7 +228,7 @@ export default class i {
           this.v();
       }),
       t(this, "ht", (t) => {
-        13 === t.keyCode && (this.N(), t.preventDefault());
+        13 === t.keyCode && (this.F(), t.preventDefault());
       }),
       t(this, "A", ({ x: t, y: e }) => {
         this.G(t, e).className = this.ot(t, e);
@@ -352,19 +353,19 @@ export default class i {
       this.J(this.$, this.K),
       this.v();
   }
-  Y({ x: t = 0, y: e = 0 }, i) {
+  q({ x: t = 0, y: e = 0 }, i) {
     const s = i ? this.U : this.L,
       n = { x: s.x + t, y: s.y + e };
     this.C(n) &&
-      (this.N(),
+      (this.F(),
       this.u(n),
       this.j(() => {
-        i ? (this.U = n) : (this.L = this.U = this.q = n);
+        i ? (this.U = n) : (this.L = this.U = this.Y = n);
       }),
       this.X(n));
   }
-  P(t, e = 1) {
-    let { x: i, y: n } = this.q || { x: 0, y: 0 };
+  N(t, e = 1) {
+    let { x: i, y: n } = this.Y || { x: 0, y: 0 };
     const h = this.Z(),
       { rx: r, ry: o } =
         h > 1 ? this.$ : { rx: [0, this.i.maxCols], ry: [0, this.i.maxRows] };
@@ -375,10 +376,10 @@ export default class i {
       l = { x: t.y, y: t.x };
     }
     this.C(l) &&
-      (this.N(),
+      (this.F(),
       this.u(l),
       this.j(() => {
-        (this.q = l), h <= 1 && (this.L = this.U = l);
+        (this.Y = l), h <= 1 && (this.L = this.U = l);
       }),
       this.X(l));
   }
@@ -388,7 +389,7 @@ export default class i {
   et() {
     (this.tt = !1), (this.tbody.style.userSelect = "");
   }
-  F({ x: t, y: e }) {
+  P({ x: t, y: e }) {
     this.R = { x: t, y: e };
     const i = this.G(t, e),
       s = i.getBoundingClientRect(),
@@ -404,14 +405,14 @@ export default class i {
         height: n.height + "px",
       }),
       h.focus(),
-      h.addEventListener("blur", this.N),
+      h.addEventListener("blur", this.F),
       h.addEventListener("keydown", this.ht);
   }
   T() {
     if (this.R) {
       const { x: t, y: e } = this.R,
         i = this.G(t, e).firstChild;
-      i.removeEventListener("blur", this.N),
+      i.removeEventListener("blur", this.F),
         i.removeEventListener("keydown", this.ht);
     }
   }
@@ -451,7 +452,7 @@ export default class i {
         e >= s[0] &&
         e < s[1] &&
         ((n += " selected"), this.Z() > 1 && (n += " multi")),
-      this.q && this.q.x === t && this.q.y === e && (n += " focus"),
+      this.Y && this.Y.x === t && this.Y.y === e && (n += " focus"),
       this.R && t === this.R.x && e === this.R.y && (n += " editing"),
       n
     );

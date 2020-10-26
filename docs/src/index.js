@@ -287,6 +287,10 @@ export default class _Importabular {
         this._tabCursorInSelection(true, e.shiftKey ? -1 : 1);
       }
       if (!this._editing) {
+        if (e.key === "F2") {
+          e.preventDefault();
+          this._startEditing(this._focus);
+        }
         if (e.key === "Delete" || e.key === "Backspace") {
           e.preventDefault();
           this._setAllSelectedCellsTo("");
