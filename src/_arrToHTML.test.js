@@ -1,4 +1,4 @@
-import { _arrToHTML } from "./index";
+import { _arrToHTML } from "./_arrToHTML";
 
 test("textContent behavior", () => {
   const div = document.createElement("div");

@@ -1,4 +1,4 @@
-import { _shift } from "./index";
+import { _shift } from "./_shift";
 
 describe("moving forward ", () => {
   test("moves one cell to the right", () => {

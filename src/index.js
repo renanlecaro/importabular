@@ -1,5 +1,10 @@
 /** @private All the events we listen to inside the iframe at the root level.
  * Each one is mapped to the corresponding method on the instance. */
+import { _parsePasteEvent } from "./_parsePasteEvent";
+import { _defaultCss } from "./_defaultCss";
+import { _arrToHTML } from "./_arrToHTML";
+import { _LooseArray } from "./_LooseArray";
+
 const _events = [
   "mousedown",
   "mouseenter",
@@ -32,7 +37,17 @@ const _events = [
  *
  */
 export default class _Importabular {
-  constructor({
+  constructor(options) {
+    this._saveConstructorOptions(options);
+    this._setupDom();
+    this._replaceDataWithArray(options.data);
+    this._incrementToFit({
+      x: this._options.minCols - 1,
+      y: this._options.minRows - 1,
+    });
+    this._fillScrollSpace();
+  }
+  _saveConstructorOptions({
     data = [],
     node = null,
     onChange = null,
@@ -48,6 +63,9 @@ export default class _Importabular {
       throw new Error(
         "You need to pass a node argument to Importabular, like this : new Importabular({node: document.body})"
       );
+    }
+    if (maxCols !== Infinity) {
+      css += "table{min-width:100%;}";
     }
     // Reference to the parent DOM element, contains the iframe
     this._parent = node;
@@ -65,14 +83,6 @@ export default class _Importabular {
       border: "none",
       background: "transparent",
     };
-
-    this._setupDom();
-    this._replaceDataWithArray(data);
-    this._incrementToFit({
-      x: this._options.minCols - 1,
-      y: this._options.minRows - 1,
-    });
-    this._fillScrollSpace();
   }
 
   /** @private {Number} Current number of columns of the table. */
@@ -108,7 +118,7 @@ export default class _Importabular {
     const div = document.createElement("div");
     td.setAttribute("x", x.toString());
     td.setAttribute("y", y.toString());
-    const val = this._getVal(x, y);
+    const val = this._divContent(x, y);
     if (val) {
       div.textContent = val;
     } else {
@@ -119,7 +129,10 @@ export default class _Importabular {
     this._restyle({ x, y });
   }
 
-  /** @private Initial dom setup */
+  _divContent(x, y) {
+    return this._getVal(x, y);
+  }
+
   _setupDom() {
     // We wrap the table in an iframe mostly to let the browser
     // handle the focus for us, without the need for a hidden
@@ -225,8 +238,9 @@ export default class _Importabular {
         x: offset.x + rows[0].length - 1,
         y: offset.y + rows.length - 1,
       };
+      // THis needs to run before rerender
+      this._onDataChanged();
     });
-    this._onDataChanged();
   };
 
   /** @private Returns the currently selected cells as a 2D array of strings.*/
@@ -330,9 +344,8 @@ export default class _Importabular {
     this._forSelectionCoord(this._selection, ({ x, y }) =>
       this._setVal(x, y, value)
     );
-    this._forSelectionCoord(this._selection, this._refreshDisplayedValue);
-
     this._onDataChanged();
+    this._forSelectionCoord(this._selection, this._refreshDisplayedValue);
   }
 
   _moveCursor({ x = 0, y = 0 }, shiftSelectionEnd) {
@@ -559,10 +572,10 @@ export default class _Importabular {
     input.removeEventListener("blur", this._stopEditing);
     input.removeEventListener("keydown", this._blurIfEnter);
     this._setVal(x, y, input.value);
+    this._onDataChanged();
     td.removeChild(input);
     this._editing = null;
     this._renderTDContent(td, x, y);
-    this._onDataChanged();
   };
   _blurIfEnter = (e) => {
     const code = e.keyCode;
@@ -628,7 +641,7 @@ export default class _Importabular {
   _refreshDisplayedValue = ({ x, y }) => {
     const div = this._getCell(x, y).firstChild;
     if (div.tagName === "DIV") {
-      div.textContent = this._getVal(x, y);
+      div.textContent = this._divContent(x, y);
     }
     this._restyle({ x, y });
   };
@@ -669,14 +682,13 @@ export default class _Importabular {
     return this._data._toArr();
   }
 
-  _replaceDataWithArray(data) {
+  _replaceDataWithArray(data = [[]]) {
     data.forEach((line, y) => {
       line.forEach((val, x) => {
         this._setVal(x, y, val);
       });
     });
   }
-
   _setVal(x, y, val) {
     if (!this._fitBounds({ x, y })) return;
 
@@ -693,185 +705,3 @@ export default class _Importabular {
     return this.tbody.children[y].children[x];
   }
 }
-export function _shift(x, y, deltaX, xMin, xMax, yMin, yMax) {
-  x += deltaX;
-  if (x < xMin) {
-    if (xMax === Infinity) {
-      return { x: xMin, y };
-    }
-    x = xMax;
-    y--;
-    if (y < yMin) {
-      if (yMax === Infinity) {
-        return { x: xMin, y: yMin };
-      }
-      y = yMax;
-    }
-  }
-  if (x > xMax) {
-    x = xMin;
-    y++;
-    if (y > yMax) {
-      y = yMin;
-      x = xMin;
-    }
-  }
-  return { x, y };
-}
-
-export function _parsePasteEvent(event) {
-  try {
-    const html = (event.clipboardData || window.clipboardData).getData(
-      "text/html"
-    );
-
-    const iframe = document.createElement("iframe");
-    document.body.appendChild(iframe);
-    iframe.contentWindow.document.open();
-    iframe.contentWindow.document.write(html);
-    iframe.contentWindow.document.close();
-
-    const trs = iframe.contentWindow.document.querySelectorAll("tr");
-    const data = [];
-    Array.prototype.forEach.call(trs, (tr, y) => {
-      const tds = tr.querySelectorAll("td");
-      Array.prototype.forEach.call(tds, (td, x) => {
-        const text = td.textContent;
-        if (!data[y]) data[y] = [];
-        data[y][x] = text;
-      });
-    });
-
-    document.body.removeChild(iframe);
-    if (data.length) return data;
-  } catch (e) {}
-
-  const fromText = (event.clipboardData || window.clipboardData)
-    .getData("text")
-    .split(/\r\n|\n|\r/)
-    .map((row) => row.split(""));
-  return fromText;
-}
-export class _LooseArray {
-  // An 2D array of strings that only stores non "" values
-  _data = {};
-
-  _setVal(x, y, val) {
-    const hash = this._data;
-    const cleanedVal = _cleanVal(val);
-    if (cleanedVal) {
-      if (!hash[x]) hash[x] = {};
-      hash[x][y] = cleanedVal;
-    } else {
-      // delete item
-      if (hash[x] && hash[x][y]) {
-        delete hash[x][y];
-        if (_isEmpty(hash[x])) delete hash[x];
-      }
-    }
-  }
-
-  _clear() {
-    this._data = {};
-  }
-
-  _getVal(x, y) {
-    const hash = this._data;
-    return (hash && hash[x] && hash[x][y]) || "";
-  }
-
-  _toArr() {
-    let width = 1,
-      height = 1;
-    for (let x in this._data) {
-      for (let y in this._data[x]) {
-        height = Math.max(height, parseInt(y) + 1);
-        width = Math.max(width, parseInt(x) + 1);
-      }
-    }
-    const result = [];
-    for (let y = 0; y < height; y++) {
-      result.push([]);
-      for (let x = 0; x < width; x++) {
-        result[y].push(this._getVal(x, y));
-      }
-    }
-    return result;
-  }
-}
-
-export function _cleanVal(val) {
-  if (val === 0) return "0";
-  if (!val) return "";
-  return val.toString();
-}
-
-export function _isEmpty(obj) {
-  return Object.keys(obj).length === 0;
-}
-export function _arrToHTML(arr) {
-  const table = document.createElement("table");
-  table.setAttribute("lang", navigator.language);
-  arr.forEach((row) => {
-    const tr = document.createElement("tr");
-    table.appendChild(tr);
-    row.forEach((cell) => {
-      const td = document.createElement("td");
-      tr.appendChild(td);
-      td.textContent = cell;
-    });
-  });
-  return `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"><html lang="${navigator.language}"><head>
-<meta http-equiv="content-type" content="text/html; charset=utf-8"/><title></title></head><body>${table.outerHTML}</body></html>`;
-}
-export const _defaultCss = `
-html{
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-::-webkit-scrollbar {
-  width: 0;
-  height:0;
-}
-*{
-  box-sizing: border-box;
-}
-body{
-  padding: 0; 
-  margin: 0;
-}
-table{
-  border-spacing: 0;
-  background: white;
-  border: 1px solid #ddd;
-  border-width: 0 1px 1px 0;
-  font-size: 16px;
-  font-family: sans-serif;
-  border-collapse: separate;
-}
-td{
-  padding:0;
-  border: 1px solid;
-  border-color: #ddd transparent transparent #ddd; 
-}
-td.selected.multi:not(.editing){
-  background:#d7f2f9;
-} 
-td.focus:not(.editing){
-  border-color: black;
-} 
-td>*{
-  border:none;
-  padding:10px;
-  min-width:100px;
-  min-height: 40px;
-  font:inherit;
-  line-height: 20px;
-  color:inherit;
-  white-space: normal;
-}
-td>div::selection {
-    color: none;
-    background: none;
-}
-`;

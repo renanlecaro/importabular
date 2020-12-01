@@ -1,5 +1,5 @@
-import { _parsePasteEvent } from "./index";
-import { _arrToHTML } from "./index";
+import { _parsePasteEvent } from "./_parsePasteEvent";
+import { _arrToHTML } from "./_arrToHTML";
 
 test("_parsePasteEvent", () => {
   const baseTable = [
