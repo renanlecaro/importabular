@@ -1,10 +1,11 @@
 const path = require('path');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+var MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const isProd = process.env.NODE_ENV === 'production'
 
 const TerserPlugin = require("terser-webpack-plugin");
-
+const CopyPlugin = require("copy-webpack-plugin");
 
 const common={
 
@@ -45,11 +46,20 @@ const docExport= {
   },
   plugins: [
     new CleanWebpackPlugin(),
+    new MiniCssExtractPlugin(),
+
     new HtmlWebpackPlugin({
       template:'src/demo/index.ejs',
       scriptLoading:'defer'
-    })
-  ],
+    }),
+    new CopyPlugin({
+      patterns: [
+        { from: "src/demo/public", to: "." }
+      ],
+    }),
+
+
+],
 ...common
 }
 
