@@ -13,48 +13,47 @@
   <body>
 
 
-  <section style="background: linear-gradient(141deg, #b700b1, #2c77df)">
-      <div>
-        <h2>Minimal spreadsheet javascript component</h2>
-        <ul class="checks">
-          <li title="Once minified and gzipped">Under 5 Kb</li>
-          <li
-            title="Basic support, double tap a cell to edit it, not tried on iphone"
-          >
-            Mobile friendly
-          </li>
-          <li title="Works from libre office, should work for other software">
-            Copy / paste
-          </li>
-          <li>MIT License</li>
-        </ul>
-      </div>
-
-      <div id="main-demo"></div>
-    </section>
 
   <section
-      style="background-image: linear-gradient(145deg, #ff7fc7, #b175c1)"
-    >
+          class="sample"
+          style="background-image: linear-gradient(-141deg, #cda9f9, #96c4ff)"
+  >
+      <div id="editor"></div>
       <div>
-        <h2>Usage</h2>
-        <p>Install it from npm</p>
-        <pre><code>npm install importabular</code></pre>
 
-        <p>Instanciate it on a dom node</p>
-        <pre><code lang="javascript">import Importabular from 'importabular'
-const sheet=new Importabular({
-  node:document.getElementById('editorNode'),
-})</code></pre>
+          <h1>Minimal spreadsheet javascript component</h1>
 
-        <p>Get the current data as a 2D array</p>
-        <pre><code lang="javascript">sheet.getData()</code></pre>
+          <p>Install it from npm</p>
+          <pre><code>npm install importabular</code></pre>
 
-        <p>Destroy it to remove event listeners</p>
-        <pre><code lang="javascript">sheet.destroy()</code></pre>
+          <p>Instantiate it on a dom node</p>
+
+          <pre><code data-script="simple"></code></pre>
+
+          <p>Manipulate the sheet programmatically</p>
+          <pre><code lang="javascript">sheet.getData();</code></pre>
+          <pre><code lang="javascript">sheet.setData([['First','line','text']);</code></pre>
+          <pre><code lang="javascript">sheet.destroy()</code></pre>
+
+
       </div>
-    </section>
 
+  </section>
+
+
+
+  <section
+          class="sample"
+          style="background-image: linear-gradient(141deg, #f25407, #ac02f9);"
+  >
+      <div id="with-checks"></div>
+      <div>
+          <h2>More complete example</h2>
+
+
+          <pre><code data-script="with-checks"></code></pre>
+      </div>
+  </section>
     <section
       style="background-image: linear-gradient(141deg, #0096c4, #165fac)"
     >
@@ -64,11 +63,6 @@ const sheet=new Importabular({
           I've created this lib because I was tired of having to remove 90% of
           the features offered by the very few open source libs for web
           spreadsheets.
-        </p>
-        <p>
-          Some common use cases have options, for the rest you should just read
-          <a href="https://github.com/renanlecaro/importabular">the source</a>
-          and subclass it, or fix the code.
         </p>
         <p>
           So for this reinventing the wheel to make sense, I should not add any
@@ -94,91 +88,7 @@ const sheet=new Importabular({
       </div>
     </section>
 
-    <section
-      class="sample"
-      style="background-image: linear-gradient(-141deg, #a9f1f9, #96c4ff)"
-    >
-      <div id="editor-minimal"></div>
-      <div>
-        <h2>Minimal example</h2>
-        <p>This is the most minimal way to embed the editor</p>
 
-        <pre><code data-script="minimal"></code></pre>
-      </div>
-    </section>
-
-    <section
-      class="sample"
-      style="background-image: linear-gradient(-141deg, #2dd3e6, #bff7f1)"
-    >
-      <div id="editor-css"></div>
-      <div>
-        <h2>Simple css</h2>
-        <p>Makes even rows slightly darker</p>
-
-
-          <pre><code data-script="editor-css"></code></pre>
-      </div>
-    </section>
-
-    <section
-      class="sample"
-      style="background-image: linear-gradient(-90deg, #fdffb1, #e8ffb4)"
-    >
-      <div style="display: flex; justify-content: space-between">
-        <div style="width: 45%">
-          <strong>Editor 1</strong>
-          <div id="editor-clone-1"></div>
-        </div>
-        <div style="width: 45%">
-          <strong>Editor 2</strong>
-          <div id="editor-clone-2"></div>
-        </div>
-      </div>
-      <div>
-        <h2>Linked editors</h2>
-        <p>
-          Changing the content of one editor should modify the content of the
-          second too
-        </p>
-
-          <pre><code data-script="2-editors"></code></pre>
-      </div>
-    </section>
-
-    <section
-      class="sample"
-      style="background-image: linear-gradient(-141deg, #cda9f9, #96c4ff)"
-    >
-      <div id="editor-simple-subclass"></div>
-      <div>
-        <h2>Subclasses editors</h2>
-        <p>
-          For specific changes to the editor, you can subclass the non minified
-          file
-        </p>
-
-          <pre><code data-script="simple-subclass"></code></pre>
-      </div>
-    </section>
-
-
-
-  <section
-          class="sample"
-          style="background-image: linear-gradient(-141deg, #cda9f9, #96c4ff)"
-  >
-      <div id="editor-with-headers"></div>
-      <div>
-          <h2>Columns mode</h2>
-          <p>
-              This different file lets you create tables with column headers and validation of the
-              user input.
-          </p>
-
-          <pre><code data-script="editor-with-headers"></code></pre>
-      </div>
-  </section>
 
 
   </body>

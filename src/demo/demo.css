@@ -86,6 +86,7 @@ pre > code {
   padding: 20px;
   overflow: auto;
   max-width: 100%;
+  max-height: 70vh;
 }
 pre.auto {
   display: block;

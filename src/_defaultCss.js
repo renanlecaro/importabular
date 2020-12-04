@@ -22,6 +22,7 @@ table{
   font-size: 16px;
   font-family: sans-serif;
   border-collapse: separate;
+  min-width:100%;
 }
 td, th{
   padding:0;
@@ -48,4 +49,11 @@ td>div::selection {
     color: none;
     background: none;
 }
+
+.placeholder div{
+  user-select:none;
+  color:rgba(0,0,0,0.2);
+}
+*[title] div{cursor:help;}
+th{text-align:left;}
 `;

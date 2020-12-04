@@ -1,9 +1,8 @@
-var Importabular;
-Importabular = (() => {
+module.exports.Importabular = (() => {
   "use strict";
   var t = {
       225: (t, e, i) => {
-        i.r(e), i.d(e, { default: () => r });
+        i.r(e), i.d(e, { Importabular: () => r });
         class s {
           constructor() {
             var t, e;
@@ -309,10 +308,14 @@ Importabular = (() => {
               this._setupDom(),
               this._replaceDataWithArray(t.data),
               this._incrementToFit({
-                x: this._options.minCols - 1,
+                x: this.columns.length - 1,
                 y: this._options.minRows - 1,
               }),
               this._fillScrollSpace();
+          }
+          _runChecks(t) {
+            const { titles: e, classNames: i } = this.checks(t);
+            this.checkResults = { titles: e, classNames: i };
           }
           _saveConstructorOptions({
             data: t = [],
@@ -320,31 +323,33 @@ Importabular = (() => {
             onChange: i = null,
             minRows: s = 1,
             maxRows: n = 1 / 0,
-            minCols: o = 1,
-            maxCols: r = 1 / 0,
-            css: h = "",
-            width: l = "100%",
-            height: a = "80vh",
+            css: o = "",
+            width: r = "100%",
+            height: l = "80vh",
+            columns: h,
+            checks: a,
           }) {
-            if (!e)
+            if (
+              ((this.columns = h),
+              (this.checks = a || (() => ({}))),
+              this._runChecks(t),
+              !e)
+            )
               throw new Error(
                 "You need to pass a node argument to Importabular, like this : new Importabular({node: document.body})"
               );
-            r !== 1 / 0 && (h += "table{min-width:100%;}"),
-              (this._parent = e),
+            (this._parent = e),
               (this._options = {
                 onChange: i,
                 minRows: s,
                 maxRows: n,
-                minCols: o,
-                maxCols: r,
                 css:
-                  "\nhtml{\n  -ms-overflow-style: none;\n  scrollbar-width: none;\n}\n::-webkit-scrollbar {\n  width: 0;\n  height:0;\n}\n*{\n  box-sizing: border-box;\n}\nbody{\n  padding: 0; \n  margin: 0;\n}\ntable{\n  border-spacing: 0;\n  background: white;\n  border: 1px solid #ddd;\n  border-width: 0 1px 1px 0;\n  font-size: 16px;\n  font-family: sans-serif;\n  border-collapse: separate;\n}\ntd, th{\n  padding:0;\n  border: 1px solid;\n  border-color: #ddd transparent transparent #ddd; \n}\ntd.selected.multi:not(.editing){\n  background:#d7f2f9;\n} \ntd.focus:not(.editing){\n  border-color: black;\n} \ntd>*, th>*{\n  border:none;\n  padding:10px;\n  min-width:100px;\n  min-height: 40px;\n  font:inherit;\n  line-height: 20px;\n  color:inherit;\n  white-space: normal;\n}\ntd>div::selection {\n    color: none;\n    background: none;\n}\n" +
-                  h,
+                  "\nhtml{\n  -ms-overflow-style: none;\n  scrollbar-width: none;\n}\n::-webkit-scrollbar {\n  width: 0;\n  height:0;\n}\n*{\n  box-sizing: border-box;\n}\nbody{\n  padding: 0; \n  margin: 0;\n}\ntable{\n  border-spacing: 0;\n  background: white;\n  border: 1px solid #ddd;\n  border-width: 0 1px 1px 0;\n  font-size: 16px;\n  font-family: sans-serif;\n  border-collapse: separate;\n  min-width:100%;\n}\ntd, th{\n  padding:0;\n  border: 1px solid;\n  border-color: #ddd transparent transparent #ddd; \n}\ntd.selected.multi:not(.editing){\n  background:#d7f2f9;\n} \ntd.focus:not(.editing){\n  border-color: black;\n} \ntd>*, th>*{\n  border:none;\n  padding:10px;\n  min-width:100px;\n  min-height: 40px;\n  font:inherit;\n  line-height: 20px;\n  color:inherit;\n  white-space: normal;\n}\ntd>div::selection {\n    color: none;\n    background: none;\n}\n\n.placeholder div{\n  user-select:none;\n  color:rgba(0,0,0,0.2);\n}\n*[title] div{cursor:help;}\nth{text-align:left;}\n" +
+                  o,
               }),
               (this._iframeStyle = {
-                width: l,
-                height: a,
+                width: r,
+                height: l,
                 border: "none",
                 background: "transparent",
               });
@@ -352,7 +357,7 @@ Importabular = (() => {
           _fitBounds({ x: t, y: e }) {
             return (
               t >= 0 &&
-              t < this._options.maxCols &&
+              t < this.columns.length &&
               e >= 0 &&
               e < this._options.maxRows
             );
@@ -364,7 +369,8 @@ Importabular = (() => {
           }
           _onDataChanged() {
             this._options.onChange &&
-              this._options.onChange(this._data._toArr());
+              this._options.onChange(this._data._toArr()),
+              this._runChecks(this._data._toArr());
           }
           _renderTDContent(t, e, i) {
             const s = document.createElement("div");
@@ -374,9 +380,11 @@ Importabular = (() => {
             n ? (s.textContent = n) : (s.innerHTML = "&nbsp;"),
               t.appendChild(s),
               this._restyle({ x: e, y: i });
+            const o = l(this.checkResults.titles, e, i);
+            o ? t.setAttribute("title", o) : t.removeAttribute("title");
           }
           _divContent(t, e) {
-            return this._getVal(t, e);
+            return this._getVal(t, e) || this.columns[t].placeholder;
           }
           _setupDom() {
             const t = document.createElement("iframe");
@@ -390,8 +398,20 @@ Importabular = (() => {
               e.close(),
               Object.assign(t.style, this._iframeStyle);
             const i = document.createElement("table"),
-              s = document.createElement("tbody");
-            i.appendChild(s),
+              s = document.createElement("tbody"),
+              n = document.createElement("THEAD"),
+              r = document.createElement("TR");
+            n.appendChild(r),
+              this.columns.forEach((t) => {
+                const e = document.createElement("TH"),
+                  i = document.createElement("div");
+                (i.innerHTML = t.label),
+                  t.title && e.setAttribute("title", t.title),
+                  e.appendChild(i),
+                  r.appendChild(e);
+              }),
+              i.appendChild(n),
+              i.appendChild(s),
               e.body.appendChild(i),
               (this.tbody = s),
               (this.table = i);
@@ -478,23 +498,23 @@ Importabular = (() => {
                 n > 1
                   ? this._selection
                   : {
-                      rx: [0, this._options.maxCols],
+                      rx: [0, this.columns.length],
                       ry: [0, this._options.maxRows],
                     };
-            let h;
-            if (t) h = _shift(i, s, e, o[0], o[1] - 1, r[0], r[1] - 1);
+            let l;
+            if (t) l = _shift(i, s, e, o[0], o[1] - 1, r[0], r[1] - 1);
             else {
               const t = _shift(s, i, e, r[0], r[1] - 1, o[0], o[1] - 1);
-              h = { x: t.y, y: t.x };
+              l = { x: t.y, y: t.x };
             }
-            this._fitBounds(h) &&
+            this._fitBounds(l) &&
               (this._stopEditing(),
-              this._incrementToFit(h),
+              this._incrementToFit(l),
               this._changeSelectedCellsStyle(() => {
-                (this._focus = h),
-                  n <= 1 && (this._selectionStart = this._selectionEnd = h);
+                (this._focus = l),
+                  n <= 1 && (this._selectionStart = this._selectionEnd = l);
               }),
-              this._scrollIntoView(h));
+              this._scrollIntoView(l));
           }
           _scrollIntoView({ x: t, y: e }) {
             this._getCell(t, e).scrollIntoView({
@@ -581,6 +601,8 @@ Importabular = (() => {
                 t === this._editing.x &&
                 e === this._editing.y &&
                 (n += " editing"),
+              this._getVal(t, e) || (n += " placeholder"),
+              (n += " " + l(this.checkResults.classNames, t, e)),
               n
             );
           }
@@ -621,6 +643,9 @@ Importabular = (() => {
           _getCell(t, e) {
             return this.tbody.children[e].children[t];
           }
+        }
+        function l(t, e, i) {
+          return (t && t[i] && t[i][e]) || "";
         }
       },
     },

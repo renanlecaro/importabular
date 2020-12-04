@@ -65,19 +65,16 @@ const docExport= {
 function libExport({filename, mangle}) {
   return {
     ...common,
-    entry:{
-      index:'./src/index.js',
-      withHeaders:'./src/withHeaders.js'
-    },
+    entry:'./src/index.js',
     output: {
-      filename: '[name].js',
+      filename: 'index.js',
       path: path.resolve(__dirname, 'dist'),
       library: 'Importabular',
+      libraryTarget:'commonjs2'
     },
     plugins: [
       new CleanWebpackPlugin(),
     ],
-
   }
 }
 module.exports = [

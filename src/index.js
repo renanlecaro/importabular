@@ -28,24 +28,32 @@ const _events = [
  *               has changed, receives the new data as an argument.
  *@param {Number} options.minRows Minimum number of rows.
  *@param {Number} options.maxRows Maximum number of rows, the table will not grow vertically beyond this.
- *@param {Number} options.minCols Minimum number of columns.
- *@param {Number} options.maxCols Maximum number of columns, the table will not grow horizontally beyond this.
  *@param {String} options.css Css code to add inside the iframe.
+ *@param {String} options.columns Array of columns definitions
  *
  *@param {Object} options.width Width of the iframe that will contain the table.
  *@param {Object} options.height Height of the iframe that will contain the table.
  *
  */
-export default class _Importabular {
+
+export class Importabular {
   constructor(options) {
     this._saveConstructorOptions(options);
     this._setupDom();
     this._replaceDataWithArray(options.data);
     this._incrementToFit({
-      x: this._options.minCols - 1,
+      x: this.columns.length - 1,
       y: this._options.minRows - 1,
     });
     this._fillScrollSpace();
+  }
+  _runChecks(data) {
+    const { titles, classNames } = this.checks(data);
+
+    this.checkResults = {
+      titles,
+      classNames,
+    };
   }
   _saveConstructorOptions({
     data = [],
@@ -53,19 +61,20 @@ export default class _Importabular {
     onChange = null,
     minRows = 1,
     maxRows = Infinity,
-    minCols = 1,
-    maxCols = Infinity,
     css = "",
     width = "100%",
     height = "80vh",
+    columns,
+    checks,
   }) {
+    this.columns = columns;
+    this.checks = checks || (() => ({}));
+    this._runChecks(data);
+
     if (!node) {
       throw new Error(
         "You need to pass a node argument to Importabular, like this : new Importabular({node: document.body})"
       );
-    }
-    if (maxCols !== Infinity) {
-      css += "table{min-width:100%;}";
     }
     // Reference to the parent DOM element, contains the iframe
     this._parent = node;
@@ -73,8 +82,6 @@ export default class _Importabular {
       onChange,
       minRows,
       maxRows,
-      minCols,
-      maxCols,
       css: _defaultCss + css,
     };
     this._iframeStyle = {
@@ -97,7 +104,7 @@ export default class _Importabular {
   /** @private Checks whether this cell should be editable, or if it's out of bounds*/
   _fitBounds({ x, y }) {
     return (
-      x >= 0 && x < this._options.maxCols && y >= 0 && y < this._options.maxRows
+      x >= 0 && x < this.columns.length && y >= 0 && y < this._options.maxRows
     );
   }
 
@@ -111,6 +118,7 @@ export default class _Importabular {
   /** @private Runs the onchange callback*/
   _onDataChanged() {
     if (this._options.onChange) this._options.onChange(this._data._toArr());
+    this._runChecks(this._data._toArr());
   }
 
   /** @private Create a div with the cell content and correct style */
@@ -127,10 +135,14 @@ export default class _Importabular {
     }
     td.appendChild(div);
     this._restyle({ x, y });
+
+    const title = _fromArr(this.checkResults.titles, x, y);
+    if (title) td.setAttribute("title", title);
+    else td.removeAttribute("title");
   }
 
   _divContent(x, y) {
-    return this._getVal(x, y);
+    return this._getVal(x, y) || this.columns[x].placeholder;
   }
 
   _setupDom() {
@@ -153,6 +165,18 @@ export default class _Importabular {
     const table = document.createElement("table");
     const tbody = document.createElement("tbody");
 
+    const thead = document.createElement("THEAD");
+    const tr = document.createElement("TR");
+    thead.appendChild(tr);
+    this.columns.forEach((col) => {
+      const th = document.createElement("TH");
+      const div = document.createElement("div");
+      div.innerHTML = col.label;
+      col.title && th.setAttribute("title", col.title);
+      th.appendChild(div);
+      tr.appendChild(th);
+    });
+    table.appendChild(thead);
     table.appendChild(tbody);
     cwd.body.appendChild(table);
     this.tbody = tbody;
@@ -374,7 +398,7 @@ export default class _Importabular {
       selectionSize > 1
         ? this._selection
         : {
-            rx: [0, this._options.maxCols],
+            rx: [0, this.columns.length],
             ry: [0, this._options.maxRows],
           };
 
@@ -635,6 +659,9 @@ export default class _Importabular {
       classes += " editing";
     }
 
+    if (!this._getVal(x, y)) classes += " placeholder";
+    classes += " " + _fromArr(this.checkResults.classNames, x, y);
+
     return classes;
   }
 
@@ -704,4 +731,8 @@ export default class _Importabular {
   _getCell(x, y) {
     return this.tbody.children[y].children[x];
   }
+}
+
+function _fromArr(arr, x, y) {
+  return (arr && arr[y] && arr[y][x]) || "";
 }

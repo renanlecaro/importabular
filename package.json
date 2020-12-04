@@ -1,16 +1,15 @@
 {
   "name": "importabular",
-  "version": "0.2.2",
+  "version": "0.2.4",
   "description": "5kb javascript spreadsheet, let your users import their data from excel.",
   "main": "dist/index.js",
   "files": [
-    "dist/index.js",
-    "dist/withHeaders.js"
+    "dist/index.js"
   ],
   "scripts": {
     "start": "webpack serve",
     "build": "bash ./build.sh",
-    "pretty": "prettier --write src/demo src",
+    "pretty": "prettier --write src/**",
     "test": "jest"
   },
   "repository": {
