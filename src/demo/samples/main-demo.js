@@ -1,4 +1,4 @@
-import Importabular from "../../index";
+import Importabular from "../..";
 
 window.sheet = new Importabular({
   data: [

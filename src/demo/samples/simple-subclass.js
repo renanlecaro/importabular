@@ -1,4 +1,4 @@
-import Importabular from "../../index.js";
+import Importabular from "../..";
 
 class CustomEditor extends Importabular {
   _fillScrollSpace() {

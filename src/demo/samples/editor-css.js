@@ -1,4 +1,4 @@
-import Importabular from "../../index.js";
+import Importabular from "../..";
 
 new Importabular({
   node: document.getElementById("editor-css"),

@@ -6,7 +6,7 @@ function setCode(code, codeBlockId) {
   const pre=document.createElement('pre')
   const formattedCode=code
     .replace('from "../..', 'from "importabular')
-
+    .replace('importabular/withHeaders.js', 'importabular/dist/withHeaders.js')
   pre.innerText = formattedCode
   if(codeBlockId==='2-editors')
   console.log(formattedCode)
