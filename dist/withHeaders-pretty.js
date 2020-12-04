@@ -3,7 +3,7 @@ Importabular = (() => {
   "use strict";
   var t = {
       225: (t, e, i) => {
-        i.r(e), i.d(e, { default: () => r });
+        i.d(e, { default: () => r });
         class s {
           constructor() {
             var t, e;
@@ -322,15 +322,15 @@ Importabular = (() => {
             maxRows: n = 1 / 0,
             minCols: o = 1,
             maxCols: r = 1 / 0,
-            css: h = "",
-            width: l = "100%",
+            css: l = "",
+            width: h = "100%",
             height: a = "80vh",
           }) {
             if (!e)
               throw new Error(
                 "You need to pass a node argument to Importabular, like this : new Importabular({node: document.body})"
               );
-            r !== 1 / 0 && (h += "table{min-width:100%;}"),
+            r !== 1 / 0 && (l += "table{min-width:100%;}"),
               (this._parent = e),
               (this._options = {
                 onChange: i,
@@ -340,10 +340,10 @@ Importabular = (() => {
                 maxCols: r,
                 css:
                   "\nhtml{\n  -ms-overflow-style: none;\n  scrollbar-width: none;\n}\n::-webkit-scrollbar {\n  width: 0;\n  height:0;\n}\n*{\n  box-sizing: border-box;\n}\nbody{\n  padding: 0; \n  margin: 0;\n}\ntable{\n  border-spacing: 0;\n  background: white;\n  border: 1px solid #ddd;\n  border-width: 0 1px 1px 0;\n  font-size: 16px;\n  font-family: sans-serif;\n  border-collapse: separate;\n}\ntd, th{\n  padding:0;\n  border: 1px solid;\n  border-color: #ddd transparent transparent #ddd; \n}\ntd.selected.multi:not(.editing){\n  background:#d7f2f9;\n} \ntd.focus:not(.editing){\n  border-color: black;\n} \ntd>*, th>*{\n  border:none;\n  padding:10px;\n  min-width:100px;\n  min-height: 40px;\n  font:inherit;\n  line-height: 20px;\n  color:inherit;\n  white-space: normal;\n}\ntd>div::selection {\n    color: none;\n    background: none;\n}\n" +
-                  h,
+                  l,
               }),
               (this._iframeStyle = {
-                width: l,
+                width: h,
                 height: a,
                 border: "none",
                 background: "transparent",
@@ -481,20 +481,20 @@ Importabular = (() => {
                       rx: [0, this._options.maxCols],
                       ry: [0, this._options.maxRows],
                     };
-            let h;
-            if (t) h = _shift(i, s, e, o[0], o[1] - 1, r[0], r[1] - 1);
+            let l;
+            if (t) l = _shift(i, s, e, o[0], o[1] - 1, r[0], r[1] - 1);
             else {
               const t = _shift(s, i, e, r[0], r[1] - 1, o[0], o[1] - 1);
-              h = { x: t.y, y: t.x };
+              l = { x: t.y, y: t.x };
             }
-            this._fitBounds(h) &&
+            this._fitBounds(l) &&
               (this._stopEditing(),
-              this._incrementToFit(h),
+              this._incrementToFit(l),
               this._changeSelectedCellsStyle(() => {
-                (this._focus = h),
-                  n <= 1 && (this._selectionStart = this._selectionEnd = h);
+                (this._focus = l),
+                  n <= 1 && (this._selectionStart = this._selectionEnd = l);
               }),
-              this._scrollIntoView(h));
+              this._scrollIntoView(l));
           }
           _scrollIntoView({ x: t, y: e }) {
             this._getCell(t, e).scrollIntoView({
@@ -623,6 +623,68 @@ Importabular = (() => {
           }
         }
       },
+      526: (t, e, i) => {
+        i.r(e), i.d(e, { default: () => n });
+        var s = i(225);
+        class n extends s.default {
+          _saveConstructorOptions({
+            columns: t,
+            checks: e,
+            data: i,
+            css: s = "",
+            ...n
+          }) {
+            (this.columns = t),
+              (this.checks = e || (() => ({}))),
+              this._runChecks(i),
+              super._saveConstructorOptions({
+                ...n,
+                maxCols: t.length,
+                css:
+                  s +
+                  "\n.placeholder div{\n  user-select:none;\n  color:rgba(0,0,0,0.3);\n}\n*[title] div{cursor:help;}\nth{text-align:left;}\n",
+              });
+          }
+          _runChecks(t) {
+            const { titles: e, classNames: i } = this.checks(t);
+            this.checkResults = { titles: e, classNames: i };
+          }
+          _setupDom() {
+            super._setupDom();
+            const t = document.createElement("THEAD"),
+              e = document.createElement("TR");
+            t.appendChild(e),
+              this.columns.forEach((t) => {
+                const i = document.createElement("TH"),
+                  s = document.createElement("div");
+                (s.innerHTML = t.label),
+                  t.title && i.setAttribute("title", t.title),
+                  i.appendChild(s),
+                  e.appendChild(i);
+              }),
+              this.table.insertBefore(t, this.tbody);
+          }
+          _divContent(t, e) {
+            return this._getVal(t, e) || this.columns[t].placeholder;
+          }
+          _classNames(t, e) {
+            const i = this._getVal(t, e) ? "" : " placeholder",
+              s = " " + o(this.checkResults.classNames, t, e);
+            return super._classNames(t, e) + i + s;
+          }
+          _onDataChanged() {
+            super._onDataChanged(), this._runChecks(this._data._toArr());
+          }
+          _renderTDContent(t, e, i) {
+            super._renderTDContent(t, e, i);
+            const s = o(this.checkResults.titles, e, i);
+            s ? t.setAttribute("title", s) : t.removeAttribute("title");
+          }
+        }
+        function o(t, e, i) {
+          return (t && t[i] && t[i][e]) || "";
+        }
+      },
     },
     e = {};
   function i(s) {
@@ -644,6 +706,6 @@ Importabular = (() => {
         Object.defineProperty(t, Symbol.toStringTag, { value: "Module" }),
         Object.defineProperty(t, "__esModule", { value: !0 });
     }),
-    i(225)
+    i(526)
   );
 })();

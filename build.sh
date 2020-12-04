@@ -4,10 +4,14 @@ NODE_ENV=production webpack
 
 # Gzipp size check
 gzip -k ./dist/index.js
+gzip -k ./dist/withHeaders.js
 
 # Pretty copy
 cp ./dist/index.js ./dist/index-pretty.js
 prettier --write  ./dist/index-pretty.js
+
+cp ./dist/withHeaders.js ./dist/withHeaders-pretty.js
+prettier --write  ./dist/withHeaders-pretty.js
 
 ls -l  ./dist/
 

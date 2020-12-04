@@ -4,7 +4,6 @@ var MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const isProd = process.env.NODE_ENV === 'production'
 
-const TerserPlugin = require("terser-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 
 const common={
@@ -64,45 +63,27 @@ const docExport= {
 }
 
 function libExport({filename, mangle}) {
-return {
-  ...common,
-  entry:{
-    index:'./src/index.js',
-    withHeaders:'./src/withHeaders.js'
-  },
-  output: {
-    filename: filename,
-    path: path.resolve(__dirname, 'dist'),
-    library: 'Importabular',
-  },
-  plugins: [
-    new CleanWebpackPlugin(),
-  ],
-  optimization: {
-    runtimeChunk: true ,
-    minimize: true,
-    minimizer: [new TerserPlugin({
-      terserOptions: {
-        ecma: 5,
-        module:true,
-        compress:true,
-        mangle,
-      },
-    }),],
-  },
+  return {
+    ...common,
+    entry:{
+      index:'./src/index.js',
+      withHeaders:'./src/withHeaders.js'
+    },
+    output: {
+      filename: '[name].js',
+      path: path.resolve(__dirname, 'dist'),
+      library: 'Importabular',
+    },
+    plugins: [
+      new CleanWebpackPlugin(),
+    ],
+
+  }
 }
-}
-// https://webpack.js.org/concepts/targets/#multiple-targets
 module.exports = [
   docExport,
   isProd && libExport({
-    filename:"[name].js",
+    filename:"",
     mangle:{}
   })
-  // isProd && libExport({
-  //   filename:"[name]-min.js",
-  //   mangle:{  properties: {
-  //       regex:/^_/
-  //     }}
-  // }),
 ].filter(i=>i)
