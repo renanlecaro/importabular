@@ -109,3 +109,20 @@ section.sample > :first-child {
   /*We flip the order of the script and the container so that the script can see the container when it runs*/
   order: 2;
 }
+.github-corner {
+  display: block;
+  text-decoration: none;
+  background: white;
+  color: black;
+  text-align: center;
+  padding: 20px;
+}
+@media screen and (min-width: 1200px) {
+  .github-corner {
+    position: fixed;
+    top: 0;
+    right: 0;
+    padding: 10px 60px;
+    transform: translate(50px,50px) rotate(45deg);
+  }
+}
