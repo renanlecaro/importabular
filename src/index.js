@@ -120,6 +120,7 @@ export default class Importabular {
   _onDataChanged() {
     if (this._options.onChange) this._options.onChange(this._data._toArr());
     this._runChecks(this._data._toArr());
+    this._restyleAll()
   }
 
   /** @private Create a div with the cell content and correct style */
@@ -137,9 +138,6 @@ export default class Importabular {
     td.appendChild(div);
     this._restyle({ x, y });
 
-    const title = _fromArr(this.checkResults.titles, x, y);
-    if (title) td.setAttribute("title", title);
-    else td.removeAttribute("title");
   }
 
   _divContent(x, y) {
@@ -635,8 +633,20 @@ export default class Importabular {
   }
 
   _restyle = ({ x, y }) => {
-    this._getCell(x, y).className = this._classNames(x, y);
+    const td =this._getCell(x, y)
+    td.className = this._classNames(x, y);
+
+    const title = _fromArr(this.checkResults.titles, x, y);
+    if (title) td.setAttribute("title", title);
+    else td.removeAttribute("title");
+
   };
+
+  _restyleAll(){
+    for(var x=0;x<this._width;x++)
+    for(var y=0;y<this._height;y++)
+      this._restyle({x,y});
+  }
 
   _selectionSize() {
     const { rx, ry } = this._selection;

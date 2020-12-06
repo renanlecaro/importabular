@@ -44,28 +44,39 @@ const sheet = new Importabular({
 });
 
 function checkData(data) {
+  // Generate tooltip content for each problem
   const titles = data.map((line) => [
-    nameOk(line) ? "" : "Name is required",
-    phoneOk(line) ? "" : "Invalid phone number",
-    emailOk(line) ? "" : "Invalid  email address",
+    checkName(line),
+    checkPhone(line),
+    checkEmail(line),
   ]);
 
-  const classNames = data.map((line) => [
-    nameOk(line) ? line[0] && "valid" : "invalid",
-    phoneOk(line) ? line[1] && "valid" : "invalid",
-    emailOk(line) ? line[2] && "valid" : "invalid",
+  // Display the cell as invalid if there's a problem
+  const classNames = data.map((line, index) => [
+    titles[index][0] ?  "invalid": line[0] && "valid",
+    titles[index][1] ?  "invalid": line[1] && "valid",
+    titles[index][2] ?  "invalid": line[2] && "valid",
   ]);
 
   return { titles, classNames };
 }
 
-function nameOk([name, phone, email]) {
-  return name || (!phone && !email);
+function checkName([name, phone, email]) {
+
+  if(!name && (phone || email)){
+    return 'Name is required'
+  }
 }
-function phoneOk([name, phone, email]) {
-  return !phone || phone.match(/\+[0-9]+/);
+function checkPhone([name, phone, email]) {
+  if(phone && !phone.match(/\+[0-9]+/))
+    return  'Invalid phone number'
 }
 
-function emailOk([name, phone, email]) {
-  return email && email.match(/[a-z0-9.-]+@[a-z0-9.-]+/gi);
+function checkEmail([name, phone, email]) {
+  if(name && !email)
+    return  'Email is required'
+
+  if(!email.match(/[a-z0-9.-]+@[a-z0-9.-]+/gi)){
+    return 'Invalid  email address'
+  }
 }

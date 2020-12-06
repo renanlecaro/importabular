@@ -322,7 +322,10 @@
                   13 === t.keyCode && (this._stopEditing(), t.preventDefault());
                 }),
                 o(this, "_restyle", ({ x: t, y: e }) => {
-                  this._getCell(t, e).className = this._classNames(t, e);
+                  const i = this._getCell(t, e);
+                  i.className = this._classNames(t, e);
+                  const s = h(this.checkResults.titles, t, e);
+                  s ? i.setAttribute("title", s) : i.removeAttribute("title");
                 }),
                 o(this, "_refreshDisplayedValue", ({ x: t, y: e }) => {
                   const i = this._getCell(t, e).firstChild;
@@ -396,7 +399,8 @@
             _onDataChanged() {
               this._options.onChange &&
                 this._options.onChange(this._data._toArr()),
-                this._runChecks(this._data._toArr());
+                this._runChecks(this._data._toArr()),
+                this._restyleAll();
             }
             _renderTDContent(t, e, i) {
               const s = document.createElement("div");
@@ -406,8 +410,6 @@
               n ? (s.textContent = n) : (s.innerHTML = "&nbsp;"),
                 t.appendChild(s),
                 this._restyle({ x: e, y: i });
-              const o = h(this.checkResults.titles, e, i);
-              o ? t.setAttribute("title", o) : t.removeAttribute("title");
             }
             _divContent(t, e) {
               return this._getVal(t, e) || this.columns[t].placeholder;
@@ -607,6 +609,11 @@
               for (let s = t[0]; s < t[1]; s++)
                 for (let t = e[0]; t < e[1]; t++)
                   this._fitBounds({ x: s, y: t }) && i({ x: s, y: t });
+            }
+            _restyleAll() {
+              for (var t = 0; t < this._width; t++)
+                for (var e = 0; e < this._height; e++)
+                  this._restyle({ x: t, y: e });
             }
             _selectionSize() {
               const { rx: t, ry: e } = this._selection;
