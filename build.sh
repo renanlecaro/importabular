@@ -3,7 +3,7 @@
 NODE_ENV=production webpack
 
 # Gzipp size check
-gzip -k ./dist/index.js
+gzip -kf ./dist/index.js
 # Pretty copy
 cp ./dist/index.js ./dist/index-pretty.js
 prettier --write  ./dist/index-pretty.js

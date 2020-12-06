@@ -2,9 +2,9 @@ import "./demo.css";
 
 function setCode(code, codeBlockId) {
   const pre = document.createElement("pre");
-  const formattedCode = code;
-  // .replace('from "../..', 'from "importabular')
-  // .replace("importabular/withHeaders.js", "importabular/dist/withHeaders.js");
+  const formattedCode = code
+  .replace(/ from "[^;]*;/, 'from "importabular";')
+
   pre.innerText = formattedCode;
 
   document

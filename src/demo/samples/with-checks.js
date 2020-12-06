@@ -1,4 +1,4 @@
-import { Importabular } from "../../index.js";
+import Importabular from "../../index";
 
 const sheet = new Importabular({
   node: document.getElementById("with-checks"),

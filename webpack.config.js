@@ -69,8 +69,15 @@ function libExport({filename, mangle}) {
     output: {
       filename: 'index.js',
       path: path.resolve(__dirname, 'dist'),
+      // library: "default",
+      // libraryExport: "default",
+      // libraryTarget: "var"
+      libraryExport: "default" ,
+      libraryTarget: 'umd',
       library: 'Importabular',
-      libraryTarget:'commonjs2'
+      // libraryTarget:'commonjs2'
+      // libraryExport: "Importabular" ,
+      // libraryTarget: 'commonjs2'
     },
     plugins: [
       new CleanWebpackPlugin(),

@@ -29,14 +29,14 @@ const _events = [
  *@param {Number} options.minRows Minimum number of rows.
  *@param {Number} options.maxRows Maximum number of rows, the table will not grow vertically beyond this.
  *@param {String} options.css Css code to add inside the iframe.
- *@param {String} options.columns Array of columns definitions
+ *@param {String} options.columns Array of columns definition
  *
  *@param {Object} options.width Width of the iframe that will contain the table.
  *@param {Object} options.height Height of the iframe that will contain the table.
  *
  */
 
-export class Importabular {
+export default class Importabular {
   constructor(options) {
     this._saveConstructorOptions(options);
     this._setupDom();
