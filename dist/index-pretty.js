@@ -10,8 +10,8 @@
   return (() => {
     "use strict";
     var t = {
-        225: (t, e, i) => {
-          i.d(e, { default: () => r });
+        895: (t, e, i) => {
+          i.d(e, { default: () => l });
           class s {
             constructor() {
               var t, e;
@@ -61,7 +61,19 @@
               return i;
             }
           }
-          function n(t, e, i) {
+          function n(t, e, i, s, n, o, r) {
+            if ((t += i) < s) {
+              if (n === 1 / 0) return { x: s, y: e };
+              if (((t = n), --e < o)) {
+                if (r === 1 / 0) return { x: s, y: o };
+                e = r;
+              }
+            }
+            return (
+              t > n && ((t = s), ++e > r && ((e = o), (t = s))), { x: t, y: e }
+            );
+          }
+          function o(t, e, i) {
             return (
               e in t
                 ? Object.defineProperty(t, e, {
@@ -74,7 +86,7 @@
               t
             );
           }
-          const o = [
+          const r = [
             "mousedown",
             "mouseenter",
             "mouseup",
@@ -87,12 +99,12 @@
             "cut",
             "copy",
           ];
-          class r {
+          class l {
             constructor(t) {
-              n(this, "_width", 1),
-                n(this, "_height", 1),
-                n(this, "_data", new s()),
-                n(this, "paste", (t) => {
+              o(this, "_width", 1),
+                o(this, "_height", 1),
+                o(this, "_data", new s()),
+                o(this, "paste", (t) => {
                   if (this._editing) return;
                   t.preventDefault();
                   const e = (function (t) {
@@ -141,7 +153,7 @@
                       this._onDataChanged();
                   });
                 }),
-                n(this, "copy", (t) => {
+                o(this, "copy", (t) => {
                   if (this._editing) return;
                   const e = this._getSelectionAsArray();
                   e &&
@@ -169,11 +181,11 @@
                       e.map((t) => t.join("")).join("\n")
                     ));
                 }),
-                n(this, "cut", (t) => {
+                o(this, "cut", (t) => {
                   this._editing ||
                     (this.copy(t), this._setAllSelectedCellsTo(""));
                 }),
-                n(this, "keydown", (t) => {
+                o(this, "keydown", (t) => {
                   t.ctrlKey ||
                     (this._selectionStart &&
                       ("Escape" === t.key &&
@@ -212,13 +224,13 @@
                             (this._getCell(t, e).firstChild.value = "");
                         })));
                 }),
-                n(this, "_selecting", !1),
-                n(this, "_selectionStart", null),
-                n(this, "_selectionEnd", null),
-                n(this, "_selection", { rx: [0, 0], ry: [0, 0] }),
-                n(this, "_editing", null),
-                n(this, "_focus", null),
-                n(this, "mousedown", (t) => {
+                o(this, "_selecting", !1),
+                o(this, "_selectionStart", null),
+                o(this, "_selectionEnd", null),
+                o(this, "_selection", { rx: [0, 0], ry: [0, 0] }),
+                o(this, "_editing", null),
+                o(this, "_focus", null),
+                o(this, "mousedown", (t) => {
                   if (!this.mobile) {
                     if (
                       3 === t.which &&
@@ -243,16 +255,16 @@
                     });
                   }
                 }),
-                n(this, "mouseenter", (t) => {
+                o(this, "mouseenter", (t) => {
                   this.mobile ||
                     (this._selecting &&
                       this._changeSelectedCellsStyle(() => {
                         this._selectionEnd = this._getCoords(t);
                       }));
                 }),
-                n(this, "_lastMouseUp", null),
-                n(this, "_lastMouseUpTarget", null),
-                n(this, "mouseup", (t) => {
+                o(this, "_lastMouseUp", null),
+                o(this, "_lastMouseUpTarget", null),
+                o(this, "mouseup", (t) => {
                   this.mobile ||
                     (3 !== t.which &&
                       this._selecting &&
@@ -270,15 +282,15 @@
                           (this._lastMouseUpTarget = this._selectionEnd);
                       }));
                 }),
-                n(this, "mouseleave", (t) => {
+                o(this, "mouseleave", (t) => {
                   t.target === this.tbody &&
                     this._selecting &&
                     this._endSelection();
                 }),
-                n(this, "touchstart", (t) => {
+                o(this, "touchstart", (t) => {
                   this._editing || ((this.mobile = !0), (this.moved = !1));
                 }),
-                n(this, "touchend", (t) => {
+                o(this, "touchend", (t) => {
                   this.mobile &&
                     (this._editing ||
                       this.moved ||
@@ -289,10 +301,10 @@
                       }),
                       this._startEditing(this._focus)));
                 }),
-                n(this, "touchmove", (t) => {
+                o(this, "touchmove", (t) => {
                   this.mobile && (this.moved = !0);
                 }),
-                n(this, "_stopEditing", () => {
+                o(this, "_stopEditing", () => {
                   if (!this._editing) return;
                   const { x: t, y: e } = this._editing,
                     i = this._getCell(t, e);
@@ -306,13 +318,13 @@
                     (this._editing = null),
                     this._renderTDContent(i, t, e);
                 }),
-                n(this, "_blurIfEnter", (t) => {
+                o(this, "_blurIfEnter", (t) => {
                   13 === t.keyCode && (this._stopEditing(), t.preventDefault());
                 }),
-                n(this, "_restyle", ({ x: t, y: e }) => {
+                o(this, "_restyle", ({ x: t, y: e }) => {
                   this._getCell(t, e).className = this._classNames(t, e);
                 }),
-                n(this, "_refreshDisplayedValue", ({ x: t, y: e }) => {
+                o(this, "_refreshDisplayedValue", ({ x: t, y: e }) => {
                   const i = this._getCell(t, e).firstChild;
                   "DIV" === i.tagName &&
                     (i.textContent = this._divContent(t, e)),
@@ -394,7 +406,7 @@
               n ? (s.textContent = n) : (s.innerHTML = "&nbsp;"),
                 t.appendChild(s),
                 this._restyle({ x: e, y: i });
-              const o = l(this.checkResults.titles, e, i);
+              const o = h(this.checkResults.titles, e, i);
               o ? t.setAttribute("title", o) : t.removeAttribute("title");
             }
             _divContent(t, e) {
@@ -414,15 +426,15 @@
               const i = document.createElement("table"),
                 s = document.createElement("tbody"),
                 n = document.createElement("THEAD"),
-                r = document.createElement("TR");
-              n.appendChild(r),
+                o = document.createElement("TR");
+              n.appendChild(o),
                 this.columns.forEach((t) => {
                   const e = document.createElement("TH"),
                     i = document.createElement("div");
                   (i.innerHTML = t.label),
                     t.title && e.setAttribute("title", t.title),
                     e.appendChild(i),
-                    r.appendChild(e);
+                    o.appendChild(e);
                 }),
                 i.appendChild(n),
                 i.appendChild(s),
@@ -434,11 +446,11 @@
                 s.appendChild(e);
                 for (let i = 0; i < this._width; i++) this._addCell(e, i, t);
               }
-              o.forEach((t) => e.addEventListener(t, this[t], !0));
+              r.forEach((t) => e.addEventListener(t, this[t], !0));
             }
             destroy() {
               this._destroyEditing(),
-                o.forEach((t) => this.cwd.removeEventListener(t, this[t], !0)),
+                r.forEach((t) => this.cwd.removeEventListener(t, this[t], !0)),
                 this.iframe.parentElement.removeChild(this.iframe);
             }
             _addCell(t, e, i) {
@@ -507,28 +519,28 @@
             }
             _tabCursorInSelection(t, e = 1) {
               let { x: i, y: s } = this._focus || { x: 0, y: 0 };
-              const n = this._selectionSize(),
-                { rx: o, ry: r } =
-                  n > 1
+              const o = this._selectionSize(),
+                { rx: r, ry: l } =
+                  o > 1
                     ? this._selection
                     : {
                         rx: [0, this.columns.length],
                         ry: [0, this._options.maxRows],
                       };
-              let l;
-              if (t) l = _shift(i, s, e, o[0], o[1] - 1, r[0], r[1] - 1);
+              let h;
+              if (t) h = n(i, s, e, r[0], r[1] - 1, l[0], l[1] - 1);
               else {
-                const t = _shift(s, i, e, r[0], r[1] - 1, o[0], o[1] - 1);
-                l = { x: t.y, y: t.x };
+                const t = n(s, i, e, l[0], l[1] - 1, r[0], r[1] - 1);
+                h = { x: t.y, y: t.x };
               }
-              this._fitBounds(l) &&
+              this._fitBounds(h) &&
                 (this._stopEditing(),
-                this._incrementToFit(l),
+                this._incrementToFit(h),
                 this._changeSelectedCellsStyle(() => {
-                  (this._focus = l),
-                    n <= 1 && (this._selectionStart = this._selectionEnd = l);
+                  (this._focus = h),
+                    o <= 1 && (this._selectionStart = this._selectionEnd = h);
                 }),
-                this._scrollIntoView(l));
+                this._scrollIntoView(h));
             }
             _scrollIntoView({ x: t, y: e }) {
               this._getCell(t, e).scrollIntoView({
@@ -619,7 +631,7 @@
                   e === this._editing.y &&
                   (n += " editing"),
                 this._getVal(t, e) || (n += " placeholder"),
-                (n += " " + l(this.checkResults.classNames, t, e)),
+                (n += " " + h(this.checkResults.classNames, t, e)),
                 n
               );
             }
@@ -661,7 +673,7 @@
               return this.tbody.children[e].children[t];
             }
           }
-          function l(t, e, i) {
+          function h(t, e, i) {
             return (t && t[i] && t[i][e]) || "";
           }
         },
@@ -680,7 +692,7 @@
             Object.defineProperty(t, s, { enumerable: !0, get: e[s] });
       }),
       (i.o = (t, e) => Object.prototype.hasOwnProperty.call(t, e)),
-      i(225)
+      i(895)
     );
   })().default;
 });

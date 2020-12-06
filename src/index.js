@@ -4,6 +4,7 @@ import { _parsePasteEvent } from "./_parsePasteEvent";
 import { _defaultCss } from "./_defaultCss";
 import { _arrToHTML } from "./_arrToHTML";
 import { _LooseArray } from "./_LooseArray";
+import {_shift} from "./_shift";
 
 const _events = [
   "mousedown",
