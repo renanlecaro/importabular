@@ -3,7 +3,6 @@ export function _parsePasteEvent(event) {
     const html = (event.clipboardData || window.clipboardData).getData(
       "text/html"
     );
-
     const iframe = document.createElement("iframe");
     document.body.appendChild(iframe);
     iframe.contentWindow.document.open();
@@ -23,11 +22,12 @@ export function _parsePasteEvent(event) {
 
     document.body.removeChild(iframe);
     if (data.length) return data;
+
   } catch (e) {}
 
-  const fromText = (event.clipboardData || window.clipboardData)
+  const text= (event.clipboardData || window.clipboardData)
     .getData("text")
-    .split(/\r\n|\n|\r/)
-    .map((row) => row.split(""));
-  return fromText;
+    .replace(/\n/gi, ' ')
+    .trim();
+  return [[text]];
 }

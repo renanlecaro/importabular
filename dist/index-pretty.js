@@ -134,10 +134,14 @@
                         )
                           return n;
                       } catch (t) {}
-                      return (t.clipboardData || window.clipboardData)
-                        .getData("text")
-                        .split(/\r\n|\n|\r/)
-                        .map((t) => t.split(""));
+                      return [
+                        [
+                          (t.clipboardData || window.clipboardData)
+                            .getData("text")
+                            .replace(/\n/gi, " ")
+                            .trim(),
+                        ],
+                      ];
                     })(t),
                     { rx: i, ry: s } = this._selection,
                     n = { x: i[0], y: s[0] };
