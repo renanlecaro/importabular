@@ -1,10 +1,9 @@
 /** @private All the events we listen to inside the iframe at the root level.
  * Each one is mapped to the corresponding method on the instance. */
-import { _parsePasteEvent } from "./_parsePasteEvent";
 import { _defaultCss } from "./_defaultCss";
-import { _arrToHTML } from "./_arrToHTML";
 import { _LooseArray } from "./_LooseArray";
 import {_shift} from "./_shift";
+import {parseArrayString, stringifyArray} from "./sheetclip";
 
 const _events = [
   "mousedown",
@@ -116,10 +115,18 @@ export default class Importabular {
     this._incrementToFit({ x: cols - 1, y: rows - 1 });
   }
 
+  /**Returns the current data as a 2D array
+   * @return {[[String]]} data the latest data as a 2D array.
+   *
+   * */
+  getData() {
+    return this._data._toArr(this._width, this._height)
+  }
   /** @private Runs the onchange callback*/
   _onDataChanged() {
-    if (this._options.onChange) this._options.onChange(this._data._toArr());
-    this._runChecks(this._data._toArr());
+    const asArr=this.getData()
+    if (this._options.onChange) this._options.onChange(asArr);
+    this._runChecks(asArr);
     this._restyleAll()
   }
 
@@ -244,7 +251,7 @@ export default class Importabular {
   paste = (e) => {
     if (this._editing) return;
     e.preventDefault();
-    const rows = _parsePasteEvent(e);
+    const rows = parseArrayString((e.clipboardData || window.clipboardData).getData('text/plain'))
     const { rx, ry } = this._selection;
     const offset = { x: rx[0], y: ry[0] };
 
@@ -288,11 +295,7 @@ export default class Importabular {
     const asArr = this._getSelectionAsArray();
     if (asArr) {
       e.preventDefault();
-      e.clipboardData.setData("text/html", _arrToHTML(asArr));
-      e.clipboardData.setData(
-        "text/plain",
-        asArr.map((row) => row.join("")).join("\n")
-      );
+      e.clipboardData.setData("text/plain", stringifyArray(asArr));
     }
   };
 
@@ -712,13 +715,6 @@ export default class Importabular {
         this._refreshDisplayedValue({ x, y });
   }
 
-  /**Returns the current data as a 2D array
-   * @return {[[String]]} data the latest data as a 2D array.
-   *
-   * */
-  getData() {
-    return this._data._toArr();
-  }
 
   _replaceDataWithArray(data = [[]]) {
     data.forEach((line, y) => {

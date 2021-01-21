@@ -1,6 +1,6 @@
 {
   "name": "importabular",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "5kb javascript spreadsheet, let your users import their data from excel.",
   "main": "dist/index.js",
   "files": [

@@ -10,7 +10,7 @@
   return (() => {
     "use strict";
     var t = {
-        895: (t, e, i) => {
+        103: (t, e, i) => {
           i.d(e, { default: () => l });
           class s {
             constructor() {
@@ -46,13 +46,7 @@
               const i = this._data;
               return (i && i[t] && i[t][e]) || "";
             }
-            _toArr() {
-              let t = 1,
-                e = 1;
-              for (let i in this._data)
-                for (let s in this._data[i])
-                  (e = Math.max(e, parseInt(s) + 1)),
-                    (t = Math.max(t, parseInt(i) + 1));
+            _toArr(t, e) {
               const i = [];
               for (let s = 0; s < e; s++) {
                 i.push([]);
@@ -73,7 +67,10 @@
               t > n && ((t = s), ++e > r && ((e = o), (t = s))), { x: t, y: e }
             );
           }
-          function o(t, e, i) {
+          function o(t) {
+            return t.split('"').length - 1;
+          }
+          function r(t, e, i) {
             return (
               e in t
                 ? Object.defineProperty(t, e, {
@@ -86,7 +83,7 @@
               t
             );
           }
-          const r = [
+          const h = [
             "mousedown",
             "mouseenter",
             "mouseup",
@@ -101,48 +98,63 @@
           ];
           class l {
             constructor(t) {
-              o(this, "_width", 1),
-                o(this, "_height", 1),
-                o(this, "_data", new s()),
-                o(this, "paste", (t) => {
+              r(this, "_width", 1),
+                r(this, "_height", 1),
+                r(this, "_data", new s()),
+                r(this, "paste", (t) => {
                   if (this._editing) return;
                   t.preventDefault();
                   const e = (function (t) {
-                      try {
-                        const e = (
-                            t.clipboardData || window.clipboardData
-                          ).getData("text/html"),
-                          i = document.createElement("iframe");
-                        document.body.appendChild(i),
-                          i.contentWindow.document.open(),
-                          i.contentWindow.document.write(e),
-                          i.contentWindow.document.close();
-                        const s = i.contentWindow.document.querySelectorAll(
-                            "tr"
-                          ),
-                          n = [];
-                        if (
-                          (Array.prototype.forEach.call(s, (t, e) => {
-                            const i = t.querySelectorAll("td");
-                            Array.prototype.forEach.call(i, (t, i) => {
-                              const s = t.textContent;
-                              n[e] || (n[e] = []), (n[e][i] = s);
-                            });
-                          }),
-                          document.body.removeChild(i),
-                          n.length)
+                      var e,
+                        i,
+                        s,
+                        n,
+                        r,
+                        h,
+                        l,
+                        a = [],
+                        c = 0;
+                      for (
+                        (s = t.split("\n")).length > 1 &&
+                          "" === s[s.length - 1] &&
+                          s.pop(),
+                          e = 0,
+                          i = s.length;
+                        e < i;
+                        e += 1
+                      ) {
+                        for (
+                          s[e] = s[e].split("\t"), n = 0, r = s[e].length;
+                          n < r;
+                          n += 1
                         )
-                          return n;
-                      } catch (t) {}
-                      return [
-                        [
-                          (t.clipboardData || window.clipboardData)
-                            .getData("text")
-                            .replace(/\n/gi, " ")
-                            .trim(),
-                        ],
-                      ];
-                    })(t),
+                          a[c] || (a[c] = []),
+                            h && 0 === n
+                              ? ((l = a[c].length - 1),
+                                (a[c][l] = a[c][l] + "\n" + s[e][0]),
+                                h &&
+                                  1 & o(s[e][0]) &&
+                                  ((h = !1),
+                                  (a[c][l] = a[c][l]
+                                    .substring(0, a[c][l].length - 1)
+                                    .replace(/""/g, '"'))))
+                              : n === r - 1 &&
+                                0 === s[e][n].indexOf('"') &&
+                                1 & o(s[e][n])
+                              ? (a[c].push(
+                                  s[e][n].substring(1).replace(/""/g, '"')
+                                ),
+                                (h = !0))
+                              : (a[c].push(s[e][n].replace(/""/g, '"')),
+                                (h = !1));
+                        h || (c += 1);
+                      }
+                      return a;
+                    })(
+                      (t.clipboardData || window.clipboardData).getData(
+                        "text/plain"
+                      )
+                    ),
                     { rx: i, ry: s } = this._selection,
                     n = { x: i[0], y: s[0] };
                   for (let t = 0; t < e.length; t++)
@@ -157,39 +169,39 @@
                       this._onDataChanged();
                   });
                 }),
-                o(this, "copy", (t) => {
+                r(this, "copy", (t) => {
                   if (this._editing) return;
                   const e = this._getSelectionAsArray();
                   e &&
                     (t.preventDefault(),
                     t.clipboardData.setData(
-                      "text/html",
-                      (function (t) {
-                        const e = document.createElement("table");
-                        return (
-                          e.setAttribute("lang", navigator.language),
-                          t.forEach((t) => {
-                            const i = document.createElement("tr");
-                            e.appendChild(i),
-                              t.forEach((t) => {
-                                const e = document.createElement("td");
-                                i.appendChild(e), (e.textContent = t);
-                              });
-                          }),
-                          `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"><html lang="${navigator.language}"><head>\n<meta http-equiv="content-type" content="text/html; charset=utf-8"/><title></title></head><body>${e.outerHTML}</body></html>`
-                        );
-                      })(e)
-                    ),
-                    t.clipboardData.setData(
                       "text/plain",
-                      e.map((t) => t.join("")).join("\n")
+                      (function (t) {
+                        var e,
+                          i,
+                          s,
+                          n,
+                          o,
+                          r = "";
+                        for (e = 0, i = t.length; e < i; e += 1) {
+                          for (s = 0, n = t[e].length; s < n; s += 1)
+                            s > 0 && (r += "\t"),
+                              "string" == typeof (o = t[e][s])
+                                ? o.indexOf("\n") > -1
+                                  ? (r += '"' + o.replace(/"/g, '""') + '"')
+                                  : (r += o)
+                                : (r += null == o ? "" : o);
+                          r += "\n";
+                        }
+                        return r;
+                      })(e)
                     ));
                 }),
-                o(this, "cut", (t) => {
+                r(this, "cut", (t) => {
                   this._editing ||
                     (this.copy(t), this._setAllSelectedCellsTo(""));
                 }),
-                o(this, "keydown", (t) => {
+                r(this, "keydown", (t) => {
                   t.ctrlKey ||
                     (this._selectionStart &&
                       ("Escape" === t.key &&
@@ -228,13 +240,13 @@
                             (this._getCell(t, e).firstChild.value = "");
                         })));
                 }),
-                o(this, "_selecting", !1),
-                o(this, "_selectionStart", null),
-                o(this, "_selectionEnd", null),
-                o(this, "_selection", { rx: [0, 0], ry: [0, 0] }),
-                o(this, "_editing", null),
-                o(this, "_focus", null),
-                o(this, "mousedown", (t) => {
+                r(this, "_selecting", !1),
+                r(this, "_selectionStart", null),
+                r(this, "_selectionEnd", null),
+                r(this, "_selection", { rx: [0, 0], ry: [0, 0] }),
+                r(this, "_editing", null),
+                r(this, "_focus", null),
+                r(this, "mousedown", (t) => {
                   if (!this.mobile) {
                     if (
                       3 === t.which &&
@@ -259,16 +271,16 @@
                     });
                   }
                 }),
-                o(this, "mouseenter", (t) => {
+                r(this, "mouseenter", (t) => {
                   this.mobile ||
                     (this._selecting &&
                       this._changeSelectedCellsStyle(() => {
                         this._selectionEnd = this._getCoords(t);
                       }));
                 }),
-                o(this, "_lastMouseUp", null),
-                o(this, "_lastMouseUpTarget", null),
-                o(this, "mouseup", (t) => {
+                r(this, "_lastMouseUp", null),
+                r(this, "_lastMouseUpTarget", null),
+                r(this, "mouseup", (t) => {
                   this.mobile ||
                     (3 !== t.which &&
                       this._selecting &&
@@ -286,15 +298,15 @@
                           (this._lastMouseUpTarget = this._selectionEnd);
                       }));
                 }),
-                o(this, "mouseleave", (t) => {
+                r(this, "mouseleave", (t) => {
                   t.target === this.tbody &&
                     this._selecting &&
                     this._endSelection();
                 }),
-                o(this, "touchstart", (t) => {
+                r(this, "touchstart", (t) => {
                   this._editing || ((this.mobile = !0), (this.moved = !1));
                 }),
-                o(this, "touchend", (t) => {
+                r(this, "touchend", (t) => {
                   this.mobile &&
                     (this._editing ||
                       this.moved ||
@@ -305,10 +317,10 @@
                       }),
                       this._startEditing(this._focus)));
                 }),
-                o(this, "touchmove", (t) => {
+                r(this, "touchmove", (t) => {
                   this.mobile && (this.moved = !0);
                 }),
-                o(this, "_stopEditing", () => {
+                r(this, "_stopEditing", () => {
                   if (!this._editing) return;
                   const { x: t, y: e } = this._editing,
                     i = this._getCell(t, e);
@@ -322,16 +334,16 @@
                     (this._editing = null),
                     this._renderTDContent(i, t, e);
                 }),
-                o(this, "_blurIfEnter", (t) => {
+                r(this, "_blurIfEnter", (t) => {
                   13 === t.keyCode && (this._stopEditing(), t.preventDefault());
                 }),
-                o(this, "_restyle", ({ x: t, y: e }) => {
+                r(this, "_restyle", ({ x: t, y: e }) => {
                   const i = this._getCell(t, e);
                   i.className = this._classNames(t, e);
-                  const s = h(this.checkResults.titles, t, e);
+                  const s = a(this.checkResults.titles, t, e);
                   s ? i.setAttribute("title", s) : i.removeAttribute("title");
                 }),
-                o(this, "_refreshDisplayedValue", ({ x: t, y: e }) => {
+                r(this, "_refreshDisplayedValue", ({ x: t, y: e }) => {
                   const i = this._getCell(t, e).firstChild;
                   "DIV" === i.tagName &&
                     (i.textContent = this._divContent(t, e)),
@@ -358,12 +370,12 @@
               maxRows: n = 1 / 0,
               css: o = "",
               width: r = "100%",
-              height: l = "80vh",
-              columns: h,
+              height: h = "80vh",
+              columns: l,
               checks: a,
             }) {
               if (
-                ((this.columns = h),
+                ((this.columns = l),
                 (this.checks = a || (() => ({}))),
                 this._runChecks(t),
                 !e)
@@ -382,7 +394,7 @@
                 }),
                 (this._iframeStyle = {
                   width: r,
-                  height: l,
+                  height: h,
                   border: "none",
                   background: "transparent",
                 });
@@ -400,10 +412,13 @@
                 e = Math.ceil(this.iframe.contentWindow.innerWidth / 100);
               this._incrementToFit({ x: e - 1, y: t - 1 });
             }
+            getData() {
+              return this._data._toArr(this._width, this._height);
+            }
             _onDataChanged() {
-              this._options.onChange &&
-                this._options.onChange(this._data._toArr()),
-                this._runChecks(this._data._toArr()),
+              const t = this.getData();
+              this._options.onChange && this._options.onChange(t),
+                this._runChecks(t),
                 this._restyleAll();
             }
             _renderTDContent(t, e, i) {
@@ -452,11 +467,11 @@
                 s.appendChild(e);
                 for (let i = 0; i < this._width; i++) this._addCell(e, i, t);
               }
-              r.forEach((t) => e.addEventListener(t, this[t], !0));
+              h.forEach((t) => e.addEventListener(t, this[t], !0));
             }
             destroy() {
               this._destroyEditing(),
-                r.forEach((t) => this.cwd.removeEventListener(t, this[t], !0)),
+                h.forEach((t) => this.cwd.removeEventListener(t, this[t], !0)),
                 this.iframe.parentElement.removeChild(this.iframe);
             }
             _addCell(t, e, i) {
@@ -526,27 +541,27 @@
             _tabCursorInSelection(t, e = 1) {
               let { x: i, y: s } = this._focus || { x: 0, y: 0 };
               const o = this._selectionSize(),
-                { rx: r, ry: l } =
+                { rx: r, ry: h } =
                   o > 1
                     ? this._selection
                     : {
                         rx: [0, this.columns.length],
                         ry: [0, this._options.maxRows],
                       };
-              let h;
-              if (t) h = n(i, s, e, r[0], r[1] - 1, l[0], l[1] - 1);
+              let l;
+              if (t) l = n(i, s, e, r[0], r[1] - 1, h[0], h[1] - 1);
               else {
-                const t = n(s, i, e, l[0], l[1] - 1, r[0], r[1] - 1);
-                h = { x: t.y, y: t.x };
+                const t = n(s, i, e, h[0], h[1] - 1, r[0], r[1] - 1);
+                l = { x: t.y, y: t.x };
               }
-              this._fitBounds(h) &&
+              this._fitBounds(l) &&
                 (this._stopEditing(),
-                this._incrementToFit(h),
+                this._incrementToFit(l),
                 this._changeSelectedCellsStyle(() => {
-                  (this._focus = h),
-                    o <= 1 && (this._selectionStart = this._selectionEnd = h);
+                  (this._focus = l),
+                    o <= 1 && (this._selectionStart = this._selectionEnd = l);
                 }),
-                this._scrollIntoView(h));
+                this._scrollIntoView(l));
             }
             _scrollIntoView({ x: t, y: e }) {
               this._getCell(t, e).scrollIntoView({
@@ -642,7 +657,7 @@
                   e === this._editing.y &&
                   (n += " editing"),
                 this._getVal(t, e) || (n += " placeholder"),
-                (n += " " + h(this.checkResults.classNames, t, e)),
+                (n += " " + a(this.checkResults.classNames, t, e)),
                 n
               );
             }
@@ -660,9 +675,6 @@
               for (let t = 0; t < this._width; t++)
                 for (let e = 0; e < this._height; e++)
                   this._refreshDisplayedValue({ x: t, y: e });
-            }
-            getData() {
-              return this._data._toArr();
             }
             _replaceDataWithArray(t = [[]]) {
               t.forEach((t, e) => {
@@ -684,7 +696,7 @@
               return this.tbody.children[e].children[t];
             }
           }
-          function h(t, e, i) {
+          function a(t, e, i) {
             return (t && t[i] && t[i][e]) || "";
           }
         },
@@ -703,7 +715,7 @@
             Object.defineProperty(t, s, { enumerable: !0, get: e[s] });
       }),
       (i.o = (t, e) => Object.prototype.hasOwnProperty.call(t, e)),
-      i(895)
+      i(103)
     );
   })().default;
 });

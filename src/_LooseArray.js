@@ -29,15 +29,7 @@ export class _LooseArray {
     return (hash && hash[x] && hash[x][y]) || "";
   }
 
-  _toArr() {
-    let width = 1,
-      height = 1;
-    for (let x in this._data) {
-      for (let y in this._data[x]) {
-        height = Math.max(height, parseInt(y) + 1);
-        width = Math.max(width, parseInt(x) + 1);
-      }
-    }
+  _toArr(width,height) {
     const result = [];
     for (let y = 0; y < height; y++) {
       result.push([]);
