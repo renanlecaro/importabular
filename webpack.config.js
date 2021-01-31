@@ -3,6 +3,10 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 var MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const isProd = process.env.NODE_ENV === 'production'
+const HTMLInlineCSSWebpackPlugin = require("html-inline-css-webpack-plugin").default;
+const HtmlInlineScriptPlugin = require('html-inline-script-webpack-plugin');
+
+
 
 const CopyPlugin = require("copy-webpack-plugin");
 
@@ -12,7 +16,7 @@ const common={
     rules: [
       {
         test: /\.css$/i,
-        use: ['style-loader', 'css-loader'],
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
       {
         test: /\.js$/,
@@ -46,18 +50,17 @@ const docExport= {
   plugins: [
     new CleanWebpackPlugin(),
     new MiniCssExtractPlugin(),
-
     new HtmlWebpackPlugin({
       template:'src/demo/index.ejs',
-      scriptLoading:'defer'
+
     }),
+    new HTMLInlineCSSWebpackPlugin(),
+    new HtmlInlineScriptPlugin(),
     new CopyPlugin({
       patterns: [
         { from: "src/demo/public", to: "." }
       ],
     }),
-
-
 ],
 ...common
 }
@@ -69,15 +72,9 @@ function libExport({filename, mangle}) {
     output: {
       filename: 'index.js',
       path: path.resolve(__dirname, 'dist'),
-      // library: "default",
-      // libraryExport: "default",
-      // libraryTarget: "var"
       libraryExport: "default" ,
       libraryTarget: 'umd',
       library: 'Importabular',
-      // libraryTarget:'commonjs2'
-      // libraryExport: "Importabular" ,
-      // libraryTarget: 'commonjs2'
     },
     plugins: [
       new CleanWebpackPlugin(),
