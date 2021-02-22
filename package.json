@@ -30,7 +30,7 @@
   "bugs": {
     "url": "https://github.com/renanlecaro/importabular/issues"
   },
-  "homepage": "https://renanlecaro.github.io/importabular/",
+  "homepage": "https://lecaro.me/importabular/",
   "devDependencies": {
     "@babel/cli": "^7.11.6",
     "@babel/core": "^7.12.9",

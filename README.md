@@ -8,6 +8,6 @@ Lightweight spreadsheet editor for the web, to easily let your users import thei
 -   MIT License
  
 
-Demo and doc : https://renanlecaro.github.io/importabular/
+Demo and doc : https://lecaro.me/importabular/
 
 ![Screenshot of the demo website](./src/demo/screenshot.jpg)
