@@ -10,4 +10,6 @@ Lightweight spreadsheet editor for the web, to easily let your users import thei
 
 Demo and doc : https://lecaro.me/importabular/
 
+NPM : https://www.npmjs.com/package/importabular
+
 ![Screenshot of the demo website](./src/demo/screenshot.jpg)
