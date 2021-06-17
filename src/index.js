@@ -516,7 +516,8 @@ export default class Importabular {
     }
   };
 
-  touchstart = (e) => {
+  
+  touchstart = (e) => { // eslint-disable-line no-unused-vars
     if (this._editing) return;
     this.mobile = true;
     this.moved = false;
@@ -533,7 +534,7 @@ export default class Importabular {
       this._startEditing(this._focus);
     }
   };
-  touchmove = (e) => {
+  touchmove = (e) => { // eslint-disable-line no-unused-vars
     if (!this.mobile) return;
     this.moved = true;
   };
