@@ -26,6 +26,7 @@ const _events = [
  * @param {Node} options.node Dom node to create the table into
  * @param {Node} options.onChange Callback to run whenever the data
  *               has changed, receives the new data as an argument.
+ *@param {Number} options.rows Starting number of rows.
  *@param {Number} options.minRows Minimum number of rows.
  *@param {Number} options.maxRows Maximum number of rows, the table will not grow vertically beyond this.
  *@param {String} options.css Css code to add inside the iframe.
@@ -59,6 +60,7 @@ export default class Importabular {
     data = [],
     node = null,
     onChange = null,
+    rows = undefined,
     minRows = 1,
     maxRows = Infinity,
     css = "",
@@ -80,6 +82,7 @@ export default class Importabular {
     this._parent = node;
     this._options = {
       onChange,
+      rows,
       minRows,
       maxRows,
       css: _defaultCss + css,
@@ -110,7 +113,8 @@ export default class Importabular {
 
   /** @private Fill the iframe visible window with empty cells*/
   _fillScrollSpace() {
-    const rows = Math.ceil(this.iframe.contentWindow.innerHeight / 40);
+    console.log(this._options)
+    const rows = this._options.rows || Math.ceil(this.iframe.contentWindow.innerHeight / 40);
     const cols = Math.ceil(this.iframe.contentWindow.innerWidth / 100);
     this._incrementToFit({ x: cols - 1, y: rows - 1 });
   }
