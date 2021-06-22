@@ -113,7 +113,6 @@ export default class Importabular {
 
   /** @private Fill the iframe visible window with empty cells*/
   _fillScrollSpace() {
-    console.log(this._options)
     const rows = this._options.rows || Math.ceil(this.iframe.contentWindow.innerHeight / 40);
     const cols = Math.ceil(this.iframe.contentWindow.innerWidth / 100);
     this._incrementToFit({ x: cols - 1, y: rows - 1 });
