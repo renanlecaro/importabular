@@ -309,7 +309,14 @@ export default class Importabular {
   };
 
   keydown = (e) => {
-    if (e.ctrlKey) return;
+    if (e.ctrlKey){ 
+      if (this._editing) {
+        e.preventDefault();
+        this._revertEdit();
+        this._stopEditing();
+      }
+      return;
+    }
 
     if (this._selectionStart) {
       if (e.key === "Escape" && this._editing) {
@@ -496,7 +503,9 @@ export default class Importabular {
       this._changeSelectedCellsStyle(() => {
         this._selectionEnd = this._getCoords(e);
         this._endSelection();
-
+        
+        // In a multi-byte environment(Japanese etc),want to enter edit mode after click
+        this._startEditing(this._focus);
         if (
           this._lastMouseUp &&
           this._lastMouseUp > Date.now() - 300 &&
