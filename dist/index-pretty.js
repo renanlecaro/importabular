@@ -55,22 +55,22 @@
               return i;
             }
           }
-          function n(t, e, i, s, n, o, r) {
+          function n(t, e, i, s, n, o, h) {
             if ((t += i) < s) {
               if (n === 1 / 0) return { x: s, y: e };
               if (((t = n), --e < o)) {
-                if (r === 1 / 0) return { x: s, y: o };
-                e = r;
+                if (h === 1 / 0) return { x: s, y: o };
+                e = h;
               }
             }
             return (
-              t > n && ((t = s), ++e > r && ((e = o), (t = s))), { x: t, y: e }
+              t > n && ((t = s), ++e > h && ((e = o), (t = s))), { x: t, y: e }
             );
           }
           function o(t) {
             return t.split('"').length - 1;
           }
-          function r(t, e, i) {
+          function h(t, e, i) {
             return (
               e in t
                 ? Object.defineProperty(t, e, {
@@ -83,7 +83,7 @@
               t
             );
           }
-          const h = [
+          const r = [
             "mousedown",
             "mouseenter",
             "mouseup",
@@ -98,10 +98,10 @@
           ];
           class l {
             constructor(t) {
-              r(this, "_width", 1),
-                r(this, "_height", 1),
-                r(this, "_data", new s()),
-                r(this, "paste", (t) => {
+              h(this, "_width", 1),
+                h(this, "_height", 1),
+                h(this, "_data", new s()),
+                h(this, "paste", (t) => {
                   if (this._editing) return;
                   t.preventDefault();
                   const e = (function (t) {
@@ -109,8 +109,8 @@
                         i,
                         s,
                         n,
-                        r,
                         h,
+                        r,
                         l,
                         a = [],
                         c = 0;
@@ -124,30 +124,30 @@
                         e += 1
                       ) {
                         for (
-                          s[e] = s[e].split("\t"), n = 0, r = s[e].length;
-                          n < r;
+                          s[e] = s[e].split("\t"), n = 0, h = s[e].length;
+                          n < h;
                           n += 1
                         )
                           a[c] || (a[c] = []),
-                            h && 0 === n
+                            r && 0 === n
                               ? ((l = a[c].length - 1),
                                 (a[c][l] = a[c][l] + "\n" + s[e][0]),
-                                h &&
+                                r &&
                                   1 & o(s[e][0]) &&
-                                  ((h = !1),
+                                  ((r = !1),
                                   (a[c][l] = a[c][l]
                                     .substring(0, a[c][l].length - 1)
                                     .replace(/""/g, '"'))))
-                              : n === r - 1 &&
+                              : n === h - 1 &&
                                 0 === s[e][n].indexOf('"') &&
                                 1 & o(s[e][n])
                               ? (a[c].push(
                                   s[e][n].substring(1).replace(/""/g, '"')
                                 ),
-                                (h = !0))
+                                (r = !0))
                               : (a[c].push(s[e][n].replace(/""/g, '"')),
-                                (h = !1));
-                        h || (c += 1);
+                                (r = !1));
+                        r || (c += 1);
                       }
                       return a;
                     })(
@@ -169,7 +169,7 @@
                       this._onDataChanged();
                   });
                 }),
-                r(this, "copy", (t) => {
+                h(this, "copy", (t) => {
                   if (this._editing) return;
                   const e = this._getSelectionAsArray();
                   e &&
@@ -182,28 +182,32 @@
                           s,
                           n,
                           o,
-                          r = "";
+                          h = "";
                         for (e = 0, i = t.length; e < i; e += 1) {
                           for (s = 0, n = t[e].length; s < n; s += 1)
-                            s > 0 && (r += "\t"),
+                            s > 0 && (h += "\t"),
                               "string" == typeof (o = t[e][s])
                                 ? o.indexOf("\n") > -1
-                                  ? (r += '"' + o.replace(/"/g, '""') + '"')
-                                  : (r += o)
-                                : (r += null == o ? "" : o);
-                          r += "\n";
+                                  ? (h += '"' + o.replace(/"/g, '""') + '"')
+                                  : (h += o)
+                                : (h += null == o ? "" : o);
+                          h += "\n";
                         }
-                        return r;
+                        return h;
                       })(e)
                     ));
                 }),
-                r(this, "cut", (t) => {
+                h(this, "cut", (t) => {
                   this._editing ||
                     (this.copy(t), this._setAllSelectedCellsTo(""));
                 }),
-                r(this, "keydown", (t) => {
-                  t.ctrlKey ||
-                    (this._selectionStart &&
+                h(this, "keydown", (t) => {
+                  t.ctrlKey
+                    ? this._editing &&
+                      (t.preventDefault(),
+                      this._revertEdit(),
+                      this._stopEditing())
+                    : this._selectionStart &&
                       ("Escape" === t.key &&
                         this._editing &&
                         (t.preventDefault(),
@@ -238,15 +242,15 @@
                           const { x: t, y: e } = this._focus;
                           this._startEditing({ x: t, y: e }),
                             (this._getCell(t, e).firstChild.value = "");
-                        })));
+                        }));
                 }),
-                r(this, "_selecting", !1),
-                r(this, "_selectionStart", null),
-                r(this, "_selectionEnd", null),
-                r(this, "_selection", { rx: [0, 0], ry: [0, 0] }),
-                r(this, "_editing", null),
-                r(this, "_focus", null),
-                r(this, "mousedown", (t) => {
+                h(this, "_selecting", !1),
+                h(this, "_selectionStart", null),
+                h(this, "_selectionEnd", null),
+                h(this, "_selection", { rx: [0, 0], ry: [0, 0] }),
+                h(this, "_editing", null),
+                h(this, "_focus", null),
+                h(this, "mousedown", (t) => {
                   if (!this.mobile) {
                     if (
                       3 === t.which &&
@@ -271,22 +275,23 @@
                     });
                   }
                 }),
-                r(this, "mouseenter", (t) => {
+                h(this, "mouseenter", (t) => {
                   this.mobile ||
                     (this._selecting &&
                       this._changeSelectedCellsStyle(() => {
                         this._selectionEnd = this._getCoords(t);
                       }));
                 }),
-                r(this, "_lastMouseUp", null),
-                r(this, "_lastMouseUpTarget", null),
-                r(this, "mouseup", (t) => {
+                h(this, "_lastMouseUp", null),
+                h(this, "_lastMouseUpTarget", null),
+                h(this, "mouseup", (t) => {
                   this.mobile ||
                     (3 !== t.which &&
                       this._selecting &&
                       this._changeSelectedCellsStyle(() => {
                         (this._selectionEnd = this._getCoords(t)),
                           this._endSelection(),
+                          this._startEditing(this._focus),
                           this._lastMouseUp &&
                             this._lastMouseUp > Date.now() - 300 &&
                             this._lastMouseUpTarget.x ===
@@ -298,15 +303,15 @@
                           (this._lastMouseUpTarget = this._selectionEnd);
                       }));
                 }),
-                r(this, "mouseleave", (t) => {
+                h(this, "mouseleave", (t) => {
                   t.target === this.tbody &&
                     this._selecting &&
                     this._endSelection();
                 }),
-                r(this, "touchstart", (t) => {
+                h(this, "touchstart", (t) => {
                   this._editing || ((this.mobile = !0), (this.moved = !1));
                 }),
-                r(this, "touchend", (t) => {
+                h(this, "touchend", (t) => {
                   this.mobile &&
                     (this._editing ||
                       this.moved ||
@@ -317,10 +322,10 @@
                       }),
                       this._startEditing(this._focus)));
                 }),
-                r(this, "touchmove", (t) => {
+                h(this, "touchmove", (t) => {
                   this.mobile && (this.moved = !0);
                 }),
-                r(this, "_stopEditing", () => {
+                h(this, "_stopEditing", () => {
                   if (!this._editing) return;
                   const { x: t, y: e } = this._editing,
                     i = this._getCell(t, e);
@@ -334,16 +339,16 @@
                     (this._editing = null),
                     this._renderTDContent(i, t, e);
                 }),
-                r(this, "_blurIfEnter", (t) => {
+                h(this, "_blurIfEnter", (t) => {
                   13 === t.keyCode && (this._stopEditing(), t.preventDefault());
                 }),
-                r(this, "_restyle", ({ x: t, y: e }) => {
+                h(this, "_restyle", ({ x: t, y: e }) => {
                   const i = this._getCell(t, e);
                   i.className = this._classNames(t, e);
                   const s = a(this.checkResults.titles, t, e);
                   s ? i.setAttribute("title", s) : i.removeAttribute("title");
                 }),
-                r(this, "_refreshDisplayedValue", ({ x: t, y: e }) => {
+                h(this, "_refreshDisplayedValue", ({ x: t, y: e }) => {
                   const i = this._getCell(t, e).firstChild;
                   "DIV" === i.tagName &&
                     (i.textContent = this._divContent(t, e)),
@@ -369,8 +374,8 @@
               minRows: s = 1,
               maxRows: n = 1 / 0,
               css: o = "",
-              width: r = "100%",
-              height: h = "80vh",
+              width: h = "100%",
+              height: r = "80vh",
               columns: l,
               checks: a,
             }) {
@@ -393,8 +398,8 @@
                     o,
                 }),
                 (this._iframeStyle = {
-                  width: r,
-                  height: h,
+                  width: h,
+                  height: r,
                   border: "none",
                   background: "transparent",
                 });
@@ -467,11 +472,11 @@
                 s.appendChild(e);
                 for (let i = 0; i < this._width; i++) this._addCell(e, i, t);
               }
-              h.forEach((t) => e.addEventListener(t, this[t], !0));
+              r.forEach((t) => e.addEventListener(t, this[t], !0));
             }
             destroy() {
               this._destroyEditing(),
-                h.forEach((t) => this.cwd.removeEventListener(t, this[t], !0)),
+                r.forEach((t) => this.cwd.removeEventListener(t, this[t], !0)),
                 this.iframe.parentElement.removeChild(this.iframe);
             }
             _addCell(t, e, i) {
@@ -541,7 +546,7 @@
             _tabCursorInSelection(t, e = 1) {
               let { x: i, y: s } = this._focus || { x: 0, y: 0 };
               const o = this._selectionSize(),
-                { rx: r, ry: h } =
+                { rx: h, ry: r } =
                   o > 1
                     ? this._selection
                     : {
@@ -549,9 +554,9 @@
                         ry: [0, this._options.maxRows],
                       };
               let l;
-              if (t) l = n(i, s, e, r[0], r[1] - 1, h[0], h[1] - 1);
+              if (t) l = n(i, s, e, h[0], h[1] - 1, r[0], r[1] - 1);
               else {
-                const t = n(s, i, e, h[0], h[1] - 1, r[0], r[1] - 1);
+                const t = n(s, i, e, r[0], r[1] - 1, h[0], h[1] - 1);
                 l = { x: t.y, y: t.x };
               }
               this._fitBounds(l) &&
