@@ -185,7 +185,7 @@ export default class Importabular {
       this.columns.forEach((col,index) => {
         const th = document.createElement("TH");
         const div = document.createElement("div");
-        let bondflag = true;
+        let bondflag = false;
         for ( const bd of this._options.bond) {
           if ( index >= bd.startRow  &&  index < bd.startRow + bd.rowSize){
             if ( index === bd.startRow ) {
@@ -197,7 +197,7 @@ export default class Importabular {
             const downth = document.createElement("TH");
             const downdiv = document.createElement("div");
             downdiv.innerHTML = col.label;
-            col.title && ee.setAttribute("title", col.title);
+            col.title && downth.setAttribute("title", col.title);
             downth.appendChild(downdiv);
             downtr.appendChild(downth);
             bondflag = true;
