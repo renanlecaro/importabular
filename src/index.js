@@ -600,7 +600,7 @@ export default class Importabular {
       }
     }
 
-    if ( this._options.select.length <= 0 || !selectflag ) { 
+    if ( !selectflag ) { 
       // add the input
       const input = document.createElement("input");
       input.type = "text";
