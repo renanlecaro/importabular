@@ -228,18 +228,14 @@ export default class Importabular {
     cwd.body.appendChild(table);
     this.tbody = tbody;
     this.table = table;
-
     for (let y = 0; y < this._height; y++) {
       const tr = document.createElement("tr");
       tbody.appendChild(tr);
       for (let x = 0; x < this._width; x++) {
-          this._addCell(tr, x, y);
-        }
+        this._addCell(tr, x, y);
       }
-
-      _events.forEach((name) => cwd.addEventListener(name, this[name], true));
-
     }
+    _events.forEach((name) => cwd.addEventListener(name, this[name], true));
   }
 
   /** Destroys the table, and clears even listeners
