@@ -67,6 +67,7 @@ export default class Importabular {
     columns,
     checks,
     select = [],
+    bond = []
   }) {
     this.columns = columns;
     this.checks = checks || (() => ({}));
@@ -85,6 +86,7 @@ export default class Importabular {
       maxRows,
       css: _defaultCss + css,
       select,
+      bond,
     };
     this._iframeStyle = {
       width,
@@ -175,15 +177,52 @@ export default class Importabular {
 
     const thead = document.createElement("THEAD");
     const tr = document.createElement("TR");
-    thead.appendChild(tr);
-    this.columns.forEach((col) => {
-      const th = document.createElement("TH");
-      const div = document.createElement("div");
-      div.innerHTML = col.label;
-      col.title && th.setAttribute("title", col.title);
-      th.appendChild(div);
-      tr.appendChild(th);
-    });
+
+    if ( this._options.bond.length > 0 ) {
+      const downtr = document.createElement("TR");
+      thead.appendChild(tr);
+      thead.appendChild(downtr);
+      this.columns.forEach((col,index) => {
+        const th = document.createElement("TH");
+        const div = document.createElement("div");
+        let bondflag = true;
+        for ( const bd of this._options.bond) {
+          if ( index >= bd.startRow  &&  index < bd.startRow + bd.rowSize){
+            if ( index === bd.startRow ) {
+              div.innerHTML = bd.label;
+              bd.label &&  th.setAttribute("colspan", bd.rowSize);
+              th.appendChild(div);
+              tr.appendChild(th);
+            }
+            const downth = document.createElement("TH");
+            const downdiv = document.createElement("div");
+            downdiv.innerHTML = col.label;
+            col.title && ee.setAttribute("title", col.title);
+            downth.appendChild(downdiv);
+            downtr.appendChild(downth);
+            bondflag = true;
+            break;
+          }
+        }
+        if ( !bondflag ) {
+          div.innerHTML = col.label;
+          col.title &&  th.setAttribute("rowspan", "2");
+          th.appendChild(div);
+          tr.appendChild(th);
+        }
+      });
+    } else {
+      thead.appendChild(tr);
+      this.columns.forEach((col) => {
+        const th = document.createElement("TH");
+        const div = document.createElement("div");
+        div.innerHTML = col.label;
+        col.title && th.setAttribute("title", col.title);
+        th.appendChild(div);
+        tr.appendChild(th);
+      });
+    }
+    
     table.appendChild(thead);
     table.appendChild(tbody);
     cwd.body.appendChild(table);
@@ -194,11 +233,13 @@ export default class Importabular {
       const tr = document.createElement("tr");
       tbody.appendChild(tr);
       for (let x = 0; x < this._width; x++) {
-        this._addCell(tr, x, y);
+          this._addCell(tr, x, y);
+        }
       }
-    }
 
-    _events.forEach((name) => cwd.addEventListener(name, this[name], true));
+      _events.forEach((name) => cwd.addEventListener(name, this[name], true));
+
+    }
   }
 
   /** Destroys the table, and clears even listeners
