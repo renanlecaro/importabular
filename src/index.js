@@ -66,6 +66,7 @@ export default class Importabular {
     height = "80vh",
     columns,
     checks,
+    select = [],
   }) {
     this.columns = columns;
     this.checks = checks || (() => ({}));
@@ -83,6 +84,7 @@ export default class Importabular {
       minRows,
       maxRows,
       css: _defaultCss + css,
+      select,
     };
     this._iframeStyle = {
       width,
@@ -554,30 +556,72 @@ export default class Importabular {
     // Measure the current content
     const tdSize = td.getBoundingClientRect();
     const cellSize = td.firstChild.getBoundingClientRect();
+    var selectflag = false;
 
     // remove the current content
     td.removeChild(td.firstChild);
 
-    // add the input
-    const input = document.createElement("input");
-    input.type = "text";
-    input.value = this._getVal(x, y);
-    td.appendChild(input);
+    if ( this._options.select.length > 0 ) { 
+      //add the select
+      for ( let i = 0 ; i < this._options.select.length ; i ++ ) {
+        if ( x === this._options.select[i].rowIndex ) {
 
-    // Make the new content fit the past size
-    Object.assign(td.style, {
-      width: tdSize.width - 2,
-      height: tdSize.height,
-    });
+          const select = document.createElement("select");
+          td.appendChild(select);
 
-    Object.assign(input.style, {
-      width: `${cellSize.width}px`,
-      height: `${cellSize.height}px`,
-    });
+          // Make the new content fit the past size
+          Object.assign(td.style, {
+            width: tdSize.width - 2,
+            height: tdSize.height,
+          });
 
-    input.focus();
-    input.addEventListener("blur", this._stopEditing);
-    input.addEventListener("keydown", this._blurIfEnter);
+          Object.assign(select.style, {
+            width: `${cellSize.width}px`,
+            height: `${cellSize.height}px`,
+          });
+
+          //add the option of select
+          this._options.select[i].selectableInfo.forEach( op => {
+            const option = document.createElement("option");
+            if (op.text == this._getVal(x, y)) {
+              option.selected = true;
+            }
+            option.text = op.text;
+            option.value = op.text;
+            select.appendChild(option);
+          });
+
+          select.focus();
+          select.addEventListener("blur", this._stopEditing);
+          select.addEventListener("keydown", this._blurIfEnter);
+          selectflag = true;
+          break;
+        }
+      }
+    }
+
+    if ( this._options.select.length <= 0 || !selectflag ) { 
+      // add the input
+      const input = document.createElement("input");
+      input.type = "text";
+      input.value = this._getVal(x, y);
+      td.appendChild(input);
+  
+      // Make the new content fit the past size
+      Object.assign(td.style, {
+        width: tdSize.width - 2,
+        height: tdSize.height,
+      });
+  
+      Object.assign(input.style, {
+        width: `${cellSize.width}px`,
+        height: `${cellSize.height}px`,
+      });
+  
+      input.focus();
+      input.addEventListener("blur", this._stopEditing);
+      input.addEventListener("keydown", this._blurIfEnter);
+    }
   }
 
   _destroyEditing() {
