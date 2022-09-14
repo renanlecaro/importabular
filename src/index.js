@@ -556,15 +556,15 @@ export default class Importabular {
     // Measure the current content
     const tdSize = td.getBoundingClientRect();
     const cellSize = td.firstChild.getBoundingClientRect();
-    var selectflag = false;
+    let selectflag = false;
 
     // remove the current content
     td.removeChild(td.firstChild);
 
     if ( this._options.select.length > 0 ) { 
       //add the select
-      for ( let i = 0 ; i < this._options.select.length ; i ++ ) {
-        if ( x === this._options.select[i].rowIndex ) {
+      for ( const sel of this._options.select) {
+        if ( x === sel.rowIndex ) {
 
           const select = document.createElement("select");
           td.appendChild(select);
@@ -581,7 +581,7 @@ export default class Importabular {
           });
 
           //add the option of select
-          this._options.select[i].selectableInfo.forEach( op => {
+          sel.selectableInfo.forEach( op => {
             const option = document.createElement("option");
             if (op.text == this._getVal(x, y)) {
               option.selected = true;
