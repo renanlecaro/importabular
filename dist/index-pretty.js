@@ -11,7 +11,7 @@
     "use strict";
     var t = {
         103: (t, e, i) => {
-          i.d(e, { default: () => l });
+          i.d(e, { default: () => r });
           class s {
             constructor() {
               var t, e;
@@ -55,22 +55,22 @@
               return i;
             }
           }
-          function n(t, e, i, s, n, o, h) {
+          function n(t, e, i, s, n, o, l) {
             if ((t += i) < s) {
               if (n === 1 / 0) return { x: s, y: e };
               if (((t = n), --e < o)) {
-                if (h === 1 / 0) return { x: s, y: o };
-                e = h;
+                if (l === 1 / 0) return { x: s, y: o };
+                e = l;
               }
             }
             return (
-              t > n && ((t = s), ++e > h && ((e = o), (t = s))), { x: t, y: e }
+              t > n && ((t = s), ++e > l && ((e = o), (t = s))), { x: t, y: e }
             );
           }
           function o(t) {
             return t.split('"').length - 1;
           }
-          function h(t, e, i) {
+          function l(t, e, i) {
             return (
               e in t
                 ? Object.defineProperty(t, e, {
@@ -83,7 +83,7 @@
               t
             );
           }
-          const r = [
+          const h = [
             "mousedown",
             "mouseenter",
             "mouseup",
@@ -96,12 +96,12 @@
             "cut",
             "copy",
           ];
-          class l {
+          class r {
             constructor(t) {
-              h(this, "_width", 1),
-                h(this, "_height", 1),
-                h(this, "_data", new s()),
-                h(this, "paste", (t) => {
+              l(this, "_width", 1),
+                l(this, "_height", 1),
+                l(this, "_data", new s()),
+                l(this, "paste", (t) => {
                   if (this._editing) return;
                   t.preventDefault();
                   const e = (function (t) {
@@ -109,11 +109,11 @@
                         i,
                         s,
                         n,
+                        l,
                         h,
                         r,
-                        l,
                         a = [],
-                        c = 0;
+                        d = 0;
                       for (
                         (s = t.split("\n")).length > 1 &&
                           "" === s[s.length - 1] &&
@@ -124,30 +124,30 @@
                         e += 1
                       ) {
                         for (
-                          s[e] = s[e].split("\t"), n = 0, h = s[e].length;
-                          n < h;
+                          s[e] = s[e].split("\t"), n = 0, l = s[e].length;
+                          n < l;
                           n += 1
                         )
-                          a[c] || (a[c] = []),
-                            r && 0 === n
-                              ? ((l = a[c].length - 1),
-                                (a[c][l] = a[c][l] + "\n" + s[e][0]),
-                                r &&
+                          a[d] || (a[d] = []),
+                            h && 0 === n
+                              ? ((r = a[d].length - 1),
+                                (a[d][r] = a[d][r] + "\n" + s[e][0]),
+                                h &&
                                   1 & o(s[e][0]) &&
-                                  ((r = !1),
-                                  (a[c][l] = a[c][l]
-                                    .substring(0, a[c][l].length - 1)
+                                  ((h = !1),
+                                  (a[d][r] = a[d][r]
+                                    .substring(0, a[d][r].length - 1)
                                     .replace(/""/g, '"'))))
-                              : n === h - 1 &&
+                              : n === l - 1 &&
                                 0 === s[e][n].indexOf('"') &&
                                 1 & o(s[e][n])
-                              ? (a[c].push(
+                              ? (a[d].push(
                                   s[e][n].substring(1).replace(/""/g, '"')
                                 ),
-                                (r = !0))
-                              : (a[c].push(s[e][n].replace(/""/g, '"')),
-                                (r = !1));
-                        r || (c += 1);
+                                (h = !0))
+                              : (a[d].push(s[e][n].replace(/""/g, '"')),
+                                (h = !1));
+                        h || (d += 1);
                       }
                       return a;
                     })(
@@ -169,7 +169,7 @@
                       this._onDataChanged();
                   });
                 }),
-                h(this, "copy", (t) => {
+                l(this, "copy", (t) => {
                   if (this._editing) return;
                   const e = this._getSelectionAsArray();
                   e &&
@@ -182,26 +182,26 @@
                           s,
                           n,
                           o,
-                          h = "";
+                          l = "";
                         for (e = 0, i = t.length; e < i; e += 1) {
                           for (s = 0, n = t[e].length; s < n; s += 1)
-                            s > 0 && (h += "\t"),
+                            s > 0 && (l += "\t"),
                               "string" == typeof (o = t[e][s])
                                 ? o.indexOf("\n") > -1
-                                  ? (h += '"' + o.replace(/"/g, '""') + '"')
-                                  : (h += o)
-                                : (h += null == o ? "" : o);
-                          h += "\n";
+                                  ? (l += '"' + o.replace(/"/g, '""') + '"')
+                                  : (l += o)
+                                : (l += null == o ? "" : o);
+                          l += "\n";
                         }
-                        return h;
+                        return l;
                       })(e)
                     ));
                 }),
-                h(this, "cut", (t) => {
+                l(this, "cut", (t) => {
                   this._editing ||
                     (this.copy(t), this._setAllSelectedCellsTo(""));
                 }),
-                h(this, "keydown", (t) => {
+                l(this, "keydown", (t) => {
                   t.ctrlKey
                     ? this._editing &&
                       (t.preventDefault(),
@@ -244,13 +244,13 @@
                             (this._getCell(t, e).firstChild.value = "");
                         }));
                 }),
-                h(this, "_selecting", !1),
-                h(this, "_selectionStart", null),
-                h(this, "_selectionEnd", null),
-                h(this, "_selection", { rx: [0, 0], ry: [0, 0] }),
-                h(this, "_editing", null),
-                h(this, "_focus", null),
-                h(this, "mousedown", (t) => {
+                l(this, "_selecting", !1),
+                l(this, "_selectionStart", null),
+                l(this, "_selectionEnd", null),
+                l(this, "_selection", { rx: [0, 0], ry: [0, 0] }),
+                l(this, "_editing", null),
+                l(this, "_focus", null),
+                l(this, "mousedown", (t) => {
                   if (!this.mobile) {
                     if (
                       3 === t.which &&
@@ -275,16 +275,16 @@
                     });
                   }
                 }),
-                h(this, "mouseenter", (t) => {
+                l(this, "mouseenter", (t) => {
                   this.mobile ||
                     (this._selecting &&
                       this._changeSelectedCellsStyle(() => {
                         this._selectionEnd = this._getCoords(t);
                       }));
                 }),
-                h(this, "_lastMouseUp", null),
-                h(this, "_lastMouseUpTarget", null),
-                h(this, "mouseup", (t) => {
+                l(this, "_lastMouseUp", null),
+                l(this, "_lastMouseUpTarget", null),
+                l(this, "mouseup", (t) => {
                   this.mobile ||
                     (3 !== t.which &&
                       this._selecting &&
@@ -303,15 +303,15 @@
                           (this._lastMouseUpTarget = this._selectionEnd);
                       }));
                 }),
-                h(this, "mouseleave", (t) => {
+                l(this, "mouseleave", (t) => {
                   t.target === this.tbody &&
                     this._selecting &&
                     this._endSelection();
                 }),
-                h(this, "touchstart", (t) => {
+                l(this, "touchstart", (t) => {
                   this._editing || ((this.mobile = !0), (this.moved = !1));
                 }),
-                h(this, "touchend", (t) => {
+                l(this, "touchend", (t) => {
                   this.mobile &&
                     (this._editing ||
                       this.moved ||
@@ -322,10 +322,10 @@
                       }),
                       this._startEditing(this._focus)));
                 }),
-                h(this, "touchmove", (t) => {
+                l(this, "touchmove", (t) => {
                   this.mobile && (this.moved = !0);
                 }),
-                h(this, "_stopEditing", () => {
+                l(this, "_stopEditing", () => {
                   if (!this._editing) return;
                   const { x: t, y: e } = this._editing,
                     i = this._getCell(t, e);
@@ -339,16 +339,16 @@
                     (this._editing = null),
                     this._renderTDContent(i, t, e);
                 }),
-                h(this, "_blurIfEnter", (t) => {
+                l(this, "_blurIfEnter", (t) => {
                   13 === t.keyCode && (this._stopEditing(), t.preventDefault());
                 }),
-                h(this, "_restyle", ({ x: t, y: e }) => {
+                l(this, "_restyle", ({ x: t, y: e }) => {
                   const i = this._getCell(t, e);
                   i.className = this._classNames(t, e);
                   const s = a(this.checkResults.titles, t, e);
                   s ? i.setAttribute("title", s) : i.removeAttribute("title");
                 }),
-                h(this, "_refreshDisplayedValue", ({ x: t, y: e }) => {
+                l(this, "_refreshDisplayedValue", ({ x: t, y: e }) => {
                   const i = this._getCell(t, e).firstChild;
                   "DIV" === i.tagName &&
                     (i.textContent = this._divContent(t, e)),
@@ -374,13 +374,15 @@
               minRows: s = 1,
               maxRows: n = 1 / 0,
               css: o = "",
-              width: h = "100%",
-              height: r = "80vh",
-              columns: l,
+              width: l = "100%",
+              height: h = "80vh",
+              columns: r,
               checks: a,
+              select: d = [],
+              bond: c = [],
             }) {
               if (
-                ((this.columns = l),
+                ((this.columns = r),
                 (this.checks = a || (() => ({}))),
                 this._runChecks(t),
                 !e)
@@ -396,10 +398,12 @@
                   css:
                     "\nhtml{\n  -ms-overflow-style: none;\n  scrollbar-width: none;\n}\n::-webkit-scrollbar {\n  width: 0;\n  height:0;\n}\n*{\n  box-sizing: border-box;\n}\nbody{\n  padding: 0; \n  margin: 0;\n}\ntable{\n  border-spacing: 0;\n  background: white;\n  border: 1px solid #ddd;\n  border-width: 0 1px 1px 0;\n  font-size: 16px;\n  font-family: sans-serif;\n  border-collapse: separate;\n  min-width:100%;\n}\ntd, th{\n  padding:0;\n  border: 1px solid;\n  border-color: #ddd transparent transparent #ddd; \n}\ntd.selected.multi:not(.editing){\n  background:#d7f2f9;\n} \ntd.focus:not(.editing){\n  border-color: black;\n} \ntd>*, th>*{\n  border:none;\n  padding:10px;\n  min-width:100px;\n  min-height: 40px;\n  font:inherit;\n  line-height: 20px;\n  color:inherit;\n  white-space: normal;\n}\ntd>div::selection {\n    color: none;\n    background: none;\n}\n\n.placeholder div{\n  user-select:none;\n  color:rgba(0,0,0,0.2);\n}\n*[title] div{cursor:help;}\nth{text-align:left;}\n" +
                     o,
+                  select: d,
+                  bond: c,
                 }),
                 (this._iframeStyle = {
-                  width: h,
-                  height: r,
+                  width: l,
+                  height: h,
                   border: "none",
                   background: "transparent",
                 });
@@ -453,16 +457,47 @@
                 s = document.createElement("tbody"),
                 n = document.createElement("THEAD"),
                 o = document.createElement("TR");
-              n.appendChild(o),
-                this.columns.forEach((t) => {
-                  const e = document.createElement("TH"),
-                    i = document.createElement("div");
-                  (i.innerHTML = t.label),
-                    t.title && e.setAttribute("title", t.title),
-                    e.appendChild(i),
-                    o.appendChild(e);
-                }),
-                i.appendChild(n),
+              if (this._options.bond.length > 0) {
+                const t = document.createElement("TR");
+                n.appendChild(o),
+                  n.appendChild(t),
+                  this.columns.forEach((e, i) => {
+                    const s = document.createElement("TH"),
+                      n = document.createElement("div");
+                    let l = !1;
+                    for (const h of this._options.bond)
+                      if (i >= h.startRow && i < h.startRow + h.rowSize) {
+                        i === h.startRow &&
+                          ((n.innerHTML = h.label),
+                          h.label && s.setAttribute("colspan", h.rowSize),
+                          s.appendChild(n),
+                          o.appendChild(s));
+                        const r = document.createElement("TH"),
+                          a = document.createElement("div");
+                        (a.innerHTML = e.label),
+                          e.title && r.setAttribute("title", e.title),
+                          r.appendChild(a),
+                          t.appendChild(r),
+                          (l = !0);
+                        break;
+                      }
+                    l ||
+                      ((n.innerHTML = e.label),
+                      e.title && s.setAttribute("rowspan", "2"),
+                      s.appendChild(n),
+                      o.appendChild(s));
+                  });
+              } else
+                n.appendChild(o),
+                  this.columns.forEach((t) => {
+                    const e = document.createElement("TH"),
+                      i = document.createElement("div");
+                    (i.innerHTML = t.label),
+                      t.title && e.setAttribute("title", t.title),
+                      e.appendChild(i),
+                      o.appendChild(e);
+                  });
+              i.appendChild(n),
                 i.appendChild(s),
                 e.body.appendChild(i),
                 (this.tbody = s),
@@ -472,11 +507,11 @@
                 s.appendChild(e);
                 for (let i = 0; i < this._width; i++) this._addCell(e, i, t);
               }
-              r.forEach((t) => e.addEventListener(t, this[t], !0));
+              h.forEach((t) => e.addEventListener(t, this[t], !0));
             }
             destroy() {
               this._destroyEditing(),
-                r.forEach((t) => this.cwd.removeEventListener(t, this[t], !0)),
+                h.forEach((t) => this.cwd.removeEventListener(t, this[t], !0)),
                 this.iframe.parentElement.removeChild(this.iframe);
             }
             _addCell(t, e, i) {
@@ -546,27 +581,27 @@
             _tabCursorInSelection(t, e = 1) {
               let { x: i, y: s } = this._focus || { x: 0, y: 0 };
               const o = this._selectionSize(),
-                { rx: h, ry: r } =
+                { rx: l, ry: h } =
                   o > 1
                     ? this._selection
                     : {
                         rx: [0, this.columns.length],
                         ry: [0, this._options.maxRows],
                       };
-              let l;
-              if (t) l = n(i, s, e, h[0], h[1] - 1, r[0], r[1] - 1);
+              let r;
+              if (t) r = n(i, s, e, l[0], l[1] - 1, h[0], h[1] - 1);
               else {
-                const t = n(s, i, e, r[0], r[1] - 1, h[0], h[1] - 1);
-                l = { x: t.y, y: t.x };
+                const t = n(s, i, e, h[0], h[1] - 1, l[0], l[1] - 1);
+                r = { x: t.y, y: t.x };
               }
-              this._fitBounds(l) &&
+              this._fitBounds(r) &&
                 (this._stopEditing(),
-                this._incrementToFit(l),
+                this._incrementToFit(r),
                 this._changeSelectedCellsStyle(() => {
-                  (this._focus = l),
-                    o <= 1 && (this._selectionStart = this._selectionEnd = l);
+                  (this._focus = r),
+                    o <= 1 && (this._selectionStart = this._selectionEnd = r);
                 }),
-                this._scrollIntoView(l));
+                this._scrollIntoView(r));
             }
             _scrollIntoView({ x: t, y: e }) {
               this._getCell(t, e).scrollIntoView({
@@ -582,22 +617,52 @@
               const i = this._getCell(t, e),
                 s = i.getBoundingClientRect(),
                 n = i.firstChild.getBoundingClientRect();
-              i.removeChild(i.firstChild);
-              const o = document.createElement("input");
-              (o.type = "text"),
-                (o.value = this._getVal(t, e)),
-                i.appendChild(o),
-                Object.assign(i.style, {
-                  width: s.width - 2,
-                  height: s.height,
-                }),
-                Object.assign(o.style, {
-                  width: `${n.width}px`,
-                  height: `${n.height}px`,
-                }),
-                o.focus(),
-                o.addEventListener("blur", this._stopEditing),
-                o.addEventListener("keydown", this._blurIfEnter);
+              let o = !1;
+              if (
+                (i.removeChild(i.firstChild), this._options.select.length > 0)
+              )
+                for (const l of this._options.select)
+                  if (t === l.rowIndex) {
+                    const h = document.createElement("select");
+                    i.appendChild(h),
+                      Object.assign(i.style, {
+                        width: s.width - 2,
+                        height: s.height,
+                      }),
+                      Object.assign(h.style, {
+                        width: `${n.width}px`,
+                        height: `${n.height}px`,
+                      }),
+                      l.selectableInfo.forEach((i) => {
+                        const s = document.createElement("option");
+                        i.text == this._getVal(t, e) && (s.selected = !0),
+                          (s.text = i.text),
+                          (s.value = i.text),
+                          h.appendChild(s);
+                      }),
+                      h.focus(),
+                      h.addEventListener("blur", this._stopEditing),
+                      h.addEventListener("keydown", this._blurIfEnter),
+                      (o = !0);
+                    break;
+                  }
+              if (!o) {
+                const o = document.createElement("input");
+                (o.type = "text"),
+                  (o.value = this._getVal(t, e)),
+                  i.appendChild(o),
+                  Object.assign(i.style, {
+                    width: s.width - 2,
+                    height: s.height,
+                  }),
+                  Object.assign(o.style, {
+                    width: `${n.width}px`,
+                    height: `${n.height}px`,
+                  }),
+                  o.focus(),
+                  o.addEventListener("blur", this._stopEditing),
+                  o.addEventListener("keydown", this._blurIfEnter);
+              }
             }
             _destroyEditing() {
               if (this._editing) {
