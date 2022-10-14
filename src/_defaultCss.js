@@ -1,14 +1,12 @@
 export const _defaultCss = `
 html{
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-::-webkit-scrollbar {
-  width: 0;
-  height:0;
+  overflow: auto;
 }
 *{
   box-sizing: border-box;
+}
+iframe{
+  position:absolute;
 }
 body{
   padding: 0; 
@@ -33,12 +31,12 @@ td.selected.multi:not(.editing){
   background:#d7f2f9;
 } 
 td.focus:not(.editing){
-  border-color: black;
+  border-color: #13ac59;
 } 
 td>*, th>*{
   border:none;
   padding:10px;
-  min-width:100px;
+  min-width:10px;
   min-height: 40px;
   font:inherit;
   line-height: 20px;
