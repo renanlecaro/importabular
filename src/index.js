@@ -62,6 +62,8 @@ export default class Importabular {
     height = "80vh",
     columns,
     checks,
+    select = [],
+    bond = []
   }) {
     this.columns = columns;
     this.checks = checks || (() => ({}));
@@ -88,6 +90,8 @@ export default class Importabular {
       minRows,
       maxRows,
       css: _defaultCss + css,
+      select,
+      bond,
     };
     this._iframeStyle = {
       width,
@@ -108,7 +112,9 @@ export default class Importabular {
   
       height,
       border: "none",
+      position: "absolute",
       background: "transparent",
+      borderRadius: "5px"
     };
   }
   /** @private {Number} Current number of columns of the table. */
@@ -145,9 +151,11 @@ export default class Importabular {
   }
   /** @private Create a div with the cell content and correct style */
   _renderTDContent(td, x, y) {
-    const div = document.createElement("div");
+    //なんか知らんが差分が出る
+    var div = document.createElement("div");
     td.setAttribute("x", x.toString());
     td.setAttribute("y", y.toString());
+    td.setAttribute("id", x.toString() + y.toString());
     const val = this._divContent(x, y);
     if (val) {
       div.textContent = val;
@@ -160,6 +168,9 @@ export default class Importabular {
   }
   _divContent(x, y) {
     return this._getVal(x, y) || this.columns[x].placeholder;
+  }
+  _selsectContent(t, e) {
+    return this._getVal(t, e) || this.columns[t].placeholder;
   }
   _setupDom() {
     // We wrap the table in an iframe mostly to let the browser
@@ -182,15 +193,63 @@ export default class Importabular {
 
     const thead = document.createElement("THEAD");
     const tr = document.createElement("TR");
-    thead.appendChild(tr);
-    this.columns.forEach((col) => {
-      const th = document.createElement("TH");
-      const div = document.createElement("div");
-      div.innerHTML = col.label;
-      col.title && th.setAttribute("title", col.title);
-      th.appendChild(div);
-      tr.appendChild(th);
-    });
+    const tr2 = document.createElement("TR");
+    const array = [];
+
+    if ( this._options.bond.length > 0 ) {
+      // const downtr = document.createElement("TR");
+      thead.appendChild(tr2);
+      thead.appendChild(tr);
+      this.columns.forEach((col,index) => {
+        const th = document.createElement("TH");
+        const div = document.createElement("div");
+        let bondflag = false;
+        for ( const bd of this._options.bond) {
+          if ( index >= bd.startRow  &&  index < bd.startRow + bd.rowSize){
+            if ( index === bd.startRow ) {
+              div.innerHTML = bd.label;
+              bd.label && th.appendChild(div);
+              th.setAttribute("colspan", bd.rowSize);
+              tr2.appendChild(th);
+            }
+            array.push(col);
+            bondflag = true;
+            break;
+          }
+        }
+        if ( !bondflag ) {
+          div.innerHTML = col.label;
+          col.title && th.setAttribute("title", col.title);
+          th.appendChild(div);
+          tr2.appendChild(th);
+          th.setAttribute("rowspan", "2");
+        }
+      });
+      array.forEach((t => {
+        const ee = document.createElement("TH");
+        const ii = document.createElement("div");
+        ii.innerHTML = t.label;
+        t.title && ee.setAttribute("title", t.title);
+        ee.appendChild(ii);
+        tr.appendChild(ee);
+      }));
+      table.appendChild(thead);
+      table.appendChild(tbody);
+      cwd.body.appendChild(table);
+      this.tbody = tbody;
+      this.table = table;
+    } else {
+      thead.appendChild(tr2);
+      this.columns.forEach((col) => {
+        const th = document.createElement("TH");
+        const div = document.createElement("div");
+        div.innerHTML = col.label;
+        col.title && th.setAttribute("title", col.title);
+        th.appendChild(div);
+        tr2.appendChild(th);
+      });
+    }
+    
     table.appendChild(thead);
     table.appendChild(tbody);
     cwd.body.appendChild(table);
@@ -318,11 +377,12 @@ export default class Importabular {
   };
   keydown = (e) => {
     if (e.ctrlKey){ 
-      if (this._editing) {
-        e.preventDefault();
-        this._revertEdit();
-        this._stopEditing();
-      }
+      // どうも相容れない
+      // if (this._editing) {
+      //   e.preventDefault();
+      //   this._revertEdit();
+      //   this._stopEditing();
+      // }
       return;
     }
     if (this._selectionStart) {
@@ -365,15 +425,17 @@ export default class Importabular {
           this._moveCursor({ x: +1 }, e.shiftKey);
         }
       }
-      if (e.key.length === 1 && !this._editing) {
-        this._changeSelectedCellsStyle(() => {
-          const { x, y } = this._focus;
-          // We clear the value of the cell, and the keyup event will
-          // happen with the cursor inside the cell and type the character there
-          this._startEditing({ x, y });
-          this._getCell(x, y).firstChild.value = "";
-        });
-      }
+
+      // 既存の処理をなぜか消している
+      // if (e.key.length === 1 && !this._editing) {
+      //   this._changeSelectedCellsStyle(() => {
+      //     const { x, y } = this._focus;
+      //     // We clear the value of the cell, and the keyup event will
+      //     // happen with the cursor inside the cell and type the character there
+      //     this._startEditing({ x, y });
+      //     this._getCell(x, y).firstChild.value = "";
+      //   });
+      // }
     }
   };
   _setAllSelectedCellsTo(value) {
@@ -496,7 +558,8 @@ export default class Importabular {
         this._endSelection();
         
         // In a multi-byte environment(Japanese etc),want to enter edit mode after click
-        this._startEditing(this._focus);
+// パッチと相性が良くない
+        //        this._startEditing(this._focus);
         if (
           this._lastMouseUp &&
           this._lastMouseUp > Date.now() - 300 &&
@@ -542,30 +605,96 @@ export default class Importabular {
     // Measure the current content
     const tdSize = td.getBoundingClientRect();
     const cellSize = td.firstChild.getBoundingClientRect();
-
+    
     // remove the current content
     td.removeChild(td.firstChild);
 
-    // add the input
     const input = document.createElement("input");
-    input.type = "text";
-    input.value = this._getVal(x, y);
-    td.appendChild(input);
+    const select = document.createElement("select");
 
-    // Make the new content fit the past size
-    Object.assign(td.style, {
-      width: tdSize.width - 2,
-      height: tdSize.height,
-    });
+    let selectflag = true;
 
-    Object.assign(input.style, {
-      width: `${cellSize.width}px`,
-      height: `${cellSize.height}px`,
-    });
+    if (this._options.select.length > 0) {
+      //add the select
+      this._options.select.forEach((sel, index) => {
+        if (x === sel.rowIndex) {
 
-    input.focus();
-    input.addEventListener("blur", this._stopEditing);
-    input.addEventListener("keydown", this._blurIfEnter);
+          //const select = document.createElement("select");
+          select.value = this._getVal(x, y);
+          td.appendChild(select);
+
+          // Make the new content fit the past size
+          Object.assign(td.style, {
+            width: tdSize.width - 2,
+            height: tdSize.height,
+          });
+
+          Object.assign(select.style, {
+            width: tdSize.width - 2,
+            height: tdSize.height - 2,
+            outline: "none",
+            background: "transparent",
+          });
+          select.focus();
+          select.addEventListener("blur", this._stopEditing);
+          select.addEventListener("keydown", this._blurIfEnter);
+
+          //add the option of select
+          this._options.select[index].selectableInfo.forEach(ele => {
+            const option = document.createElement("option");
+            if (ele.text == this._getVal(x, y)) {
+              option.selected = true;
+            }
+            option.text = ele.text;
+            option.value = ele.text;
+            select.appendChild(option);
+          });
+
+          selectflag = false;
+        }
+      });
+      if (selectflag) {
+        input.type = "text";
+        input.value = this._getVal(x, y);
+        td.appendChild(input);
+        Object.assign(td.style, {
+          width: tdSize.width - 2,
+          height: tdSize.height,
+        });
+        Object.assign(input.style, {
+          width: `${cellSize.width}px`,
+          height: tdSize.height - 2,
+          outline: "none",
+          background: "transparent",
+        });
+        input.focus();
+        input.addEventListener("blur", this._stopEditing);
+        input.addEventListener("keydown", this._blurIfEnter);
+      }
+    } else { 
+      // add the input
+      //const input = document.createElement("input");
+      input.type = "text";
+      input.value = this._getVal(x, y);
+      td.appendChild(input);
+  
+      // Make the new content fit the past size
+      Object.assign(td.style, {
+        width: tdSize.width - 2,
+        height: tdSize.height,
+      });
+  
+      Object.assign(input.style, {
+        width: `${cellSize.width}px`,
+        height: tdSize.height - 2,
+        outline: "none",
+        background: "transparent",
+      });
+  
+      input.focus();
+      input.addEventListener("blur", this._stopEditing);
+      input.addEventListener("keydown", this._blurIfEnter);
+    }
   }
 
   _destroyEditing() {

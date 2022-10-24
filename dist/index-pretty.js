@@ -113,7 +113,7 @@
                         r,
                         l,
                         a = [],
-                        c = 0;
+                        d = 0;
                       for (
                         (s = t.split("\n")).length > 1 &&
                           "" === s[s.length - 1] &&
@@ -128,26 +128,26 @@
                           n < h;
                           n += 1
                         )
-                          a[c] || (a[c] = []),
+                          a[d] || (a[d] = []),
                             r && 0 === n
-                              ? ((l = a[c].length - 1),
-                                (a[c][l] = a[c][l] + "\n" + s[e][0]),
+                              ? ((l = a[d].length - 1),
+                                (a[d][l] = a[d][l] + "\n" + s[e][0]),
                                 r &&
                                   1 & o(s[e][0]) &&
                                   ((r = !1),
-                                  (a[c][l] = a[c][l]
-                                    .substring(0, a[c][l].length - 1)
+                                  (a[d][l] = a[d][l]
+                                    .substring(0, a[d][l].length - 1)
                                     .replace(/""/g, '"'))))
                               : n === h - 1 &&
                                 0 === s[e][n].indexOf('"') &&
                                 1 & o(s[e][n])
-                              ? (a[c].push(
+                              ? (a[d].push(
                                   s[e][n].substring(1).replace(/""/g, '"')
                                 ),
                                 (r = !0))
-                              : (a[c].push(s[e][n].replace(/""/g, '"')),
+                              : (a[d].push(s[e][n].replace(/""/g, '"')),
                                 (r = !1));
-                        r || (c += 1);
+                        r || (d += 1);
                       }
                       return a;
                     })(
@@ -202,12 +202,8 @@
                     (this.copy(t), this._setAllSelectedCellsTo(""));
                 }),
                 h(this, "keydown", (t) => {
-                  t.ctrlKey
-                    ? this._editing &&
-                      (t.preventDefault(),
-                      this._revertEdit(),
-                      this._stopEditing())
-                    : this._selectionStart &&
+                  t.ctrlKey ||
+                    (this._selectionStart &&
                       ("Escape" === t.key &&
                         this._editing &&
                         (t.preventDefault(),
@@ -235,14 +231,7 @@
                           this._moveCursor({ x: -1 }, t.shiftKey)),
                         "ArrowRight" === t.key &&
                           (t.preventDefault(),
-                          this._moveCursor({ x: 1 }, t.shiftKey))),
-                      1 !== t.key.length ||
-                        this._editing ||
-                        this._changeSelectedCellsStyle(() => {
-                          const { x: t, y: e } = this._focus;
-                          this._startEditing({ x: t, y: e }),
-                            (this._getCell(t, e).firstChild.value = "");
-                        }));
+                          this._moveCursor({ x: 1 }, t.shiftKey)))));
                 }),
                 h(this, "_selecting", !1),
                 h(this, "_selectionStart", null),
@@ -291,7 +280,6 @@
                       this._changeSelectedCellsStyle(() => {
                         (this._selectionEnd = this._getCoords(t)),
                           this._endSelection(),
-                          this._startEditing(this._focus),
                           this._lastMouseUp &&
                             this._lastMouseUp > Date.now() - 300 &&
                             this._lastMouseUpTarget.x ===
@@ -378,6 +366,8 @@
               height: r = "80vh",
               columns: l,
               checks: a,
+              select: d = [],
+              bond: c = [],
             }) {
               if (
                 ((this.columns = l),
@@ -394,14 +384,18 @@
                   minRows: s,
                   maxRows: n,
                   css:
-                    "\nhtml{\n  -ms-overflow-style: none;\n  scrollbar-width: none;\n}\n::-webkit-scrollbar {\n  width: 0;\n  height:0;\n}\n*{\n  box-sizing: border-box;\n}\nbody{\n  padding: 0; \n  margin: 0;\n}\ntable{\n  border-spacing: 0;\n  background: white;\n  border: 1px solid #ddd;\n  border-width: 0 1px 1px 0;\n  font-size: 16px;\n  font-family: sans-serif;\n  border-collapse: separate;\n  min-width:100%;\n}\ntd, th{\n  padding:0;\n  border: 1px solid;\n  border-color: #ddd transparent transparent #ddd; \n}\ntd.selected.multi:not(.editing){\n  background:#d7f2f9;\n} \ntd.focus:not(.editing){\n  border-color: black;\n} \ntd>*, th>*{\n  border:none;\n  padding:10px;\n  min-width:100px;\n  min-height: 40px;\n  font:inherit;\n  line-height: 20px;\n  color:inherit;\n  white-space: normal;\n}\ntd>div::selection {\n    color: none;\n    background: none;\n}\n\n.placeholder div{\n  user-select:none;\n  color:rgba(0,0,0,0.2);\n}\n*[title] div{cursor:help;}\nth{text-align:left;}\n" +
+                    "\nhtml{\n  overflow: auto;\n}\n*{\n  box-sizing: border-box;\n}\niframe{\n  position:absolute;\n}\nbody{\n  padding: 0; \n  margin: 0;\n}\ntable{\n  border-spacing: 0;\n  background: white;\n  border: 1px solid #ddd;\n  border-width: 0 1px 1px 0;\n  font-size: 16px;\n  font-family: sans-serif;\n  border-collapse: separate;\n  min-width:100%;\n}\ntd, th{\n  padding:0;\n  border: 1px solid;\n  border-color: #ddd transparent transparent #ddd; \n}\ntd.selected.multi:not(.editing){\n  background:#d7f2f9;\n} \ntd.focus:not(.editing){\n  border-color: #13ac59;\n} \ntd>*, th>*{\n  border:none;\n  padding:10px;\n  min-width:10px;\n  min-height: 40px;\n  font:inherit;\n  line-height: 20px;\n  color:inherit;\n  white-space: normal;\n}\ntd>div::selection {\n    color: none;\n    background: none;\n}\n\n.placeholder div{\n  user-select:none;\n  color:rgba(0,0,0,0.2);\n}\n*[title] div{cursor:help;}\nth{text-align:left;}\n" +
                     o,
+                  select: d,
+                  bond: c,
                 }),
                 (this._iframeStyle = {
                   width: h,
                   height: r,
                   border: "none",
+                  position: "absolute",
                   background: "transparent",
+                  borderRadius: "5px",
                 });
             }
             _fitBounds({ x: t, y: e }) {
@@ -427,15 +421,19 @@
                 this._restyleAll();
             }
             _renderTDContent(t, e, i) {
-              const s = document.createElement("div");
+              var s = document.createElement("div");
               t.setAttribute("x", e.toString()),
-                t.setAttribute("y", i.toString());
+                t.setAttribute("y", i.toString()),
+                t.setAttribute("id", e.toString() + i.toString());
               const n = this._divContent(e, i);
               n ? (s.textContent = n) : (s.innerHTML = "&nbsp;"),
                 t.appendChild(s),
                 this._restyle({ x: e, y: i });
             }
             _divContent(t, e) {
+              return this._getVal(t, e) || this.columns[t].placeholder;
+            }
+            _selsectContent(t, e) {
               return this._getVal(t, e) || this.columns[t].placeholder;
             }
             _setupDom() {
@@ -452,16 +450,56 @@
               const i = document.createElement("table"),
                 s = document.createElement("tbody"),
                 n = document.createElement("THEAD"),
-                o = document.createElement("TR");
-              n.appendChild(o),
-                this.columns.forEach((t) => {
-                  const e = document.createElement("TH"),
-                    i = document.createElement("div");
-                  (i.innerHTML = t.label),
-                    t.title && e.setAttribute("title", t.title),
-                    e.appendChild(i),
-                    o.appendChild(e);
-                }),
+                o = document.createElement("TR"),
+                h = document.createElement("TR"),
+                l = [];
+              this._options.bond.length > 0
+                ? (n.appendChild(h),
+                  n.appendChild(o),
+                  this.columns.forEach((t, e) => {
+                    const i = document.createElement("TH"),
+                      s = document.createElement("div");
+                    let n = !1;
+                    for (const o of this._options.bond)
+                      if (e >= o.startRow && e < o.startRow + o.rowSize) {
+                        e === o.startRow &&
+                          ((s.innerHTML = o.label),
+                          o.label && i.appendChild(s),
+                          i.setAttribute("colspan", o.rowSize),
+                          h.appendChild(i)),
+                          l.push(t),
+                          (n = !0);
+                        break;
+                      }
+                    n ||
+                      ((s.innerHTML = t.label),
+                      t.title && i.setAttribute("title", t.title),
+                      i.appendChild(s),
+                      h.appendChild(i),
+                      i.setAttribute("rowspan", "2"));
+                  }),
+                  l.forEach((t) => {
+                    const e = document.createElement("TH"),
+                      i = document.createElement("div");
+                    (i.innerHTML = t.label),
+                      t.title && e.setAttribute("title", t.title),
+                      e.appendChild(i),
+                      o.appendChild(e);
+                  }),
+                  i.appendChild(n),
+                  i.appendChild(s),
+                  e.body.appendChild(i),
+                  (this.tbody = s),
+                  (this.table = i))
+                : (n.appendChild(h),
+                  this.columns.forEach((t) => {
+                    const e = document.createElement("TH"),
+                      i = document.createElement("div");
+                    (i.innerHTML = t.label),
+                      t.title && e.setAttribute("title", t.title),
+                      e.appendChild(i),
+                      h.appendChild(e);
+                  })),
                 i.appendChild(n),
                 i.appendChild(s),
                 e.body.appendChild(i),
@@ -583,21 +621,69 @@
                 s = i.getBoundingClientRect(),
                 n = i.firstChild.getBoundingClientRect();
               i.removeChild(i.firstChild);
-              const o = document.createElement("input");
-              (o.type = "text"),
-                (o.value = this._getVal(t, e)),
-                i.appendChild(o),
-                Object.assign(i.style, {
-                  width: s.width - 2,
-                  height: s.height,
-                }),
-                Object.assign(o.style, {
-                  width: `${n.width}px`,
-                  height: `${n.height}px`,
-                }),
-                o.focus(),
-                o.addEventListener("blur", this._stopEditing),
-                o.addEventListener("keydown", this._blurIfEnter);
+              const o = document.createElement("input"),
+                h = document.createElement("select");
+              let r = !0;
+              this._options.select.length > 0
+                ? (this._options.select.forEach((n, o) => {
+                    t === n.rowIndex &&
+                      ((h.value = this._getVal(t, e)),
+                      i.appendChild(h),
+                      Object.assign(i.style, {
+                        width: s.width - 2,
+                        height: s.height,
+                      }),
+                      Object.assign(h.style, {
+                        width: s.width - 2,
+                        height: s.height - 2,
+                        outline: "none",
+                        background: "transparent",
+                      }),
+                      h.focus(),
+                      h.addEventListener("blur", this._stopEditing),
+                      h.addEventListener("keydown", this._blurIfEnter),
+                      this._options.select[o].selectableInfo.forEach((i) => {
+                        const s = document.createElement("option");
+                        i.text == this._getVal(t, e) && (s.selected = !0),
+                          (s.text = i.text),
+                          (s.value = i.text),
+                          h.appendChild(s);
+                      }),
+                      (r = !1));
+                  }),
+                  r &&
+                    ((o.type = "text"),
+                    (o.value = this._getVal(t, e)),
+                    i.appendChild(o),
+                    Object.assign(i.style, {
+                      width: s.width - 2,
+                      height: s.height,
+                    }),
+                    Object.assign(o.style, {
+                      width: `${n.width}px`,
+                      height: s.height - 2,
+                      outline: "none",
+                      background: "transparent",
+                    }),
+                    o.focus(),
+                    o.addEventListener("blur", this._stopEditing),
+                    o.addEventListener("keydown", this._blurIfEnter)))
+                : ((o.type = "text"),
+                  (o.value = this._getVal(t, e)),
+                  i.appendChild(o),
+                  Object.assign(i.style, {
+                    width: s.width - 2,
+                    height: s.height,
+                  }),
+                  Object.assign(o.style, {
+                    width: `${n.width}px`,
+                    height: s.height - 2,
+                    outline: "none",
+                    background: "transparent",
+                  }),
+                  o.focus(),
+                  o.addEventListener("blur", this._stopEditing),
+                  o.addEventListener("keydown", this._blurIfEnter));
             }
             _destroyEditing() {
               if (this._editing) {
