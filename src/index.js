@@ -138,7 +138,8 @@ export default class Importabular {
 
   /** @private Create a div with the cell content and correct style */
   _renderTDContent(td, x, y) {
-    const div = document.createElement("div");
+    //なんか知らんが差分が出る
+    var div = document.createElement("div");
     td.setAttribute("x", x.toString());
     td.setAttribute("y", y.toString());
     td.setAttribute("id", x.toString() + y.toString());
@@ -182,7 +183,7 @@ export default class Importabular {
 
     const thead = document.createElement("THEAD");
     const tr = document.createElement("TR");
-    let tr2 = document.createElement("TR");
+    const tr2 = document.createElement("TR");
     const array = [];
 
     if ( this._options.bond.length > 0 ) {
@@ -208,7 +209,7 @@ export default class Importabular {
         }
         if ( !bondflag ) {
           div.innerHTML = col.label;
-          col.title && tr2.setAttribute("title", col.title);
+          col.title && th.setAttribute("title", col.title);
           th.appendChild(div);
           tr2.appendChild(th);
           th.setAttribute("rowspan", "2");
@@ -228,14 +229,14 @@ export default class Importabular {
       this.tbody = tbody;
       this.table = table;
     } else {
-      thead.appendChild(tr);
+      thead.appendChild(tr2);
       this.columns.forEach((col) => {
         const th = document.createElement("TH");
         const div = document.createElement("div");
         div.innerHTML = col.label;
         col.title && th.setAttribute("title", col.title);
         th.appendChild(div);
-        tr.appendChild(th);
+        tr2.appendChild(th);
       });
     }
     
@@ -365,11 +366,12 @@ export default class Importabular {
 
   keydown = (e) => {
     if (e.ctrlKey){ 
-      if (this._editing) {
-        e.preventDefault();
-        this._revertEdit();
-        this._stopEditing();
-      }
+      // どうも相容れない
+      // if (this._editing) {
+      //   e.preventDefault();
+      //   this._revertEdit();
+      //   this._stopEditing();
+      // }
       return;
     }
 
@@ -416,15 +418,16 @@ export default class Importabular {
         }
       }
 
-      if (e.key.length === 1 && !this._editing) {
-        this._changeSelectedCellsStyle(() => {
-          const { x, y } = this._focus;
-          // We clear the value of the cell, and the keyup event will
-          // happen with the cursor inside the cell and type the character there
-          this._startEditing({ x, y });
-          this._getCell(x, y).firstChild.value = "";
-        });
-      }
+      // 既存の処理をなぜか消している
+      // if (e.key.length === 1 && !this._editing) {
+      //   this._changeSelectedCellsStyle(() => {
+      //     const { x, y } = this._focus;
+      //     // We clear the value of the cell, and the keyup event will
+      //     // happen with the cursor inside the cell and type the character there
+      //     this._startEditing({ x, y });
+      //     this._getCell(x, y).firstChild.value = "";
+      //   });
+      // }
     }
   };
 
@@ -560,7 +563,8 @@ export default class Importabular {
         this._endSelection();
         
         // In a multi-byte environment(Japanese etc),want to enter edit mode after click
-        this._startEditing(this._focus);
+// パッチと相性が良くない
+        //        this._startEditing(this._focus);
         if (
           this._lastMouseUp &&
           this._lastMouseUp > Date.now() - 300 &&
@@ -609,13 +613,14 @@ export default class Importabular {
     // Measure the current content
     const tdSize = td.getBoundingClientRect();
     const cellSize = td.firstChild.getBoundingClientRect();
-    let selectflag = true;
+    
+    // remove the current content
+    td.removeChild(td.firstChild);
 
     const input = document.createElement("input");
     const select = document.createElement("select");
 
-    // remove the current content
-    td.removeChild(td.firstChild);
+    let selectflag = true;
 
     if (this._options.select.length > 0) {
       //add the select
@@ -638,11 +643,14 @@ export default class Importabular {
             outline: "none",
             background: "transparent",
           });
+          select.focus();
+          select.addEventListener("blur", this._stopEditing);
+          select.addEventListener("keydown", this._blurIfEnter);
 
           //add the option of select
           this._options.select[index].selectableInfo.forEach(ele => {
             const option = document.createElement("option");
-            if (option.text == this._getVal(x, y)) {
+            if (ele.text == this._getVal(x, y)) {
               option.selected = true;
             }
             option.text = ele.text;
@@ -650,34 +658,28 @@ export default class Importabular {
             select.appendChild(option);
           });
 
-          select.focus();
-          select.addEventListener("blur", this._stopEditing);
-          select.addEventListener("keydown", this._blurIfEnter);
           selectflag = false;
         }
       });
-    }
-
-    if (selectflag) {
-      input.type = "text";
-      input.value = this._getVal(x, y);
-      td.appendChild(input);
-      Object.assign(td.style, {
-        width: s.width - 2,
-        height: s.height,
-      });
-      Object.assign(o.style, {
-        width: `${n.width}px`,
-        height: s.height - 2,
-        outline: "none",
-        background: "transparent",
-      });
-      input.focus();
-      input.addEventListener("blur", this._stopEditing);
-      input.addEventListener("keydown", this._blurIfEnter);
-    }
-
-    if ( !selectflag ) { 
+      if (selectflag) {
+        input.type = "text";
+        input.value = this._getVal(x, y);
+        td.appendChild(input);
+        Object.assign(td.style, {
+          width: tdSize.width - 2,
+          height: tdSize.height,
+        });
+        Object.assign(input.style, {
+          width: `${cellSize.width}px`,
+          height: tdSize.height - 2,
+          outline: "none",
+          background: "transparent",
+        });
+        input.focus();
+        input.addEventListener("blur", this._stopEditing);
+        input.addEventListener("keydown", this._blurIfEnter);
+      }
+    } else { 
       // add the input
       //const input = document.createElement("input");
       input.type = "text";
