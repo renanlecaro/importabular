@@ -67,16 +67,6 @@ export default class Importabular {
   }) {
     this.columns = columns;
     this.checks = checks || (() => ({}));
-
-    
-        
-          
-    
-
-        
-    
-    @@ -83,6 +85,8 @@ export default class Importabular {
-  
     this._runChecks(data);
     if (!node) {
       throw new Error(
@@ -95,21 +85,6 @@ export default class Importabular {
     };
     this._iframeStyle = {
       width,
-
-    
-          
-            
-    
-
-          
-          
-            
-    
-
-          
-    
-    @@ -173,15 +177,52 @@ export default class Importabular {
-  
       height,
       border: "none",
       position: "absolute",
@@ -254,20 +229,6 @@ export default class Importabular {
     table.appendChild(tbody);
     cwd.body.appendChild(table);
 
-    
-          
-            
-    
-
-          
-          
-            
-    
-
-          
-    
-    @@ -554,30 +595,72 @@ export default class Importabular {
-  
     this.tbody = tbody;
     this.table = table;
     for (let y = 0; y < this._height; y++) {
@@ -698,16 +659,6 @@ export default class Importabular {
   }
 
   _destroyEditing() {
-
-    
-          
-            
-    
-
-          
-    
-    
-  
     if (this._editing) {
       const { x, y } = this._editing;
       const input = this._getCell(x, y).firstChild;
