@@ -203,7 +203,12 @@
                 }),
                 h(this, "keydown", (t) => {
                   t.ctrlKey ||
-                    (this._selectionStart &&
+                    ("KeyA" != t.code ||
+                      this._editing ||
+                      (t.preventDefault(),
+                      this._startEditing(this._focus),
+                      this.keydown(t)),
+                    this._selectionStart &&
                       ("Escape" === t.key &&
                         this._editing &&
                         (t.preventDefault(),
@@ -211,7 +216,8 @@
                         this._stopEditing()),
                       "Enter" === t.key &&
                         (t.preventDefault(),
-                        this._tabCursorInSelection(!1, t.shiftKey ? -1 : 1)),
+                        this._tabCursorInSelection(!1, t.shiftKey ? -1 : 1),
+                        this._startEditing(this._focus)),
                       "Tab" === t.key &&
                         (t.preventDefault(),
                         this._tabCursorInSelection(!0, t.shiftKey ? -1 : 1)),
@@ -219,19 +225,24 @@
                         ("F2" === t.key &&
                           (t.preventDefault(), this._startEditing(this._focus)),
                         ("Delete" !== t.key && "Backspace" !== t.key) ||
-                          (t.preventDefault(), this._setAllSelectedCellsTo("")),
-                        "ArrowDown" === t.key &&
                           (t.preventDefault(),
-                          this._moveCursor({ y: 1 }, t.shiftKey)),
-                        "ArrowUp" === t.key &&
-                          (t.preventDefault(),
-                          this._moveCursor({ y: -1 }, t.shiftKey)),
-                        "ArrowLeft" === t.key &&
-                          (t.preventDefault(),
-                          this._moveCursor({ x: -1 }, t.shiftKey)),
-                        "ArrowRight" === t.key &&
-                          (t.preventDefault(),
-                          this._moveCursor({ x: 1 }, t.shiftKey)))));
+                          this._setAllSelectedCellsTo(""))),
+                      "ArrowDown" === t.key &&
+                        (t.preventDefault(),
+                        this._moveCursor({ y: 1 }, t.shiftKey),
+                        this._startEditing(this._focus)),
+                      "ArrowUp" === t.key &&
+                        (t.preventDefault(),
+                        this._moveCursor({ y: -1 }, t.shiftKey),
+                        this._startEditing(this._focus)),
+                      "ArrowLeft" === t.key &&
+                        (t.preventDefault(),
+                        this._moveCursor({ x: -1 }, t.shiftKey),
+                        this._startEditing(this._focus)),
+                      "ArrowRight" === t.key &&
+                        (t.preventDefault(),
+                        this._moveCursor({ x: 1 }, t.shiftKey),
+                        this._startEditing(this._focus))));
                 }),
                 h(this, "_selecting", !1),
                 h(this, "_selectionStart", null),
@@ -260,16 +271,13 @@
                         (this._selectionEnd = this._selectionStart = this._focus = this._getCoords(
                           t
                         )),
-                        (this._selecting = !0);
+                        (this._selecting = !0),
+                        this._startEditing(this._focus);
                     });
                   }
                 }),
                 h(this, "mouseenter", (t) => {
-                  this.mobile ||
-                    (this._selecting &&
-                      this._changeSelectedCellsStyle(() => {
-                        this._selectionEnd = this._getCoords(t);
-                      }));
+                  this.mobile;
                 }),
                 h(this, "_lastMouseUp", null),
                 h(this, "_lastMouseUpTarget", null),
@@ -280,6 +288,7 @@
                       this._changeSelectedCellsStyle(() => {
                         (this._selectionEnd = this._getCoords(t)),
                           this._endSelection(),
+                          this._startEditing(this._focus),
                           this._lastMouseUp &&
                             this._lastMouseUp > Date.now() - 300 &&
                             this._lastMouseUpTarget.x ===
@@ -620,7 +629,9 @@
               const i = this._getCell(t, e),
                 s = i.getBoundingClientRect(),
                 n = i.firstChild.getBoundingClientRect();
-              i.removeChild(i.firstChild);
+              "SELECT" !== i.firstChild.nodeName
+                ? i.removeChild(i.firstChild)
+                : console.log(i.firstChild.nodeName);
               const o = document.createElement("input"),
                 h = document.createElement("select");
               let r = !0;
@@ -754,7 +765,11 @@
             }
             _getCoords(t) {
               let e = t.target;
-              for (; !e.getAttribute("x") && e.parentElement; )
+              for (
+                ;
+                e.getAttribute && !e.getAttribute("x") && e.parentElement;
+
+              )
                 e = e.parentElement;
               return {
                 x: parseInt(e.getAttribute("x")) || 0,
