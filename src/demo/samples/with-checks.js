@@ -23,6 +23,7 @@ const sheet = new Importabular({
     ["Bad data", "33366666", "email@"],
     ["", "", "missing@name"],
   ],
+  select: [{"rowIndex":1,"selectableInfo":[{"value":1,"text":"x"},{"value":2,"text":"y"}]}],
   checks: checkData,
   css: `
   td>div{
