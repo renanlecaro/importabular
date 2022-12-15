@@ -250,6 +250,7 @@
                 h(this, "_selection", { rx: [0, 0], ry: [0, 0] }),
                 h(this, "_editing", null),
                 h(this, "_focus", null),
+                h(this, "_option_pos", {}),
                 h(this, "mousedown", (t) => {
                   if (!this.mobile) {
                     if (
@@ -324,6 +325,7 @@
                 }),
                 h(this, "_stopEditing", () => {
                   if (!this._editing) return;
+                  this._option_pos && (this._option_pos = {});
                   const { x: t, y: e } = this._editing,
                     i = this._getCell(t, e);
                   (i.style.width = ""), (i.style.height = "");
@@ -338,6 +340,9 @@
                 }),
                 h(this, "_blurIfEnter", (t) => {
                   13 === t.keyCode && (this._stopEditing(), t.preventDefault());
+                }),
+                h(this, "_selectChange", (t) => {
+                  console.log(t), this._stopEditing();
                 }),
                 h(this, "_restyle", ({ x: t, y: e }) => {
                   const i = this._getCell(t, e);
@@ -629,9 +634,16 @@
               const i = this._getCell(t, e),
                 s = i.getBoundingClientRect(),
                 n = i.firstChild.getBoundingClientRect();
-              "SELECT" !== i.firstChild.nodeName
-                ? i.removeChild(i.firstChild)
-                : console.log(i.firstChild.nodeName);
+              if ("SELECT" == i.firstChild.nodeName) return;
+              if (((this._option_pos = {}), "SELECT" !== i.firstChild.nodeName))
+                try {
+                  i.removeChild(i.firstChild);
+                } catch (t) {
+                  return (
+                    console.log(i.firstChild.nodeName), void console.log(t)
+                  );
+                }
+              else console.log(i.firstChild.nodeName);
               const o = document.createElement("input"),
                 h = document.createElement("select");
               let r = !0;
@@ -653,6 +665,7 @@
                       h.focus(),
                       h.addEventListener("blur", this._stopEditing),
                       h.addEventListener("keydown", this._blurIfEnter),
+                      h.addEventListener("change", this._selectChange),
                       this._options.select[o].selectableInfo.forEach((i) => {
                         const s = document.createElement("option");
                         i.text == this._getVal(t, e) && (s.selected = !0),
@@ -660,7 +673,9 @@
                           (s.value = i.text),
                           h.appendChild(s);
                       }),
-                      (r = !1));
+                      (r = !1),
+                      (this._option_pos.x = t),
+                      (this._option_pos.y = e));
                   }),
                   r &&
                     ((o.type = "text"),

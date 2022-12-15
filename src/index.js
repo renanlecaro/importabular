@@ -485,6 +485,7 @@ export default class Importabular {
   _selection = { rx: [0, 0], ry: [0, 0] };
   _editing = null;
   _focus = null;
+  _option_pos = {};
   mousedown = (e) => {
     if (this.mobile) return;
     if (e.which === 3 && !this._editing && this._selectionSize()) {
@@ -523,6 +524,7 @@ export default class Importabular {
   mouseup = (e) => {
     if (this.mobile) return;
     if (e.which === 3) return;
+
     if (this._selecting) {
       this._changeSelectedCellsStyle(() => {
         this._selectionEnd = this._getCoords(e);
@@ -575,10 +577,22 @@ export default class Importabular {
     // Measure the current content
     const tdSize = td.getBoundingClientRect();
     const cellSize = td.firstChild.getBoundingClientRect();
-    
+
+    if (td.firstChild.nodeName == "SELECT") {      
+      return;
+    } else {
+      this._option_pos = {};
+    }
+
     // remove the current content
     if (td.firstChild.nodeName !== "SELECT"){
-      td.removeChild(td.firstChild);
+      try{
+        td.removeChild(td.firstChild);
+      }catch(e){
+        console.log(td.firstChild.nodeName);
+        console.log(e);
+        return;
+      }
     } else {
       console.log(td.firstChild.nodeName);
     }
@@ -612,6 +626,7 @@ export default class Importabular {
           select.focus();
           select.addEventListener("blur", this._stopEditing);
           select.addEventListener("keydown", this._blurIfEnter);
+          select.addEventListener("change",this._selectChange);
 
           //add the option of select
           this._options.select[index].selectableInfo.forEach(ele => {
@@ -625,6 +640,8 @@ export default class Importabular {
           });
 
           selectflag = false;
+          this._option_pos["x"] = x;
+          this._option_pos["y"] = y;
         }
       });
       if (selectflag) {
@@ -688,6 +705,9 @@ export default class Importabular {
   }
   _stopEditing = () => {
     if (!this._editing) return;
+    if (this._option_pos) {
+      this._option_pos = {};
+    }
     const { x, y } = this._editing;
     const td = this._getCell(x, y);
     td.style.width = "";
@@ -708,6 +728,10 @@ export default class Importabular {
       this._stopEditing();
       e.preventDefault();
     }
+  };
+  _selectChange = (e) => {
+    console.log(e);
+    this._stopEditing();
   };
   _changeSelectedCellsStyle(callback) {
     const oldS = this._selection;
