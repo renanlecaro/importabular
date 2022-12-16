@@ -394,7 +394,13 @@ export default class Importabular {
         this._moveCursor({ x: +1 }, e.shiftKey);
         this._startEditing(this._focus);
       }
-
+      if (e.shiftKey){ 
+        if (this._editing) {
+          e.preventDefault();
+          this._stopEditing();
+          this._stopEditing();
+        }
+      }
       // 既存の処理をなぜか消している
       // if (e.key.length === 1 && !this._editing) {
       //   this._changeSelectedCellsStyle(() => {
@@ -631,10 +637,10 @@ export default class Importabular {
           select.addEventListener("change",this._selectChange);
 
           // add empty
-          const empty = document.createElement("option");
-          empty.text = "";
-          empty.value = "";
-          select.appendChild(empty);
+          // const empty = document.createElement("option");
+          // empty.text = "";
+          // empty.value = "";
+          // select.appendChild(empty);
 
           // add the option of select
           this._options.select[index].selectableInfo.forEach(ele => {

@@ -112,8 +112,8 @@
                         h,
                         r,
                         l,
-                        a = [],
-                        d = 0;
+                        d = [],
+                        a = 0;
                       for (
                         (s = t.split("\n")).length > 1 &&
                           "" === s[s.length - 1] &&
@@ -128,28 +128,28 @@
                           n < h;
                           n += 1
                         )
-                          a[d] || (a[d] = []),
+                          d[a] || (d[a] = []),
                             r && 0 === n
-                              ? ((l = a[d].length - 1),
-                                (a[d][l] = a[d][l] + "\n" + s[e][0]),
+                              ? ((l = d[a].length - 1),
+                                (d[a][l] = d[a][l] + "\n" + s[e][0]),
                                 r &&
                                   1 & o(s[e][0]) &&
                                   ((r = !1),
-                                  (a[d][l] = a[d][l]
-                                    .substring(0, a[d][l].length - 1)
+                                  (d[a][l] = d[a][l]
+                                    .substring(0, d[a][l].length - 1)
                                     .replace(/""/g, '"'))))
                               : n === h - 1 &&
                                 0 === s[e][n].indexOf('"') &&
                                 1 & o(s[e][n])
-                              ? (a[d].push(
+                              ? (d[a].push(
                                   s[e][n].substring(1).replace(/""/g, '"')
                                 ),
                                 (r = !0))
-                              : (a[d].push(s[e][n].replace(/""/g, '"')),
+                              : (d[a].push(s[e][n].replace(/""/g, '"')),
                                 (r = !1));
-                        r || (d += 1);
+                        r || (a += 1);
                       }
-                      return a;
+                      return d;
                     })(
                       (t.clipboardData || window.clipboardData).getData(
                         "text/plain"
@@ -247,7 +247,12 @@
                         "ArrowRight" === t.key &&
                           (t.preventDefault(),
                           this._moveCursor({ x: 1 }, t.shiftKey),
-                          this._startEditing(this._focus))));
+                          this._startEditing(this._focus)),
+                        t.shiftKey &&
+                          this._editing &&
+                          (t.preventDefault(),
+                          this._stopEditing(),
+                          this._stopEditing())));
                 }),
                 h(this, "_selecting", !1),
                 h(this, "_selectionStart", null),
@@ -356,7 +361,7 @@
                 h(this, "_restyle", ({ x: t, y: e }) => {
                   const i = this._getCell(t, e);
                   i.className = this._classNames(t, e);
-                  const s = a(this.checkResults.titles, t, e);
+                  const s = d(this.checkResults.titles, t, e);
                   s ? i.setAttribute("title", s) : i.removeAttribute("title");
                 }),
                 h(this, "_refreshDisplayedValue", ({ x: t, y: e }) => {
@@ -388,13 +393,13 @@
               width: h = "100%",
               height: r = "80vh",
               columns: l,
-              checks: a,
-              select: d = [],
+              checks: d,
+              select: a = [],
               bond: c = [],
             }) {
               if (
                 ((this.columns = l),
-                (this.checks = a || (() => ({}))),
+                (this.checks = d || (() => ({}))),
                 this._runChecks(t),
                 !e)
               )
@@ -409,7 +414,7 @@
                   css:
                     "\nhtml{\n  overflow: auto;\n}\n*{\n  box-sizing: border-box;\n}\niframe{\n  position:absolute;\n}\nbody{\n  padding: 0; \n  margin: 0;\n}\ntable{\n  border-spacing: 0;\n  background: white;\n  border: 1px solid #ddd;\n  border-width: 0 1px 1px 0;\n  font-size: 16px;\n  font-family: sans-serif;\n  border-collapse: separate;\n  min-width:100%;\n}\ntd, th{\n  padding:0;\n  border: 1px solid;\n  border-color: #ddd transparent transparent #ddd; \n}\ntd.selected.multi:not(.editing){\n  background:#d7f2f9;\n} \ntd.focus:not(.editing){\n  border-color: #13ac59;\n} \ntd>*, th>*{\n  border:none;\n  padding:10px;\n  min-width:10px;\n  min-height: 40px;\n  font:inherit;\n  line-height: 20px;\n  color:inherit;\n  white-space: normal;\n}\ntd>div::selection {\n    color: none;\n    background: none;\n}\n\n.placeholder div{\n  user-select:none;\n  color:rgba(0,0,0,0.2);\n}\n*[title] div{cursor:help;}\nth{text-align:left;}\n" +
                     o,
-                  select: d,
+                  select: a,
                   bond: c,
                 }),
                 (this._iframeStyle = {
@@ -658,38 +663,33 @@
               let r = !0;
               this._options.select.length > 0
                 ? (this._options.select.forEach((n, o) => {
-                    if (t === n.rowIndex) {
-                      (h.value = this._getVal(t, e)),
-                        i.appendChild(h),
-                        Object.assign(i.style, {
-                          width: s.width - 2,
-                          height: s.height,
-                        }),
-                        Object.assign(h.style, {
-                          width: s.width - 2,
-                          height: s.height - 2,
-                          outline: "none",
-                          background: "transparent",
-                        }),
-                        h.focus(),
-                        h.addEventListener("blur", this._stopEditing),
-                        h.addEventListener("keydown", this._blurIfEnter),
-                        h.addEventListener("change", this._selectChange);
-                      const n = document.createElement("option");
-                      (n.text = ""),
-                        (n.value = ""),
-                        h.appendChild(n),
-                        this._options.select[o].selectableInfo.forEach((i) => {
-                          const s = document.createElement("option");
-                          i.text == this._getVal(t, e) && (s.selected = !0),
-                            (s.text = i.text),
-                            (s.value = i.text),
-                            h.appendChild(s);
-                        }),
-                        (r = !1),
-                        (this._option_pos.x = t),
-                        (this._option_pos.y = e);
-                    }
+                    t === n.rowIndex &&
+                      ((h.value = this._getVal(t, e)),
+                      i.appendChild(h),
+                      Object.assign(i.style, {
+                        width: s.width - 2,
+                        height: s.height,
+                      }),
+                      Object.assign(h.style, {
+                        width: s.width - 2,
+                        height: s.height - 2,
+                        outline: "none",
+                        background: "transparent",
+                      }),
+                      h.focus(),
+                      h.addEventListener("blur", this._stopEditing),
+                      h.addEventListener("keydown", this._blurIfEnter),
+                      h.addEventListener("change", this._selectChange),
+                      this._options.select[o].selectableInfo.forEach((i) => {
+                        const s = document.createElement("option");
+                        i.text == this._getVal(t, e) && (s.selected = !0),
+                          (s.text = i.text),
+                          (s.value = i.text),
+                          h.appendChild(s);
+                      }),
+                      (r = !1),
+                      (this._option_pos.x = t),
+                      (this._option_pos.y = e));
                   }),
                   r &&
                     ((o.type = "text"),
@@ -788,7 +788,7 @@
                   e === this._editing.y &&
                   (n += " editing"),
                 this._getVal(t, e) || (n += " placeholder"),
-                (n += " " + a(this.checkResults.classNames, t, e)),
+                (n += " " + d(this.checkResults.classNames, t, e)),
                 n
               );
             }
@@ -831,7 +831,7 @@
               return this.tbody.children[e].children[t];
             }
           }
-          function a(t, e, i) {
+          function d(t, e, i) {
             return (t && t[i] && t[i][e]) || "";
           }
         },
