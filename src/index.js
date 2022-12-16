@@ -374,30 +374,34 @@ export default class Importabular {
           this._setAllSelectedCellsTo("");
         }
       }
+      let arrow_with_shift = false;
       if (e.key === "ArrowDown") {
         e.preventDefault();
         this._moveCursor({ y: 1 }, e.shiftKey);
         this._startEditing(this._focus);
+        arrow_with_shift = true;
       }
       if (e.key === "ArrowUp") {
         e.preventDefault();
         this._moveCursor({ y: -1 }, e.shiftKey);
         this._startEditing(this._focus);
+        arrow_with_shift = true;
       }
       if (e.key === "ArrowLeft") {
         e.preventDefault();
         this._moveCursor({ x: -1 }, e.shiftKey);
         this._startEditing(this._focus);
+        arrow_with_shift = true;
       }
       if (e.key === "ArrowRight") {
         e.preventDefault();
         this._moveCursor({ x: +1 }, e.shiftKey);
         this._startEditing(this._focus);
+        arrow_with_shift = true;
       }
       if (e.shiftKey){ 
-        if (this._editing) {
+        if (arrow_with_shift) {
           e.preventDefault();
-          this._stopEditing();
           this._stopEditing();
         }
       }

@@ -112,8 +112,8 @@
                         h,
                         r,
                         l,
-                        d = [],
-                        a = 0;
+                        a = [],
+                        d = 0;
                       for (
                         (s = t.split("\n")).length > 1 &&
                           "" === s[s.length - 1] &&
@@ -128,28 +128,28 @@
                           n < h;
                           n += 1
                         )
-                          d[a] || (d[a] = []),
+                          a[d] || (a[d] = []),
                             r && 0 === n
-                              ? ((l = d[a].length - 1),
-                                (d[a][l] = d[a][l] + "\n" + s[e][0]),
+                              ? ((l = a[d].length - 1),
+                                (a[d][l] = a[d][l] + "\n" + s[e][0]),
                                 r &&
                                   1 & o(s[e][0]) &&
                                   ((r = !1),
-                                  (d[a][l] = d[a][l]
-                                    .substring(0, d[a][l].length - 1)
+                                  (a[d][l] = a[d][l]
+                                    .substring(0, a[d][l].length - 1)
                                     .replace(/""/g, '"'))))
                               : n === h - 1 &&
                                 0 === s[e][n].indexOf('"') &&
                                 1 & o(s[e][n])
-                              ? (d[a].push(
+                              ? (a[d].push(
                                   s[e][n].substring(1).replace(/""/g, '"')
                                 ),
                                 (r = !0))
-                              : (d[a].push(s[e][n].replace(/""/g, '"')),
+                              : (a[d].push(s[e][n].replace(/""/g, '"')),
                                 (r = !1));
-                        r || (a += 1);
+                        r || (d += 1);
                       }
-                      return d;
+                      return a;
                     })(
                       (t.clipboardData || window.clipboardData).getData(
                         "text/plain"
@@ -202,57 +202,62 @@
                     (this.copy(t), this._setAllSelectedCellsTo(""));
                 }),
                 h(this, "keydown", (t) => {
-                  t.ctrlKey
-                    ? this._editing &&
+                  if (t.ctrlKey)
+                    this._editing &&
                       (t.preventDefault(),
                       this._revertEdit(),
-                      this._stopEditing())
-                    : ("KeyA" != t.code ||
-                        this._editing ||
+                      this._stopEditing());
+                  else if (
+                    ("KeyA" != t.code ||
+                      this._editing ||
+                      (t.preventDefault(),
+                      this._startEditing(this._focus),
+                      this.keydown(t)),
+                    this._selectionStart)
+                  ) {
+                    "Escape" === t.key &&
+                      this._editing &&
+                      (t.preventDefault(),
+                      this._revertEdit(),
+                      this._stopEditing()),
+                      "Enter" === t.key &&
                         (t.preventDefault(),
+                        this._tabCursorInSelection(!1, t.shiftKey ? -1 : 1),
+                        this._startEditing(this._focus)),
+                      "Tab" === t.key &&
+                        (t.preventDefault(),
+                        this._tabCursorInSelection(!0, t.shiftKey ? -1 : 1)),
+                      this._editing ||
+                        ("F2" === t.key &&
+                          (t.preventDefault(), this._startEditing(this._focus)),
+                        ("Delete" !== t.key && "Backspace" !== t.key) ||
+                          (t.preventDefault(),
+                          this._setAllSelectedCellsTo("")));
+                    let e = !1;
+                    "ArrowDown" === t.key &&
+                      (t.preventDefault(),
+                      this._moveCursor({ y: 1 }, t.shiftKey),
+                      this._startEditing(this._focus),
+                      (e = !0)),
+                      "ArrowUp" === t.key &&
+                        (t.preventDefault(),
+                        this._moveCursor({ y: -1 }, t.shiftKey),
                         this._startEditing(this._focus),
-                        this.keydown(t)),
-                      this._selectionStart &&
-                        ("Escape" === t.key &&
-                          this._editing &&
-                          (t.preventDefault(),
-                          this._revertEdit(),
-                          this._stopEditing()),
-                        "Enter" === t.key &&
-                          (t.preventDefault(),
-                          this._tabCursorInSelection(!1, t.shiftKey ? -1 : 1),
-                          this._startEditing(this._focus)),
-                        "Tab" === t.key &&
-                          (t.preventDefault(),
-                          this._tabCursorInSelection(!0, t.shiftKey ? -1 : 1)),
-                        this._editing ||
-                          ("F2" === t.key &&
-                            (t.preventDefault(),
-                            this._startEditing(this._focus)),
-                          ("Delete" !== t.key && "Backspace" !== t.key) ||
-                            (t.preventDefault(),
-                            this._setAllSelectedCellsTo(""))),
-                        "ArrowDown" === t.key &&
-                          (t.preventDefault(),
-                          this._moveCursor({ y: 1 }, t.shiftKey),
-                          this._startEditing(this._focus)),
-                        "ArrowUp" === t.key &&
-                          (t.preventDefault(),
-                          this._moveCursor({ y: -1 }, t.shiftKey),
-                          this._startEditing(this._focus)),
-                        "ArrowLeft" === t.key &&
-                          (t.preventDefault(),
-                          this._moveCursor({ x: -1 }, t.shiftKey),
-                          this._startEditing(this._focus)),
-                        "ArrowRight" === t.key &&
-                          (t.preventDefault(),
-                          this._moveCursor({ x: 1 }, t.shiftKey),
-                          this._startEditing(this._focus)),
-                        t.shiftKey &&
-                          this._editing &&
-                          (t.preventDefault(),
-                          this._stopEditing(),
-                          this._stopEditing())));
+                        (e = !0)),
+                      "ArrowLeft" === t.key &&
+                        (t.preventDefault(),
+                        this._moveCursor({ x: -1 }, t.shiftKey),
+                        this._startEditing(this._focus),
+                        (e = !0)),
+                      "ArrowRight" === t.key &&
+                        (t.preventDefault(),
+                        this._moveCursor({ x: 1 }, t.shiftKey),
+                        this._startEditing(this._focus),
+                        (e = !0)),
+                      t.shiftKey &&
+                        e &&
+                        (t.preventDefault(), this._stopEditing());
+                  }
                 }),
                 h(this, "_selecting", !1),
                 h(this, "_selectionStart", null),
@@ -361,7 +366,7 @@
                 h(this, "_restyle", ({ x: t, y: e }) => {
                   const i = this._getCell(t, e);
                   i.className = this._classNames(t, e);
-                  const s = d(this.checkResults.titles, t, e);
+                  const s = a(this.checkResults.titles, t, e);
                   s ? i.setAttribute("title", s) : i.removeAttribute("title");
                 }),
                 h(this, "_refreshDisplayedValue", ({ x: t, y: e }) => {
@@ -393,13 +398,13 @@
               width: h = "100%",
               height: r = "80vh",
               columns: l,
-              checks: d,
-              select: a = [],
+              checks: a,
+              select: d = [],
               bond: c = [],
             }) {
               if (
                 ((this.columns = l),
-                (this.checks = d || (() => ({}))),
+                (this.checks = a || (() => ({}))),
                 this._runChecks(t),
                 !e)
               )
@@ -414,7 +419,7 @@
                   css:
                     "\nhtml{\n  overflow: auto;\n}\n*{\n  box-sizing: border-box;\n}\niframe{\n  position:absolute;\n}\nbody{\n  padding: 0; \n  margin: 0;\n}\ntable{\n  border-spacing: 0;\n  background: white;\n  border: 1px solid #ddd;\n  border-width: 0 1px 1px 0;\n  font-size: 16px;\n  font-family: sans-serif;\n  border-collapse: separate;\n  min-width:100%;\n}\ntd, th{\n  padding:0;\n  border: 1px solid;\n  border-color: #ddd transparent transparent #ddd; \n}\ntd.selected.multi:not(.editing){\n  background:#d7f2f9;\n} \ntd.focus:not(.editing){\n  border-color: #13ac59;\n} \ntd>*, th>*{\n  border:none;\n  padding:10px;\n  min-width:10px;\n  min-height: 40px;\n  font:inherit;\n  line-height: 20px;\n  color:inherit;\n  white-space: normal;\n}\ntd>div::selection {\n    color: none;\n    background: none;\n}\n\n.placeholder div{\n  user-select:none;\n  color:rgba(0,0,0,0.2);\n}\n*[title] div{cursor:help;}\nth{text-align:left;}\n" +
                     o,
-                  select: a,
+                  select: d,
                   bond: c,
                 }),
                 (this._iframeStyle = {
@@ -788,7 +793,7 @@
                   e === this._editing.y &&
                   (n += " editing"),
                 this._getVal(t, e) || (n += " placeholder"),
-                (n += " " + d(this.checkResults.classNames, t, e)),
+                (n += " " + a(this.checkResults.classNames, t, e)),
                 n
               );
             }
@@ -831,7 +836,7 @@
               return this.tbody.children[e].children[t];
             }
           }
-          function d(t, e, i) {
+          function a(t, e, i) {
             return (t && t[i] && t[i][e]) || "";
           }
         },
