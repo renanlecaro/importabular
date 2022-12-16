@@ -66,7 +66,7 @@ export default class Importabular {
     bond = []
   }) {
     this.columns = columns;
-    this.checks = checks || (() => ({}));
+    this.checks = checks || (() => ({}));  
     this._runChecks(data);
     if (!node) {
       throw new Error(
@@ -228,7 +228,6 @@ export default class Importabular {
     table.appendChild(thead);
     table.appendChild(tbody);
     cwd.body.appendChild(table);
-
     this.tbody = tbody;
     this.table = table;
     for (let y = 0; y < this._height; y++) {
@@ -338,13 +337,17 @@ export default class Importabular {
   };
   keydown = (e) => {
     if (e.ctrlKey){ 
-      // どうも相容れない
-      // if (this._editing) {
-      //   e.preventDefault();
-      //   this._revertEdit();
-      //   this._stopEditing();
-      // }
+      if (this._editing) {
+        e.preventDefault();
+        this._revertEdit();
+        this._stopEditing();
+      }
       return;
+    }
+    if (e.code == "KeyA" && !this._editing) {
+      e.preventDefault();
+      this._startEditing(this._focus);
+      this.keydown(e);
     }
     if (this._selectionStart) {
       if (e.key === "Escape" && this._editing) {
@@ -355,6 +358,7 @@ export default class Importabular {
       if (e.key === "Enter") {
         e.preventDefault();
         this._tabCursorInSelection(false, e.shiftKey ? -1 : 1);
+        this._startEditing(this._focus);
       }
       if (e.key === "Tab") {
         e.preventDefault();
@@ -369,22 +373,26 @@ export default class Importabular {
           e.preventDefault();
           this._setAllSelectedCellsTo("");
         }
-        if (e.key === "ArrowDown") {
-          e.preventDefault();
-          this._moveCursor({ y: 1 }, e.shiftKey);
-        }
-        if (e.key === "ArrowUp") {
-          e.preventDefault();
-          this._moveCursor({ y: -1 }, e.shiftKey);
-        }
-        if (e.key === "ArrowLeft") {
-          e.preventDefault();
-          this._moveCursor({ x: -1 }, e.shiftKey);
-        }
-        if (e.key === "ArrowRight") {
-          e.preventDefault();
-          this._moveCursor({ x: +1 }, e.shiftKey);
-        }
+      }
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        this._moveCursor({ y: 1 }, e.shiftKey);
+        this._startEditing(this._focus);
+      }
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        this._moveCursor({ y: -1 }, e.shiftKey);
+        this._startEditing(this._focus);
+      }
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        this._moveCursor({ x: -1 }, e.shiftKey);
+        this._startEditing(this._focus);
+      }
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        this._moveCursor({ x: +1 }, e.shiftKey);
+        this._startEditing(this._focus);
       }
 
       // 既存の処理をなぜか消している
@@ -476,6 +484,7 @@ export default class Importabular {
   _selection = { rx: [0, 0], ry: [0, 0] };
   _editing = null;
   _focus = null;
+  _option_pos = {};
   mousedown = (e) => {
     if (this.mobile) return;
     if (e.which === 3 && !this._editing && this._selectionSize()) {
@@ -488,21 +497,25 @@ export default class Importabular {
       this.cwd.getSelection().addRange(range);
       return;
     }
+    if (this._editing && (this._getCoords(e)["x"] !== this._editing["x"] || this._getCoords(e)["y"] !== this._editing["y"])) {
+      this._stopEditing();
+    }
     this._changeSelectedCellsStyle(() => {
       this.tbody.style.userSelect = "none";
       this._selectionEnd = this._selectionStart = this._focus = this._getCoords(
         e
       );
       this._selecting = true;
+      this._startEditing(this._focus);  
     });
   };
   mouseenter = (e) => {
     if (this.mobile) return;
-    if (this._selecting) {
-      this._changeSelectedCellsStyle(() => {
-        this._selectionEnd = this._getCoords(e);
-      });
-    }
+    // if (this._selecting) {
+    //   this._changeSelectedCellsStyle(() => {
+    //     this._selectionEnd = this._getCoords(e);
+    //   });
+    // }
   };
   _lastMouseUp = null;
   _lastMouseUpTarget = null;
@@ -513,14 +526,14 @@ export default class Importabular {
   mouseup = (e) => {
     if (this.mobile) return;
     if (e.which === 3) return;
+
     if (this._selecting) {
       this._changeSelectedCellsStyle(() => {
         this._selectionEnd = this._getCoords(e);
         this._endSelection();
         
         // In a multi-byte environment(Japanese etc),want to enter edit mode after click
-// パッチと相性が良くない
-        //        this._startEditing(this._focus);
+        this._startEditing(this._focus);
         if (
           this._lastMouseUp &&
           this._lastMouseUp > Date.now() - 300 &&
@@ -566,9 +579,25 @@ export default class Importabular {
     // Measure the current content
     const tdSize = td.getBoundingClientRect();
     const cellSize = td.firstChild.getBoundingClientRect();
-    
+
+    if (td.firstChild.nodeName == "SELECT") {      
+      return;
+    } else {
+      this._option_pos = {};
+    }
+
     // remove the current content
-    td.removeChild(td.firstChild);
+    if (td.firstChild.nodeName !== "SELECT"){
+      try{
+        td.removeChild(td.firstChild);
+      }catch(e){
+        console.log(td.firstChild.nodeName);
+        console.log(e);
+        return;
+      }
+    } else {
+      console.log(td.firstChild.nodeName);
+    }
 
     const input = document.createElement("input");
     const select = document.createElement("select");
@@ -599,8 +628,15 @@ export default class Importabular {
           select.focus();
           select.addEventListener("blur", this._stopEditing);
           select.addEventListener("keydown", this._blurIfEnter);
+          select.addEventListener("change",this._selectChange);
 
-          //add the option of select
+          // add empty
+          const empty = document.createElement("option");
+          empty.text = "";
+          empty.value = "";
+          select.appendChild(empty);
+
+          // add the option of select
           this._options.select[index].selectableInfo.forEach(ele => {
             const option = document.createElement("option");
             if (ele.text == this._getVal(x, y)) {
@@ -612,6 +648,8 @@ export default class Importabular {
           });
 
           selectflag = false;
+          this._option_pos["x"] = x;
+          this._option_pos["y"] = y;
         }
       });
       if (selectflag) {
@@ -658,7 +696,7 @@ export default class Importabular {
     }
   }
 
-  _destroyEditing() {
+  _destroyEditing() {  
     if (this._editing) {
       const { x, y } = this._editing;
       const input = this._getCell(x, y).firstChild;
@@ -675,6 +713,9 @@ export default class Importabular {
   }
   _stopEditing = () => {
     if (!this._editing) return;
+    if (this._option_pos) {
+      this._option_pos = {};
+    }
     const { x, y } = this._editing;
     const td = this._getCell(x, y);
     td.style.width = "";
@@ -695,6 +736,10 @@ export default class Importabular {
       this._stopEditing();
       e.preventDefault();
     }
+  };
+  _selectChange = (e) => {
+    console.log(e);
+    this._stopEditing();
   };
   _changeSelectedCellsStyle(callback) {
     const oldS = this._selection;
@@ -760,8 +805,9 @@ export default class Importabular {
   };
   _getCoords(e) {
     // Returns the clicked cell coords or null
+
     let node = e.target;
-    while (!node.getAttribute("x") && node.parentElement) {
+    while (node.getAttribute && !node.getAttribute("x") && node.parentElement) {
       node = node.parentElement;
     }
     return {
