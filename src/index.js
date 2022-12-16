@@ -337,12 +337,11 @@ export default class Importabular {
   };
   keydown = (e) => {
     if (e.ctrlKey){ 
-      // どうも相容れない
-      // if (this._editing) {
-      //   e.preventDefault();
-      //   this._revertEdit();
-      //   this._stopEditing();
-      // }
+      if (this._editing) {
+        e.preventDefault();
+        this._revertEdit();
+        this._stopEditing();
+      }
       return;
     }
     if (e.code == "KeyA" && !this._editing) {
@@ -498,6 +497,9 @@ export default class Importabular {
       this.cwd.getSelection().addRange(range);
       return;
     }
+    if (this._editing && (this._getCoords(e)["x"] !== this._editing["x"] || this._getCoords(e)["y"] !== this._editing["y"])) {
+      this._stopEditing();
+    }
     this._changeSelectedCellsStyle(() => {
       this.tbody.style.userSelect = "none";
       this._selectionEnd = this._selectionStart = this._focus = this._getCoords(
@@ -628,7 +630,13 @@ export default class Importabular {
           select.addEventListener("keydown", this._blurIfEnter);
           select.addEventListener("change",this._selectChange);
 
-          //add the option of select
+          // add empty
+          const empty = document.createElement("option");
+          empty.text = "";
+          empty.value = "";
+          select.appendChild(empty);
+
+          // add the option of select
           this._options.select[index].selectableInfo.forEach(ele => {
             const option = document.createElement("option");
             if (ele.text == this._getVal(x, y)) {

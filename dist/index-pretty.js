@@ -202,47 +202,52 @@
                     (this.copy(t), this._setAllSelectedCellsTo(""));
                 }),
                 h(this, "keydown", (t) => {
-                  t.ctrlKey ||
-                    ("KeyA" != t.code ||
-                      this._editing ||
+                  t.ctrlKey
+                    ? this._editing &&
                       (t.preventDefault(),
-                      this._startEditing(this._focus),
-                      this.keydown(t)),
-                    this._selectionStart &&
-                      ("Escape" === t.key &&
-                        this._editing &&
+                      this._revertEdit(),
+                      this._stopEditing())
+                    : ("KeyA" != t.code ||
+                        this._editing ||
                         (t.preventDefault(),
-                        this._revertEdit(),
-                        this._stopEditing()),
-                      "Enter" === t.key &&
-                        (t.preventDefault(),
-                        this._tabCursorInSelection(!1, t.shiftKey ? -1 : 1),
-                        this._startEditing(this._focus)),
-                      "Tab" === t.key &&
-                        (t.preventDefault(),
-                        this._tabCursorInSelection(!0, t.shiftKey ? -1 : 1)),
-                      this._editing ||
-                        ("F2" === t.key &&
-                          (t.preventDefault(), this._startEditing(this._focus)),
-                        ("Delete" !== t.key && "Backspace" !== t.key) ||
+                        this._startEditing(this._focus),
+                        this.keydown(t)),
+                      this._selectionStart &&
+                        ("Escape" === t.key &&
+                          this._editing &&
                           (t.preventDefault(),
-                          this._setAllSelectedCellsTo(""))),
-                      "ArrowDown" === t.key &&
-                        (t.preventDefault(),
-                        this._moveCursor({ y: 1 }, t.shiftKey),
-                        this._startEditing(this._focus)),
-                      "ArrowUp" === t.key &&
-                        (t.preventDefault(),
-                        this._moveCursor({ y: -1 }, t.shiftKey),
-                        this._startEditing(this._focus)),
-                      "ArrowLeft" === t.key &&
-                        (t.preventDefault(),
-                        this._moveCursor({ x: -1 }, t.shiftKey),
-                        this._startEditing(this._focus)),
-                      "ArrowRight" === t.key &&
-                        (t.preventDefault(),
-                        this._moveCursor({ x: 1 }, t.shiftKey),
-                        this._startEditing(this._focus))));
+                          this._revertEdit(),
+                          this._stopEditing()),
+                        "Enter" === t.key &&
+                          (t.preventDefault(),
+                          this._tabCursorInSelection(!1, t.shiftKey ? -1 : 1),
+                          this._startEditing(this._focus)),
+                        "Tab" === t.key &&
+                          (t.preventDefault(),
+                          this._tabCursorInSelection(!0, t.shiftKey ? -1 : 1)),
+                        this._editing ||
+                          ("F2" === t.key &&
+                            (t.preventDefault(),
+                            this._startEditing(this._focus)),
+                          ("Delete" !== t.key && "Backspace" !== t.key) ||
+                            (t.preventDefault(),
+                            this._setAllSelectedCellsTo(""))),
+                        "ArrowDown" === t.key &&
+                          (t.preventDefault(),
+                          this._moveCursor({ y: 1 }, t.shiftKey),
+                          this._startEditing(this._focus)),
+                        "ArrowUp" === t.key &&
+                          (t.preventDefault(),
+                          this._moveCursor({ y: -1 }, t.shiftKey),
+                          this._startEditing(this._focus)),
+                        "ArrowLeft" === t.key &&
+                          (t.preventDefault(),
+                          this._moveCursor({ x: -1 }, t.shiftKey),
+                          this._startEditing(this._focus)),
+                        "ArrowRight" === t.key &&
+                          (t.preventDefault(),
+                          this._moveCursor({ x: 1 }, t.shiftKey),
+                          this._startEditing(this._focus))));
                 }),
                 h(this, "_selecting", !1),
                 h(this, "_selectionStart", null),
@@ -267,14 +272,18 @@
                         void this.cwd.getSelection().addRange(t)
                       );
                     }
-                    this._changeSelectedCellsStyle(() => {
-                      (this.tbody.style.userSelect = "none"),
-                        (this._selectionEnd = this._selectionStart = this._focus = this._getCoords(
-                          t
-                        )),
-                        (this._selecting = !0),
-                        this._startEditing(this._focus);
-                    });
+                    !this._editing ||
+                      (this._getCoords(t).x === this._editing.x &&
+                        this._getCoords(t).y === this._editing.y) ||
+                      this._stopEditing(),
+                      this._changeSelectedCellsStyle(() => {
+                        (this.tbody.style.userSelect = "none"),
+                          (this._selectionEnd = this._selectionStart = this._focus = this._getCoords(
+                            t
+                          )),
+                          (this._selecting = !0),
+                          this._startEditing(this._focus);
+                      });
                   }
                 }),
                 h(this, "mouseenter", (t) => {
@@ -649,33 +658,38 @@
               let r = !0;
               this._options.select.length > 0
                 ? (this._options.select.forEach((n, o) => {
-                    t === n.rowIndex &&
-                      ((h.value = this._getVal(t, e)),
-                      i.appendChild(h),
-                      Object.assign(i.style, {
-                        width: s.width - 2,
-                        height: s.height,
-                      }),
-                      Object.assign(h.style, {
-                        width: s.width - 2,
-                        height: s.height - 2,
-                        outline: "none",
-                        background: "transparent",
-                      }),
-                      h.focus(),
-                      h.addEventListener("blur", this._stopEditing),
-                      h.addEventListener("keydown", this._blurIfEnter),
-                      h.addEventListener("change", this._selectChange),
-                      this._options.select[o].selectableInfo.forEach((i) => {
-                        const s = document.createElement("option");
-                        i.text == this._getVal(t, e) && (s.selected = !0),
-                          (s.text = i.text),
-                          (s.value = i.text),
-                          h.appendChild(s);
-                      }),
-                      (r = !1),
-                      (this._option_pos.x = t),
-                      (this._option_pos.y = e));
+                    if (t === n.rowIndex) {
+                      (h.value = this._getVal(t, e)),
+                        i.appendChild(h),
+                        Object.assign(i.style, {
+                          width: s.width - 2,
+                          height: s.height,
+                        }),
+                        Object.assign(h.style, {
+                          width: s.width - 2,
+                          height: s.height - 2,
+                          outline: "none",
+                          background: "transparent",
+                        }),
+                        h.focus(),
+                        h.addEventListener("blur", this._stopEditing),
+                        h.addEventListener("keydown", this._blurIfEnter),
+                        h.addEventListener("change", this._selectChange);
+                      const n = document.createElement("option");
+                      (n.text = ""),
+                        (n.value = ""),
+                        h.appendChild(n),
+                        this._options.select[o].selectableInfo.forEach((i) => {
+                          const s = document.createElement("option");
+                          i.text == this._getVal(t, e) && (s.selected = !0),
+                            (s.text = i.text),
+                            (s.value = i.text),
+                            h.appendChild(s);
+                        }),
+                        (r = !1),
+                        (this._option_pos.x = t),
+                        (this._option_pos.y = e);
+                    }
                   }),
                   r &&
                     ((o.type = "text"),
