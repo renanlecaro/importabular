@@ -287,12 +287,13 @@
                         this._getCoords(t).y === this._editing.y) ||
                       this._stopEditing(),
                       this._changeSelectedCellsStyle(() => {
-                        (this.tbody.style.userSelect = "none"),
+                        this._isValidCoords(t) &&
+                          ((this.tbody.style.userSelect = "none"),
                           (this._selectionEnd = this._selectionStart = this._focus = this._getCoords(
                             t
                           )),
                           (this._selecting = !0),
-                          this._startEditing(this._focus);
+                          this._startEditing(this._focus));
                       });
                   }
                 }),
@@ -360,8 +361,13 @@
                 h(this, "_blurIfEnter", (t) => {
                   13 === t.keyCode && (this._stopEditing(), t.preventDefault());
                 }),
+                h(this, "_cancelKeyOnSelect", (t) => {
+                  const e = t.keyCode;
+                  (13 !== e && 33 !== e && 34 != e && 36 !== e && 35 !== e) ||
+                    (this._stopEditing(), t.preventDefault());
+                }),
                 h(this, "_selectChange", (t) => {
-                  console.log(t), this._stopEditing();
+                  this._stopEditing();
                 }),
                 h(this, "_restyle", ({ x: t, y: e }) => {
                   const i = this._getCell(t, e);
@@ -658,11 +664,8 @@
                 try {
                   i.removeChild(i.firstChild);
                 } catch (t) {
-                  return (
-                    console.log(i.firstChild.nodeName), void console.log(t)
-                  );
+                  return;
                 }
-              else console.log(i.firstChild.nodeName);
               const o = document.createElement("input"),
                 h = document.createElement("select");
               let r = !0;
@@ -683,7 +686,7 @@
                       }),
                       h.focus(),
                       h.addEventListener("blur", this._stopEditing),
-                      h.addEventListener("keydown", this._blurIfEnter),
+                      h.addEventListener("keydown", this._cancelKeyOnSelect),
                       h.addEventListener("change", this._selectChange),
                       this._options.select[o].selectableInfo.forEach((i) => {
                         const s = document.createElement("option");
@@ -809,6 +812,18 @@
                 x: parseInt(e.getAttribute("x")) || 0,
                 y: parseInt(e.getAttribute("y")) || 0,
               };
+            }
+            _isValidCoords(t) {
+              let e = t.target;
+              for (
+                ;
+                e.getAttribute && !e.getAttribute("x") && e.parentElement;
+
+              )
+                e = e.parentElement;
+              return !(
+                null == e.getAttribute("x") || null == e.getAttribute("y")
+              );
             }
             setData(t) {
               this._data._clear(), this._replaceDataWithArray(t);

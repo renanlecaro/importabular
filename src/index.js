@@ -511,6 +511,7 @@ export default class Importabular {
       this._stopEditing();
     }
     this._changeSelectedCellsStyle(() => {
+      if (!this._isValidCoords(e)) return;
       this.tbody.style.userSelect = "none";
       this._selectionEnd = this._selectionStart = this._focus = this._getCoords(
         e
@@ -601,12 +602,12 @@ export default class Importabular {
       try{
         td.removeChild(td.firstChild);
       }catch(e){
-        console.log(td.firstChild.nodeName);
-        console.log(e);
+        // console.log(td.firstChild.nodeName);
+        // console.log(e);
         return;
       }
     } else {
-      console.log(td.firstChild.nodeName);
+      // console.log(td.firstChild.nodeName);
     }
 
     const input = document.createElement("input");
@@ -637,7 +638,8 @@ export default class Importabular {
           });
           select.focus();
           select.addEventListener("blur", this._stopEditing);
-          select.addEventListener("keydown", this._blurIfEnter);
+          // select.addEventListener("keydown", this._blurIfEnter);
+          select.addEventListener("keydown", this._cancelKeyOnSelect);
           select.addEventListener("change",this._selectChange);
 
           // add empty
@@ -747,8 +749,16 @@ export default class Importabular {
       e.preventDefault();
     }
   };
+  _cancelKeyOnSelect = (e) => {
+    const code = e.keyCode;
+    if (code === 13 || code === 33 || code == 34 || code === 36 || code === 35) {
+      // Enter, PageUp, PageDown, Home, End
+      this._stopEditing();
+      e.preventDefault();
+    }
+  }
   _selectChange = (e) => {
-    console.log(e);
+    // console.log(e);
     this._stopEditing();
   };
   _changeSelectedCellsStyle(callback) {
@@ -825,6 +835,13 @@ export default class Importabular {
       y: parseInt(node.getAttribute("y")) || 0,
     };
   }
+  _isValidCoords(e) {
+    let node = e.target;
+    while (node.getAttribute && !node.getAttribute("x") && node.parentElement) {
+      node = node.parentElement;
+    }
+    return !(node.getAttribute("x") == null || node.getAttribute("y") == null);
+  }  
   /** Replace the current data with the provided 2D array.
    * @param {[[String]]} data the new data, as a 2D array.
    * */
