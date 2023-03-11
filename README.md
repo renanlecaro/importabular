@@ -6,9 +6,35 @@ Lightweight spreadsheet editor for the web, to easily let your users import thei
 -   Mobile friendly
 -   Copy / paste
 -   MIT License
- 
 
-Demo and doc : https://lecaro.me/importabular/
+
+# Quickstart
+
+The quick and dirty way :
+
+```
+<div id="editor"/>
+<script src="https://cdn.jsdelivr.net/npm/importabular"></script>
+<script>
+const sheet = new Importabular({
+  node: document.getElementById("editor"),
+  columns: [
+    {
+      label: "Contact name",
+    },
+    {
+      label: "Phone number",
+    },
+    {
+      label: "Email address",
+    },
+  ],
+});
+</script>
+```
+# Demo and doc
+
+The website will give you more details : https://lecaro.me/importabular/
 
 NPM : https://www.npmjs.com/package/importabular
 
