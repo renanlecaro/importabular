@@ -11,7 +11,6 @@ const HtmlInlineScriptPlugin = require('html-inline-script-webpack-plugin');
 const CopyPlugin = require("copy-webpack-plugin");
 
 const common={
-
   module: {
     rules: [
       {
@@ -45,7 +44,8 @@ const docExport= {
   devServer: {
     contentBase: './docs',
       port: 1234,
-      open: true
+      open: true,
+    disableHostCheck: true,
   },
   plugins: [
     new CleanWebpackPlugin(),

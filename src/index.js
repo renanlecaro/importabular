@@ -1,10 +1,10 @@
-/** @private All the events we listen to inside the iframe at the root level.
- * Each one is mapped to the corresponding method on the instance. */
+
 import { _defaultCss } from "./_defaultCss";
 import { _LooseArray } from "./_LooseArray";
 import {_shift} from "./_shift";
 import {parseArrayString, stringifyArray} from "./sheetclip";
-
+/** @private All the events we listen to inside the iframe at the root level.
+ * Each one is mapped to the corresponding method on the instance. */
 const _events = [
   "mousedown",
   "mouseenter",
@@ -249,6 +249,7 @@ export default class Importabular {
 
   /** @private Handles the paste event on the node.*/
   paste = (e) => {
+    console.log('paste',e)
     if (this._editing) return;
     e.preventDefault();
     const rows = parseArrayString((e.clipboardData || window.clipboardData).getData('text/plain'))
@@ -291,6 +292,7 @@ export default class Importabular {
 
   /** @private Called when the copy even happens in the iframe.*/
   copy = (e) => {
+    console.log('copy',e)
     if (this._editing) return;
     const asArr = this._getSelectionAsArray();
     if (asArr) {
@@ -303,13 +305,16 @@ export default class Importabular {
    * Runs the copy method and then clears the cells.
    * */
   cut = (e) => {
+    console.log('cut',e)
     if (this._editing) return;
     this.copy(e);
     this._setAllSelectedCellsTo("");
   };
 
   keydown = (e) => {
-    if (e.ctrlKey) return;
+    console.log('keydown v2',e)
+
+    if (e.ctrlKey || e.metaKey) return;
 
     if (this._selectionStart) {
       if (e.key === "Escape" && this._editing) {
