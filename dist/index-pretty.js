@@ -102,7 +102,7 @@
                 r(this, "_height", 1),
                 r(this, "_data", new s()),
                 r(this, "paste", (t) => {
-                  if (this._editing) return;
+                  if ((console.log("paste", t), this._editing)) return;
                   t.preventDefault();
                   const e = (function (t) {
                       var e,
@@ -170,7 +170,7 @@
                   });
                 }),
                 r(this, "copy", (t) => {
-                  if (this._editing) return;
+                  if ((console.log("copy", t), this._editing)) return;
                   const e = this._getSelectionAsArray();
                   e &&
                     (t.preventDefault(),
@@ -198,47 +198,52 @@
                     ));
                 }),
                 r(this, "cut", (t) => {
-                  this._editing ||
-                    (this.copy(t), this._setAllSelectedCellsTo(""));
+                  console.log("cut", t),
+                    this._editing ||
+                      (this.copy(t), this._setAllSelectedCellsTo(""));
                 }),
                 r(this, "keydown", (t) => {
-                  t.ctrlKey ||
-                    (this._selectionStart &&
-                      ("Escape" === t.key &&
-                        this._editing &&
-                        (t.preventDefault(),
-                        this._revertEdit(),
-                        this._stopEditing()),
-                      "Enter" === t.key &&
-                        (t.preventDefault(),
-                        this._tabCursorInSelection(!1, t.shiftKey ? -1 : 1)),
-                      "Tab" === t.key &&
-                        (t.preventDefault(),
-                        this._tabCursorInSelection(!0, t.shiftKey ? -1 : 1)),
-                      this._editing ||
-                        ("F2" === t.key &&
-                          (t.preventDefault(), this._startEditing(this._focus)),
-                        ("Delete" !== t.key && "Backspace" !== t.key) ||
-                          (t.preventDefault(), this._setAllSelectedCellsTo("")),
-                        "ArrowDown" === t.key &&
+                  console.log("keydown v2", t),
+                    t.ctrlKey ||
+                      t.metaKey ||
+                      (this._selectionStart &&
+                        ("Escape" === t.key &&
+                          this._editing &&
                           (t.preventDefault(),
-                          this._moveCursor({ y: 1 }, t.shiftKey)),
-                        "ArrowUp" === t.key &&
+                          this._revertEdit(),
+                          this._stopEditing()),
+                        "Enter" === t.key &&
                           (t.preventDefault(),
-                          this._moveCursor({ y: -1 }, t.shiftKey)),
-                        "ArrowLeft" === t.key &&
+                          this._tabCursorInSelection(!1, t.shiftKey ? -1 : 1)),
+                        "Tab" === t.key &&
                           (t.preventDefault(),
-                          this._moveCursor({ x: -1 }, t.shiftKey)),
-                        "ArrowRight" === t.key &&
-                          (t.preventDefault(),
-                          this._moveCursor({ x: 1 }, t.shiftKey))),
-                      1 !== t.key.length ||
+                          this._tabCursorInSelection(!0, t.shiftKey ? -1 : 1)),
                         this._editing ||
-                        this._changeSelectedCellsStyle(() => {
-                          const { x: t, y: e } = this._focus;
-                          this._startEditing({ x: t, y: e }),
-                            (this._getCell(t, e).firstChild.value = "");
-                        })));
+                          ("F2" === t.key &&
+                            (t.preventDefault(),
+                            this._startEditing(this._focus)),
+                          ("Delete" !== t.key && "Backspace" !== t.key) ||
+                            (t.preventDefault(),
+                            this._setAllSelectedCellsTo("")),
+                          "ArrowDown" === t.key &&
+                            (t.preventDefault(),
+                            this._moveCursor({ y: 1 }, t.shiftKey)),
+                          "ArrowUp" === t.key &&
+                            (t.preventDefault(),
+                            this._moveCursor({ y: -1 }, t.shiftKey)),
+                          "ArrowLeft" === t.key &&
+                            (t.preventDefault(),
+                            this._moveCursor({ x: -1 }, t.shiftKey)),
+                          "ArrowRight" === t.key &&
+                            (t.preventDefault(),
+                            this._moveCursor({ x: 1 }, t.shiftKey))),
+                        1 !== t.key.length ||
+                          this._editing ||
+                          this._changeSelectedCellsStyle(() => {
+                            const { x: t, y: e } = this._focus;
+                            this._startEditing({ x: t, y: e }),
+                              (this._getCell(t, e).firstChild.value = "");
+                          })));
                 }),
                 r(this, "_selecting", !1),
                 r(this, "_selectionStart", null),
