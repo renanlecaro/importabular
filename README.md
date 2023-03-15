@@ -34,7 +34,7 @@ const sheet = new Importabular({
 ```
 # Demo and doc
 
-The website will give you more details : https://lecaro.me/importabular/
+The website will give you more details : https://importabular.lecaro.me/
 
 NPM : https://www.npmjs.com/package/importabular
 
