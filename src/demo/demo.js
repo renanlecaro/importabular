@@ -2,8 +2,7 @@ import "./demo.css";
 
 function setCode(code, codeBlockId) {
   const pre = document.createElement("pre");
-  const formattedCode = code
-  .replace(/ from "[^;]*;/, ' from "importabular";')
+  const formattedCode = code.replace(/ from "[^;]*;/, ' from "importabular";');
 
   pre.innerText = formattedCode;
 
