@@ -26,6 +26,7 @@ const _events = [
  * @param {Node} options.node Dom node to create the table into
  * @param {Node} options.onChange Callback to run whenever the data
  *               has changed, receives the new data as an argument.
+ *@param {Number} options.rows Starting number of rows.
  *@param {Number} options.minRows Minimum number of rows.
  *@param {Number} options.maxRows Maximum number of rows, the table will not grow vertically beyond this.
  *@param {String} options.css Css code to add inside the iframe.
@@ -59,6 +60,7 @@ export default class Importabular {
     data = [],
     node = null,
     onChange = null,
+    rows = undefined,
     minRows = 1,
     maxRows = Infinity,
     css = "",
@@ -80,6 +82,7 @@ export default class Importabular {
     this._parent = node;
     this._options = {
       onChange,
+      rows,
       minRows,
       maxRows,
       css: _defaultCss + css,
@@ -110,7 +113,7 @@ export default class Importabular {
 
   /** @private Fill the iframe visible window with empty cells*/
   _fillScrollSpace() {
-    const rows = Math.ceil(this.iframe.contentWindow.innerHeight / 40);
+    const rows = this._options.rows || Math.ceil(this.iframe.contentWindow.innerHeight / 40);
     const cols = Math.ceil(this.iframe.contentWindow.innerWidth / 100);
     this._incrementToFit({ x: cols - 1, y: rows - 1 });
   }
@@ -181,6 +184,18 @@ export default class Importabular {
       col.title && th.setAttribute("title", col.title);
       th.appendChild(div);
       tr.appendChild(th);
+      if (col.datalist) {
+        const datalist = document.createElement("datalist");
+        datalist.setAttribute("id", `${col.label}_datalist`);
+        col.datalist.forEach(item => {
+          const option = document.createElement("option");
+          option.innerText = item;
+          option.setAttribute("value", item);
+          datalist.appendChild(option);
+        })
+        cwd.body.appendChild(datalist);
+      }
+
     });
     table.appendChild(thead);
     table.appendChild(tbody);
@@ -359,7 +374,7 @@ export default class Importabular {
         }
       }
 
-      if (e.key.length === 1 && !this._editing) {
+      if (e.key && e.key.length === 1 && !this._editing) {
         this._changeSelectedCellsStyle(() => {
           const { x, y } = this._focus;
           // We clear the value of the cell, and the keyup event will
@@ -521,7 +536,7 @@ export default class Importabular {
     }
   };
 
-  touchstart = (e) => {
+  touchstart = (e) => { // eslint-disable-line no-unused-vars
     if (this._editing) return;
     this.mobile = true;
     this.moved = false;
@@ -538,7 +553,7 @@ export default class Importabular {
       this._startEditing(this._focus);
     }
   };
-  touchmove = (e) => {
+  touchmove = (e) => { // eslint-disable-line no-unused-vars
     if (!this.mobile) return;
     this.moved = true;
   };
@@ -556,6 +571,9 @@ export default class Importabular {
 
     // add the input
     const input = document.createElement("input");
+    if (this.columns[x].datalist) {
+      input.setAttribute("list", this.columns[x].label+'_datalist');
+    }
     input.type = "text";
     input.value = this._getVal(x, y);
     td.appendChild(input);
