@@ -287,12 +287,17 @@ export default class Importabular {
     const rows = parseArrayString((e.clipboardData || window.clipboardData).getData('text/plain'))
     const { rx, ry } = this._selection;
     const offset = { x: rx[0], y: ry[0] };
-    for (let y = 0; y < rows.length; y++)
+    for (let y = 0; y < rows.length; y++) {
       // Using the first column here makes sure that
       // if the paste data had various row length, we only
       // paste a clean rectangle
-      for (let x = 0; x < rows[0].length; x++)
-        this._setVal(offset.x + x, offset.y + y, rows[y][x]);
+      for (let x = 0; x < rows[0].length; x++) {
+        if (x === rows[0].length - 1 && /\r?\n|\r/.test(rows[y][x]) && rows[y][x].slice(-1) === '"') {
+          rows[y][x] = rows[y][x].slice(0, -1);
+        }
+        this._setVal(offset.x + x, offset.y + y, rows[y][x].replace(/\r?\n|\r/g, ""));
+      }
+    }
     this._changeSelectedCellsStyle(() => {
       this._selectionStart = offset;
       this._selectionEnd = {
