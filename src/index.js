@@ -66,6 +66,7 @@ export default class Importabular {
     bond = [], //add table header bond
     noEdit = [[],[]], //add no editable colums and rows
     styleChg = null, //add changeable style by clicking (current situation colum only)
+    btnRowDel = null //add button removeable row (need any data to target rows)
   }) {
     this.columns = columns;
     this.checks = checks || (() => ({}));  
@@ -85,7 +86,8 @@ export default class Importabular {
       select,
       bond,
       noEdit,
-      styleChg
+      styleChg,
+      btnRowDel
     };
     this._iframeStyle = {
       width,
@@ -121,6 +123,9 @@ export default class Importabular {
   getData() {
     return this._data._toArr(this._width, this._height)
   }
+  getColor() {
+    return this._toArrColorFlag(this._width, this._height)
+  }
   /** @private Runs the onchange callback*/
   _onDataChanged() {
     const asArr=this.getData()
@@ -130,6 +135,8 @@ export default class Importabular {
   }
   /** @private Create a div with the cell content and correct style */
   _renderTDContent(td, x, y) {
+    if (this._btnRowDelFlag(x)) return;
+
     //なんか知らんが差分が出る
     var div = document.createElement("div");
     td.setAttribute("x", x.toString());
@@ -368,11 +375,6 @@ export default class Importabular {
       }
       if (e.key === "Enter") {
         e.preventDefault();
-        // mouse less
-        // if (this._columStyleChgFlag(this._focus.x,true)) {
-        //   const td = this._getCell(this._focus.x, this._focus.y);
-        //   this._chgStyle(this._focus.x, this._focus.y, td);
-        // }
         this._tabCursorInSelection(false, e.shiftKey ? -1 : 1);
         this._startEditing(this._focus);
       }
@@ -607,7 +609,7 @@ export default class Importabular {
     const td = this._getCell(x, y);
 
     if (this._columStyleChgFlag(x,mouseupFlag)) this._chgStyle(x, y, td);
-    if(this._noEditFlag(x, y)) return;
+    if (this._noEditFlag(x, y) || this._btnRowDelFlag(x)) return;
 
     // Measure the current content
     const tdSize = td.getBoundingClientRect();
@@ -752,7 +754,7 @@ export default class Importabular {
     }
     const { x, y } = this._editing;
 
-    if(this._noEditFlag(x, y)) return;
+    if(this._noEditFlag(x, y) || this._btnRowDelFlag(x)) return;
     const td = this._getCell(x, y);
     td.style.width = "";
     td.style.height = "";
@@ -842,7 +844,7 @@ export default class Importabular {
   }
   _refreshDisplayedValue = ({ x, y }) => {
     const div = this._getCell(x, y).firstChild;
-    if (div.tagName === "DIV") {
+    if (div && div.tagName === "DIV") {
       div.textContent = this._divContent(x, y);
     }
     this._restyle({ x, y });
@@ -883,7 +885,11 @@ export default class Importabular {
   _replaceDataWithArray(data = [[]]) {
     data.forEach((line, y) => {
       line.forEach((val, x) => {
-        this._setVal(x, y, val);
+        if (this._btnRowDelFlag(x))  {
+          this._setDelFlag(x, y, line);
+        } else {
+          this._setVal(x, y, val);
+        }
       });
     });
   }
@@ -892,6 +898,13 @@ export default class Importabular {
     this._data._setVal(x, y, val);
     this._incrementToFit({ x: x + 1, y: y + 1 });
     this._refreshDisplayedValue({ x, y });
+  }
+  _setDelFlag(x, y, rows) {
+    if (!this._fitBounds({ x, y })) return;
+    const val = rows.find(data => data) ? "1" : ""
+    this._data._setVal(x, y, val);
+    this._incrementToFit({ x: x + 1, y: y + 1 });
+    this._createDeleteBtnContent(x, y, val);
   }
   _getVal(x, y) {
     return this._data._getVal(x, y);
@@ -904,6 +917,9 @@ export default class Importabular {
   }
   _columStyleChgFlag(x,mouseupFlag) {
     return this._options.styleChg && this._options.styleChg.colum && this._options.styleChg.colum[x] && mouseupFlag;
+  }
+  _btnRowDelFlag(x) {
+    return this._options.btnRowDel && this._options.btnRowDel.index === +x;
   }
   _chgStyle(x, y, td) {
     if(td.hasAttribute("style") && td.getAttribute("style") !== "") {
@@ -922,6 +938,36 @@ export default class Importabular {
           }
         });
       }
+    }
+  }
+  _toArrColorFlag(width,height) {
+    const result = [];
+    for (let y = 0; y < height; y++) {
+      result.push([]);
+      for (let x = 0; x < width; x++) {
+        const td = this._getCell(x, y);
+        if (td.hasAttribute("prior") && td.getAttribute("prior") === "on") {
+          result[y].push(1);
+        } else {
+          result[y].push(0);
+        }
+      }
+    }
+    return result;
+  }
+  _createDeleteBtnContent(x, y, val) {
+    const td = this._getCell(x, y) 
+    if (val === "1") {
+      if (td.firstChild) return;
+      const btn = document.createElement("button");
+      td.appendChild(btn);
+      btn.innerHTML = this._options.btnRowDel.name;
+      btn.addEventListener('click', () => {
+        this.setData(this.getData().filter((data,index) => index !== y))
+      });
+    } else {
+      if (!td.firstChild) return;
+      td.removeChild(td.firstChild);
     }
   }
 }
