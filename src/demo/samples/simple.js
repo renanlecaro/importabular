@@ -13,4 +13,13 @@ const sheet = new Importabular({
       label: "Email address",
     },
   ],
+  data:[
+    ["sample taro","XXXX-XXXX?","sample@samp.com"],
+    ["sample taro","XXXX-XXXX?","sample@samp.com"],
+    ["sample taro","XXXX-XXXX?","sample@samp.com"]
+  ],
+  noEdit: [
+    [0,1],
+    [2,3]
+  ]
 });

@@ -62,8 +62,9 @@ export default class Importabular {
     height = "80vh",
     columns,
     checks,
-    select = [],
-    bond = []
+    select = [], //add selectable element
+    bond = [], //add table header bond
+    noEdit = [[],[]], //add no editable colums and rows
   }) {
     this.columns = columns;
     this.checks = checks || (() => ({}));  
@@ -82,6 +83,7 @@ export default class Importabular {
       css: _defaultCss + css,
       select,
       bond,
+      noEdit,
     };
     this._iframeStyle = {
       width,
@@ -292,10 +294,12 @@ export default class Importabular {
       // if the paste data had various row length, we only
       // paste a clean rectangle
       for (let x = 0; x < rows[0].length; x++) {
-        if (x === rows[0].length - 1 && /\r?\n|\r/.test(rows[y][x]) && rows[y][x].slice(-1) === '"') {
-          rows[y][x] = rows[y][x].slice(0, -1);
+        if(!this._noEditFlag(offset.x + x,offset.y + y)) {
+          if (x === rows[0].length - 1 && /\r?\n|\r/.test(rows[y][x]) && rows[y][x].slice(-1) === '"') {
+            rows[y][x] = rows[y][x].slice(0, -1);
+          }
+          this._setVal(offset.x + x, offset.y + y, rows[y][x].replace(/\r?\n|\r/g, ""));
         }
-        this._setVal(offset.x + x, offset.y + y, rows[y][x].replace(/\r?\n|\r/g, ""));
       }
     }
     this._changeSelectedCellsStyle(() => {
@@ -423,9 +427,11 @@ export default class Importabular {
     }
   };
   _setAllSelectedCellsTo(value) {
-    this._forSelectionCoord(this._selection, ({ x, y }) =>
-      this._setVal(x, y, value)
-    );
+    this._forSelectionCoord(this._selection, ({ x, y }) => {
+      if (!this._noEditFlag(x,y)) {
+        this._setVal(x, y, value)
+      }
+    });
     this._onDataChanged();
     this._forSelectionCoord(this._selection, this._refreshDisplayedValue);
   }
@@ -590,8 +596,11 @@ export default class Importabular {
     this.moved = true;
   };
   _startEditing({ x, y }) {
+    if(this._noEditFlag(x, y)) return;
+    
     this._editing = { x, y };
     const td = this._getCell(x, y);
+
     // Measure the current content
     const tdSize = td.getBoundingClientRect();
     const cellSize = td.firstChild.getBoundingClientRect();
@@ -734,6 +743,8 @@ export default class Importabular {
       this._option_pos = {};
     }
     const { x, y } = this._editing;
+
+    if(this._noEditFlag(x, y)) return;
     const td = this._getCell(x, y);
     td.style.width = "";
     td.style.height = "";
@@ -879,6 +890,9 @@ export default class Importabular {
   }
   _getCell(x, y) {
     return this.tbody.children[y].children[x];
+  }
+  _noEditFlag(x, y) {
+    return this._options.noEdit[0].includes(x) || this._options.noEdit[1].includes(y)
   }
 }
 function _fromArr(arr, x, y) {
