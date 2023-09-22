@@ -65,6 +65,7 @@ export default class Importabular {
     select = [], //add selectable element
     bond = [], //add table header bond
     noEdit = [[],[]], //add no editable colums and rows
+    styleChg = null, //add changeable style by clicking (current situation colum only)
   }) {
     this.columns = columns;
     this.checks = checks || (() => ({}));  
@@ -84,6 +85,7 @@ export default class Importabular {
       select,
       bond,
       noEdit,
+      styleChg
     };
     this._iframeStyle = {
       width,
@@ -366,6 +368,11 @@ export default class Importabular {
       }
       if (e.key === "Enter") {
         e.preventDefault();
+        // mouse less
+        // if (this._columStyleChgFlag(this._focus.x,true)) {
+        //   const td = this._getCell(this._focus.x, this._focus.y);
+        //   this._chgStyle(this._focus.x, this._focus.y, td);
+        // }
         this._tabCursorInSelection(false, e.shiftKey ? -1 : 1);
         this._startEditing(this._focus);
       }
@@ -555,14 +562,14 @@ export default class Importabular {
         this._endSelection();
         
         // In a multi-byte environment(Japanese etc),want to enter edit mode after click
-        this._startEditing(this._focus);
+        this._startEditing(this._focus,true);
         if (
           this._lastMouseUp &&
           this._lastMouseUp > Date.now() - 300 &&
           this._lastMouseUpTarget.x === this._selectionEnd.x &&
           this._lastMouseUpTarget.y === this._selectionEnd.y
         ) {
-          this._startEditing(this._selectionEnd);
+          this._startEditing(this._selectionEnd,true);
         }
         this._lastMouseUp = Date.now();
         this._lastMouseUpTarget = this._selectionEnd;
@@ -595,11 +602,12 @@ export default class Importabular {
     if (!this.mobile) return;
     this.moved = true;
   };
-  _startEditing({ x, y }) {
-    if(this._noEditFlag(x, y)) return;
-    
+  _startEditing({ x, y },mouseupFlag = false) {
     this._editing = { x, y };
     const td = this._getCell(x, y);
+
+    if (this._columStyleChgFlag(x,mouseupFlag)) this._chgStyle(x, y, td);
+    if(this._noEditFlag(x, y)) return;
 
     // Measure the current content
     const tdSize = td.getBoundingClientRect();
@@ -892,7 +900,29 @@ export default class Importabular {
     return this.tbody.children[y].children[x];
   }
   _noEditFlag(x, y) {
-    return this._options.noEdit[0].includes(x) || this._options.noEdit[1].includes(y)
+    return this._options.noEdit[0].includes(x) || this._options.noEdit[1].includes(y);
+  }
+  _columStyleChgFlag(x,mouseupFlag) {
+    return this._options.styleChg && this._options.styleChg.colum && this._options.styleChg.colum[x] && mouseupFlag;
+  }
+  _chgStyle(x, y, td) {
+    if(td.hasAttribute("style") && td.getAttribute("style") !== "") {
+      td.removeAttribute("style");
+      td.removeAttribute("prior");
+    } else {
+      td.setAttribute("prior", "on");
+      Object.assign(td.style,this._options.styleChg.colum[x]);
+      if (this._options.styleChg.colum.link) {
+        const linkX = this._options.styleChg.colum.link.find(idxs => idxs.includes(x));
+        linkX.forEach(idx =>  {
+          if (idx !== x) {
+            const linkTd = this._getCell(idx, y);
+            linkTd.removeAttribute("style");
+            linkTd.removeAttribute("prior");
+          }
+        });
+      }
+    }
   }
 }
 function _fromArr(arr, x, y) {
