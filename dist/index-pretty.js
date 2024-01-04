@@ -1,12 +1,12 @@
-!(function (t, e) {
+!(function(t, e) {
   "object" == typeof exports && "object" == typeof module
     ? (module.exports = e())
     : "function" == typeof define && define.amd
-    ? define([], e)
-    : "object" == typeof exports
-    ? (exports.Importabular = e())
-    : (t.Importabular = e());
-})(self, function () {
+      ? define([], e)
+      : "object" == typeof exports
+        ? (exports.Importabular = e())
+        : (t.Importabular = e());
+})(self, function() {
   return (() => {
     "use strict";
     var t = {
@@ -17,8 +17,8 @@
               var t, e, i;
               (t = this),
                 (i = {}),
-                (e = (function (t) {
-                  var e = (function (t, e) {
+                (e = (function(t) {
+                  var e = (function(t, e) {
                     if ("object" != typeof t || null === t) return t;
                     var i = t[Symbol.toPrimitive];
                     if (void 0 !== i) {
@@ -36,13 +36,13 @@
                       value: i,
                       enumerable: !0,
                       configurable: !0,
-                      writable: !0,
+                      writable: !0
                     })
                   : (t[e] = i);
             }
             _setVal(t, e, i) {
               const s = this._data,
-                n = (function (t) {
+                n = (function(t) {
                   return 0 === t ? "0" : t ? t.toString() : "";
                 })(i);
               var o;
@@ -87,8 +87,8 @@
           }
           function r(t, e, i) {
             return (
-              (e = (function (t) {
-                var e = (function (t, e) {
+              (e = (function(t) {
+                var e = (function(t, e) {
                   if ("object" != typeof t || null === t) return t;
                   var i = t[Symbol.toPrimitive];
                   if (void 0 !== i) {
@@ -106,7 +106,7 @@
                     value: i,
                     enumerable: !0,
                     configurable: !0,
-                    writable: !0,
+                    writable: !0
                   })
                 : (t[e] = i),
               t
@@ -123,17 +123,17 @@
             "keydown",
             "paste",
             "cut",
-            "copy",
+            "copy"
           ];
           class h {
             constructor(t) {
               r(this, "_width", 1),
                 r(this, "_height", 1),
                 r(this, "_data", new s()),
-                r(this, "paste", (t) => {
+                r(this, "paste", t => {
                   if ((console.log("paste", t), this._editing)) return;
                   t.preventDefault();
-                  const e = (function (t) {
+                  const e = (function(t) {
                       var e,
                         i,
                         s,
@@ -170,12 +170,12 @@
                               : n === r - 1 &&
                                 0 === s[e][n].indexOf('"') &&
                                 1 & o(s[e][n])
-                              ? (a[c].push(
-                                  s[e][n].substring(1).replace(/""/g, '"')
-                                ),
-                                (l = !0))
-                              : (a[c].push(s[e][n].replace(/""/g, '"')),
-                                (l = !1));
+                                ? (a[c].push(
+                                    s[e][n].substring(1).replace(/""/g, '"')
+                                  ),
+                                  (l = !0))
+                                : (a[c].push(s[e][n].replace(/""/g, '"')),
+                                  (l = !1));
                         l || (c += 1);
                       }
                       return a;
@@ -193,19 +193,19 @@
                     (this._selectionStart = n),
                       (this._selectionEnd = {
                         x: n.x + e[0].length - 1,
-                        y: n.y + e.length - 1,
+                        y: n.y + e.length - 1
                       }),
                       this._onDataChanged();
                   });
                 }),
-                r(this, "copy", (t) => {
+                r(this, "copy", t => {
                   if ((console.log("copy", t), this._editing)) return;
                   const e = this._getSelectionAsArray();
                   e &&
                     (t.preventDefault(),
                     t.clipboardData.setData(
                       "text/plain",
-                      (function (t) {
+                      (function(t) {
                         var e,
                           i,
                           s,
@@ -226,12 +226,12 @@
                       })(e)
                     ));
                 }),
-                r(this, "cut", (t) => {
+                r(this, "cut", t => {
                   console.log("cut", t),
                     this._editing ||
                       (this.copy(t), this._setAllSelectedCellsTo(""));
                 }),
-                r(this, "keydown", (t) => {
+                r(this, "keydown", t => {
                   console.log("keydown v2", t),
                     t.ctrlKey ||
                       t.metaKey ||
@@ -281,7 +281,7 @@
                 r(this, "_selection", { rx: [0, 0], ry: [0, 0] }),
                 r(this, "_editing", null),
                 r(this, "_focus", null),
-                r(this, "mousedown", (t) => {
+                r(this, "mousedown", t => {
                   if (!this.mobile) {
                     if (
                       3 === t.which &&
@@ -306,7 +306,7 @@
                     });
                   }
                 }),
-                r(this, "mouseenter", (t) => {
+                r(this, "mouseenter", t => {
                   this.mobile ||
                     (this._selecting &&
                       this._changeSelectedCellsStyle(() => {
@@ -315,7 +315,7 @@
                 }),
                 r(this, "_lastMouseUp", null),
                 r(this, "_lastMouseUpTarget", null),
-                r(this, "mouseup", (t) => {
+                r(this, "mouseup", t => {
                   this.mobile ||
                     (3 !== t.which &&
                       this._selecting &&
@@ -333,15 +333,15 @@
                           (this._lastMouseUpTarget = this._selectionEnd);
                       }));
                 }),
-                r(this, "mouseleave", (t) => {
+                r(this, "mouseleave", t => {
                   t.target === this.tbody &&
                     this._selecting &&
                     this._endSelection();
                 }),
-                r(this, "touchstart", (t) => {
+                r(this, "touchstart", t => {
                   this._editing || ((this.mobile = !0), (this.moved = !1));
                 }),
-                r(this, "touchend", (t) => {
+                r(this, "touchend", t => {
                   this.mobile &&
                     (this._editing ||
                       this.moved ||
@@ -352,7 +352,7 @@
                       }),
                       this._startEditing(this._focus)));
                 }),
-                r(this, "touchmove", (t) => {
+                r(this, "touchmove", t => {
                   this.mobile && (this.moved = !0);
                 }),
                 r(this, "_stopEditing", () => {
@@ -369,7 +369,7 @@
                     (this._editing = null),
                     this._renderTDContent(i, t, e);
                 }),
-                r(this, "_blurIfEnter", (t) => {
+                r(this, "_blurIfEnter", t => {
                   13 === t.keyCode && (this._stopEditing(), t.preventDefault());
                 }),
                 r(this, "_restyle", ({ x: t, y: e }) => {
@@ -389,7 +389,7 @@
                 this._replaceDataWithArray(t.data),
                 this._incrementToFit({
                   x: this.columns.length - 1,
-                  y: this._options.minRows - 1,
+                  y: this._options.minRows - 1
                 }),
                 this._fillScrollSpace();
             }
@@ -408,7 +408,7 @@
               width: l = "100%",
               height: h = "80vh",
               columns: a,
-              checks: c,
+              checks: c
             }) {
               if (
                 ((this.columns = a),
@@ -427,13 +427,13 @@
                   maxRows: o,
                   css:
                     "\nhtml{\n  -ms-overflow-style: none;\n  scrollbar-width: none;\n}\n::-webkit-scrollbar {\n  width: 0;\n  height:0;\n}\n*{\n  box-sizing: border-box;\n}\nbody{\n  padding: 0; \n  margin: 0;\n}\ntable{\n  border-spacing: 0;\n  background: white;\n  border: 1px solid #ddd;\n  border-width: 0 1px 1px 0;\n  font-size: 16px;\n  font-family: sans-serif;\n  border-collapse: separate;\n  min-width:100%;\n}\ntd, th{\n  padding:0;\n  border: 1px solid;\n  border-color: #ddd transparent transparent #ddd; \n}\ntd.selected.multi:not(.editing){\n  background:#d7f2f9;\n} \ntd.focus:not(.editing){\n  border-color: black;\n} \ntd>*, th>*{\n  border:none;\n  padding:10px;\n  min-width:100px;\n  min-height: 40px;\n  font:inherit;\n  line-height: 20px;\n  color:inherit;\n  white-space: normal;\n}\ntd>div::selection {\n    color: none;\n    background: none;\n}\n\n.placeholder div{\n  user-select:none;\n  color:rgba(0,0,0,0.2);\n}\n*[title] div{cursor:help;}\nth{text-align:left;}\n" +
-                    r,
+                    r
                 }),
                 (this._iframeStyle = {
                   width: l,
                   height: h,
                   border: "none",
-                  background: "transparent",
+                  background: "transparent"
                 });
             }
             _fitBounds({ x: t, y: e }) {
@@ -479,7 +479,9 @@
               (this.cwd = e),
                 e.open(),
                 e.write(
-                  `<html lang="${navigator.language}"><body><style>${this._options.css}</style></body></html>`
+                  `<html lang="${navigator.language}"><body><style>${
+                    this._options.css
+                  }</style></body></html>`
                 ),
                 e.close(),
                 Object.assign(t.style, this._iframeStyle);
@@ -488,7 +490,7 @@
                 n = document.createElement("THEAD"),
                 o = document.createElement("TR");
               n.appendChild(o),
-                this.columns.forEach((t) => {
+                this.columns.forEach(t => {
                   const i = document.createElement("TH"),
                     s = document.createElement("div");
                   if (
@@ -500,7 +502,7 @@
                   ) {
                     const i = document.createElement("datalist");
                     i.setAttribute("id", `${t.label}_datalist`),
-                      t.datalist.forEach((t) => {
+                      t.datalist.forEach(t => {
                         const e = document.createElement("option");
                         (e.innerText = t),
                           e.setAttribute("value", t),
@@ -519,11 +521,11 @@
                 s.appendChild(e);
                 for (let i = 0; i < this._width; i++) this._addCell(e, i, t);
               }
-              l.forEach((t) => e.addEventListener(t, this[t], !0));
+              l.forEach(t => e.addEventListener(t, this[t], !0));
             }
             destroy() {
               this._destroyEditing(),
-                l.forEach((t) => this.cwd.removeEventListener(t, this[t], !0)),
+                l.forEach(t => this.cwd.removeEventListener(t, this[t], !0)),
                 this.iframe.parentElement.removeChild(this.iframe);
             }
             _addCell(t, e, i) {
@@ -598,7 +600,7 @@
                     ? this._selection
                     : {
                         rx: [0, this.columns.length],
-                        ry: [0, this._options.maxRows],
+                        ry: [0, this._options.maxRows]
                       };
               let h;
               if (t) h = n(i, s, e, r[0], r[1] - 1, l[0], l[1] - 1);
@@ -618,7 +620,7 @@
             _scrollIntoView({ x: t, y: e }) {
               this._getCell(t, e).scrollIntoView({
                 behavior: "smooth",
-                block: "nearest",
+                block: "nearest"
               });
             }
             _endSelection() {
@@ -638,11 +640,11 @@
                 i.appendChild(o),
                 Object.assign(i.style, {
                   width: s.width - 2,
-                  height: s.height,
+                  height: s.height
                 }),
                 Object.assign(o.style, {
                   width: `${n.width}px`,
-                  height: `${n.height}px`,
+                  height: `${n.height}px`
                 }),
                 o.focus(),
                 o.addEventListener("blur", this._stopEditing),
@@ -721,7 +723,7 @@
                 e = e.parentElement;
               return {
                 x: parseInt(e.getAttribute("x")) || 0,
-                y: parseInt(e.getAttribute("y")) || 0,
+                y: parseInt(e.getAttribute("y")) || 0
               };
             }
             setData(t) {
@@ -753,7 +755,7 @@
           function a(t, e, i) {
             return (t && t[i] && t[i][e]) || "";
           }
-        },
+        }
       },
       e = {};
     function i(s) {

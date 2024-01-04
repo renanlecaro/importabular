@@ -3,8 +3,8 @@ import Importabular from "../../index";
 const sheet = new Importabular({
   node: document.getElementById("with-checks"),
   maxRows: 15,
-  minRows: 3,
-  rows: 5,
+  minRows: 4,
+  rows: 4,
   columns: [
     {
       label: "Contact name",
