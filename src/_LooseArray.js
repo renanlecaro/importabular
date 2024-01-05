@@ -29,7 +29,7 @@ export class _LooseArray {
     return (hash && hash[x] && hash[x][y]) || "";
   }
 
-  _toArr(width,height) {
+  _toArr(width, height) {
     const result = [];
     for (let y = 0; y < height; y++) {
       result.push([]);

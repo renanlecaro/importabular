@@ -4,7 +4,6 @@ body {
   padding: 0;
 }
 
-
 section {
   color: white;
   background-attachment: fixed;
@@ -122,6 +121,6 @@ section.sample > :first-child {
     top: 0;
     right: 0;
     padding: 10px 60px;
-    transform: translate(50px,50px) rotate(45deg);
+    transform: translate(50px, 50px) rotate(45deg);
   }
 }
