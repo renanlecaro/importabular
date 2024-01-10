@@ -13,8 +13,8 @@ describe("moving forward ", () => {
         0, // xMin
         1, // xMax
         0, // yMin
-        1 // yMax
-      )
+        1, // yMax
+      ),
     ).toEqual({ x: 1, y: 0 });
   });
 
@@ -29,8 +29,8 @@ describe("moving forward ", () => {
         0, // xMin
         1, // xMax
         0, // yMin
-        1 // yMax
-      )
+        1, // yMax
+      ),
     ).toEqual({ x: 0, y: 1 });
   });
   test("goes back to the first row if it is at the last one", () => {
@@ -44,8 +44,8 @@ describe("moving forward ", () => {
         0, // xMin
         1, // xMax
         0, // yMin
-        1 // yMax
-      )
+        1, // yMax
+      ),
     ).toEqual({ x: 0, y: 0 });
   });
 });
@@ -61,8 +61,8 @@ describe("moving backward ", () => {
         0, // xMin
         1, // xMax
         0, // yMin
-        1 // yMax
-      )
+        1, // yMax
+      ),
     ).toEqual({ x: 0, y: 0 });
   });
 
@@ -77,8 +77,8 @@ describe("moving backward ", () => {
         0, // xMin
         1, // xMax
         0, // yMin
-        1 // yMax
-      )
+        1, // yMax
+      ),
     ).toEqual({ x: 1, y: 0 });
   });
 
@@ -93,8 +93,8 @@ describe("moving backward ", () => {
         0, // xMin
         Infinity, // xMax
         0, // yMin
-        1 // yMax
-      )
+        1, // yMax
+      ),
     ).toEqual({ x: 0, y: 1 });
   });
   test("does not do anything if the new Y coordinates would be infinite", () => {
@@ -109,8 +109,8 @@ describe("moving backward ", () => {
         0, // xMin
         1, // xMax
         0, // yMin
-        Infinity // yMax
-      )
+        Infinity, // yMax
+      ),
     ).toEqual({ x: 0, y: 0 });
   });
 });

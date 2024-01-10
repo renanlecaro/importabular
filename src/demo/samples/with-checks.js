@@ -2,11 +2,15 @@ import Importabular from "../../index";
 
 const sheet = new Importabular({
   node: document.getElementById("with-checks"),
+  maxRows: 15,
+  minRows: 4,
+  rows: 4,
   columns: [
     {
       label: "Contact name",
       title: "Full name",
       placeholder: "John Doe",
+      datalist: ["John", "Paul", "Julia", "Ellie"],
     },
     {
       label: "Phone number",
@@ -53,30 +57,27 @@ function checkData(data) {
 
   // Display the cell as invalid if there's a problem
   const classNames = data.map((line, index) => [
-    titles[index][0] ?  "invalid": line[0] && "valid",
-    titles[index][1] ?  "invalid": line[1] && "valid",
-    titles[index][2] ?  "invalid": line[2] && "valid",
+    titles[index][0] ? "invalid" : line[0] && "valid",
+    titles[index][1] ? "invalid" : line[1] && "valid",
+    titles[index][2] ? "invalid" : line[2] && "valid",
   ]);
 
   return { titles, classNames };
 }
 
 function checkName([name, phone, email]) {
-
-  if(!name && (phone || email)){
-    return 'Name is required'
+  if (!name && (phone || email)) {
+    return "Name is required";
   }
 }
 function checkPhone([name, phone, email]) {
-  if(phone && !phone.match(/\+[0-9]+/))
-    return  'Invalid phone number'
+  if (phone && !phone.match(/\+[0-9]+/)) return "Invalid phone number";
 }
 
 function checkEmail([name, phone, email]) {
-  if(name && !email)
-    return  'Email is required'
+  if (name && !email) return "Email is required";
 
-  if(!email.match(/[a-z0-9.-]+@[a-z0-9.-]+/gi)){
-    return 'Invalid  email address'
+  if (!email.match(/[a-z0-9.-]+@[a-z0-9.-]+/gi)) {
+    return "Invalid  email address";
   }
 }
