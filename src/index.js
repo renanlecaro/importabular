@@ -74,7 +74,7 @@ export default class Importabular {
 
     if (!node) {
       throw new Error(
-        "You need to pass a node argument to Importabular, like this : new Importabular({node: document.body})"
+        "You need to pass a node argument to Importabular, like this : new Importabular({node: document.body})",
       );
     }
     // Reference to the parent DOM element, contains the iframe
@@ -166,7 +166,7 @@ export default class Importabular {
     this.cwd = cwd;
     cwd.open();
     cwd.write(
-      `<html lang="${navigator.language}"><body><style>${this._options.css}</style></body></html>`
+      `<html lang="${navigator.language}"><body><style>${this._options.css}</style></body></html>`,
     );
     cwd.close();
     Object.assign(iframe.style, this._iframeStyle);
@@ -220,7 +220,7 @@ export default class Importabular {
     this._destroyEditing();
 
     _events.forEach((name) =>
-      this.cwd.removeEventListener(name, this[name], true)
+      this.cwd.removeEventListener(name, this[name], true),
     );
 
     this.iframe.parentElement.removeChild(this.iframe);
@@ -267,7 +267,7 @@ export default class Importabular {
     if (this._editing) return;
     e.preventDefault();
     const rows = parseArrayString(
-      (e.clipboardData || window.clipboardData).getData("text/plain")
+      (e.clipboardData || window.clipboardData).getData("text/plain"),
     );
     const { rx, ry } = this._selection;
     const offset = { x: rx[0], y: ry[0] };
@@ -389,7 +389,7 @@ export default class Importabular {
 
   _setAllSelectedCellsTo(value) {
     this._forSelectionCoord(this._selection, ({ x, y }) =>
-      this._setVal(x, y, value)
+      this._setVal(x, y, value),
     );
     this._onDataChanged();
     this._forSelectionCoord(this._selection, this._refreshDisplayedValue);
@@ -437,7 +437,7 @@ export default class Importabular {
         ry[0],
         ry[1] - 1,
         rx[0],
-        rx[1] - 1
+        rx[1] - 1,
       );
       nc = {
         x: temporaryCursor.y,
@@ -486,9 +486,10 @@ export default class Importabular {
     }
     this._changeSelectedCellsStyle(() => {
       this.tbody.style.userSelect = "none";
-      this._selectionEnd = this._selectionStart = this._focus = this._getCoords(
-        e
-      );
+      this._selectionEnd =
+        this._selectionStart =
+        this._focus =
+          this._getCoords(e);
       this._selecting = true;
     });
   };
@@ -548,9 +549,10 @@ export default class Importabular {
     if (this._editing) return;
     if (!this.moved) {
       this._changeSelectedCellsStyle(() => {
-        this._selectionEnd = this._selectionStart = this._focus = this._getCoords(
-          e
-        );
+        this._selectionEnd =
+          this._selectionStart =
+          this._focus =
+            this._getCoords(e);
       });
       this._startEditing(this._focus);
     }

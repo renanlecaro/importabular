@@ -40,19 +40,23 @@ const docExport= {
     output: {
   filename: 'main.js',
     path: path.resolve(__dirname, 'docs'),
-},
+    publicPath: '/',
+  },
+  mode: 'development',
   devServer: {
-    contentBase: './docs',
-      port: 1234,
-      open: true,
-    disableHostCheck: true,
+    static: {
+      directory: path.join(__dirname, 'docs'),
+    },
+    port: 1234,
+    open: true,
+    allowedHosts: "all",
   },
   plugins: [
     new CleanWebpackPlugin(),
     new MiniCssExtractPlugin(),
     new HtmlWebpackPlugin({
       template:'src/demo/index.ejs',
-
+	  scriptLoading: 'blocking',
     }),
     new HTMLInlineCSSWebpackPlugin(),
     new HtmlInlineScriptPlugin(),
@@ -76,6 +80,7 @@ function libExport({filename, mangle}) {
       libraryTarget: 'umd',
       library: 'Importabular',
     },
+    mode: 'production',
     plugins: [
       new CleanWebpackPlugin(),
     ],
